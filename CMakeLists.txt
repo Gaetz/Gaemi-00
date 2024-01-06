@@ -91,7 +91,7 @@ add_subdirectory( gmath )
 add_subdirectory( gecs )
 add_subdirectory( gcausality )
 add_subdirectory( gaemi )
-add_subdirectory( sunset )
+add_subdirectory(examples/sunset)
 
 
 
@@ -102,7 +102,7 @@ if (UNIX)
 endif(UNIX)
 
 # Declaring our executable
-add_executable(${PROJECT_NAME} sunset/main.cpp)
+add_executable(${PROJECT_NAME} examples/sunset/main.cpp)
 target_link_libraries(${PROJECT_NAME} game gaemi)
 
 # C++ hardcode options
