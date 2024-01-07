@@ -160,7 +160,7 @@ namespace gecs {
         archetypeRegistry[emptyArchetypeId].archetypeChanges[ComponentId::Sprite].remove = nullptr;
         // -- Position
         archetypeRegistry[positionArchetypeId].archetypeChanges[ComponentId::Position].add = &archetypeRegistry[positionArchetypeId];
-        archetypeRegistry[positionArchetypeId].archetypeChanges[ComponentId::Position].remove = &archetypeRegistry[emptyArchetypeId];;
+        archetypeRegistry[positionArchetypeId].archetypeChanges[ComponentId::Position].remove = &archetypeRegistry[emptyArchetypeId];
         archetypeRegistry[positionArchetypeId].archetypeChanges[ComponentId::Velocity].add = &archetypeRegistry[posVelArchetypeId];
         archetypeRegistry[positionArchetypeId].archetypeChanges[ComponentId::Velocity].remove = nullptr;
         archetypeRegistry[positionArchetypeId].archetypeChanges[ComponentId::Sprite].add = &archetypeRegistry[posSprArchetypeId];
@@ -260,7 +260,7 @@ namespace gecs {
 
                 // Check row is the same for each column
                 if (checkRow != std::numeric_limits<u64>::max()) {
-                    GASSERT_MSG(checkRow == newRow, "Row must be the same in all archetype columns");
+                    GASSERT_MSG(checkRow == newRow, "Row must be the same in all archetype columns")
                 }
                 checkRow = newRow;
 
@@ -272,7 +272,7 @@ namespace gecs {
             ++checkColsDst;
         }
         GASSERT_MSG(newRow != std::numeric_limits<u64>::max() && checkColsDst > 0 && checkColsSrc > 0,
-                    "Row should exist");
+                    "Row should exist")
         return newRow;
     }
 
@@ -315,9 +315,9 @@ namespace gecs {
     }
 
 
-    vector<vector<std::pair<ArchetypeId, size_t>>> World::GetArchetypeAndColumnIndices(vector<CompArchIdAndCol> &compArchCols) {
+    vector<vector<std::pair<ArchetypeId, size_t>>> World::GetArchetypeAndColumnIndices(const vector<CompArchIdAndCol> &compArchCols) {
         vector<vector<std::pair<ArchetypeId, size_t>>> ret;
-        ComponentId currentCompId = compArchCols[0].componentId;;
+        ComponentId currentCompId = compArchCols[0].componentId;
         vector<std::pair<ArchetypeId, size_t>> currentArchsAndCols { {compArchCols[0].archId, compArchCols[0].columnIndex} };
         for (u32 i = 1; i < compArchCols.size(); ++i) {
             if (currentCompId != compArchCols[i].componentId) {
@@ -334,7 +334,7 @@ namespace gecs {
     }
 
     vector<vector<size_t>> World::GetDataStartIndices(vector<CompArchIdAndCol> &compArchCols) {
-        ComponentId currentCompId = compArchCols[0].componentId;;
+        ComponentId currentCompId = compArchCols[0].componentId;
         vector<vector<size_t>> starts {};
         vector<size_t> currentStarts { 0 };
         size_t accumulator { 0 };

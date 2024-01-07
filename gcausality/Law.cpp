@@ -13,7 +13,7 @@ namespace gcausality {
     Law::Law(const str& archetypeName, i32 order) :
             order { order },
             archetype { World::Instance().GetArchetype(archetypeName) } {
-        GASSERT_MSG(archetype != nullptr, "Could not find archetype " + archetypeName);
+        GASSERT_MSG(archetype != nullptr, "Could not find archetype " + archetypeName)
     }
 
     ArchetypeData Law::Apply() {

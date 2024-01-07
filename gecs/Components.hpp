@@ -32,7 +32,7 @@ namespace gecs {
             y = newVec.y;
         }
 
-        Vec2 Vec() const {
+        [[nodiscard]] Vec2 Vec() const {
             return Vec2 { x, y };
         }
     };
@@ -41,7 +41,7 @@ namespace gecs {
         f32 x { 0.0f };
         f32 y { 0.0f };
 
-        Vec2 Vec() const {
+        [[nodiscard]] Vec2 Vec() const {
             return Vec2 { x, y };
         }
     };
@@ -57,7 +57,7 @@ namespace gecs {
 
         Rect srcRect;
         Vec2 dstSize { 1.0f, 1.0f };
-        Texture texture;
+        Texture texture {};
     };
 
 
@@ -112,8 +112,8 @@ namespace gecs {
             data.assign(newData.begin(), newData.end());
         }
 
-        size_t Count() const  { return data.size(); }
-        ComponentId GetComponentId() const { return componentId; }
+        [[nodiscard]] size_t Count() const  { return data.size(); }
+        [[nodiscard]] ComponentId GetComponentId() const { return componentId; }
 
 
         template<class T>
@@ -147,9 +147,9 @@ namespace gecs {
 
         /* Functions used for logging purpose */
 
-        const Position& GetPos(size_t row) const;
-        const Velocity& GetVelocity(size_t row) const;
-        const Sprite& GetSprite(size_t row) const;
+        [[nodiscard]] const Position& GetPos(size_t row) const;
+        [[nodiscard]] const Velocity& GetVelocity(size_t row) const;
+        [[nodiscard]] const Sprite& GetSprite(size_t row) const;
     };
 
     str LogComponent(ComponentId componentId, const Column& column, size_t row);

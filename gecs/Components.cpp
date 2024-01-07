@@ -32,6 +32,9 @@ namespace gecs {
                 auto& sprite = column.GetSprite(row);
                 return "{ src: " + sprite.srcRect.Log() + ", dst: " + sprite.dstSize.Log() + " } ";
             }
+            default: {
+                return "INVALID COMPONENT";
+            }
         }
     }
 }

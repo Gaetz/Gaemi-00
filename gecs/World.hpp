@@ -39,14 +39,14 @@ namespace gecs {
         void Init();
         Id CreateEntity();
         void DestroyEntity(Id entityId);
-        Entity GetEntity(Id entityId);
+        static Entity GetEntity(Id entityId);
         Archetype* GetArchetype(const str& archetypeName);
         void LogWorld();
 
         struct IdArchRow {
-            Id id;
+            Id id {0};
             ArchetypeId archId;
-            size_t row;
+            size_t row {0};
         };
 
         template<typename... ComponentTypes>
@@ -195,7 +195,7 @@ namespace gecs {
 
         u64 MoveEntity(const ArchetypeRecord& recordToUpdate, size_t row, Archetype* nextArchetype);
 
-        vector<vector<std::pair<ArchetypeId, size_t>>> GetArchetypeAndColumnIndices(vector<CompArchIdAndCol> &compArchCols);
+        static vector<vector<std::pair<ArchetypeId, size_t>>> GetArchetypeAndColumnIndices(const vector<CompArchIdAndCol> &compArchCols);
 
         vector<vector<size_t>> GetDataStartIndices(vector<CompArchIdAndCol> &compArchCols);
 

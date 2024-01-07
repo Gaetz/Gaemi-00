@@ -14,5 +14,9 @@ namespace gplatform {
         return strnlen_s(s, max);
     }
 
+    size_t StrLen(char* s) {
+        return strlen_s(s);
+    }
+
 }
 

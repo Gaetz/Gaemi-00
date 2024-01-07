@@ -34,4 +34,4 @@ namespace gecs {
 }
 
 
-#endif //SUNSET_REVERIES_ARCHETYPE_HPP
+#endif //GECS_ARCHETYPE_HPP

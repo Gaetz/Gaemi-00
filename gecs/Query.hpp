@@ -52,8 +52,8 @@ namespace gecs {
             world.ReintegrateQueryCache<ComponentTypes...>(cacheSoA);
         }
 
-        bool IsPopulated() const { return isPopulated; }
-        bool IsEmpty() const { return cacheAoS.size() == 0; }
+        [[nodiscard]] bool IsPopulated() const { return isPopulated; }
+        [[nodiscard]] bool IsEmpty() const { return cacheAoS.empty(); }
 
         std::tuple<vector<ComponentTypes>...> cacheSoA;
         vector<std::tuple<ComponentTypes...>> cacheAoS;
