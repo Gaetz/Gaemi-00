@@ -83,6 +83,9 @@ namespace gecs {
             // Filter entities by archetype existing in compFilter
          //   entitiesWithArchRows = entitiesWithArchRows | std::views::filter();
 
+
+            /// TODO Sort after filtering
+
             // Sort entities by archetype and row
             std::sort(entitiesWithArchRows.begin(), entitiesWithArchRows.end(), sortLambda);
 

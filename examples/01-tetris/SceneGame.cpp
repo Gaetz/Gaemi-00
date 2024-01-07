@@ -59,27 +59,25 @@ void SceneGame::Load() {
 void SceneGame::Update(f32 dt) {
 
     auto q = Query<Position, Velocity>();
-    q.Each([dt](Position& pos, Velocity& vel) {
+    q.Update([dt](Position& pos, const Velocity& vel) {
         const Vec2 newPos { pos.x + vel.x * dt, pos.y + vel.y * dt };
         pos.Set(newPos);
     });
     q.Apply();
 
-    q.DeleteIf([](Position& pos, Velocity& vel) {
+    q.DeleteIf([](const Position& pos, const Velocity& vel) {
         return pos.x > 700;
     });
-    q.Refresh();
 }
 
 void SceneGame::Draw() {
     render::DrawTexture(backgroundTexture, 0, 120, WHITE);
 
     /// TODO World should store queries and update them when needed
-    /// TODO We should have a QueryConst just for consulting data
 
     auto posSprites = Query<Position, Sprite>();
     posSprites.Refresh();
-    posSprites.Each([](Position& pos, Sprite& spr) {
+    posSprites.Read([](const Position& pos, const Sprite& spr) {
         Rect dst { pos.x, pos.y, spr.srcRect.width, spr.srcRect.height };
         render::DrawSprite(spr.texture, spr.srcRect, dst, WHITE);
     });

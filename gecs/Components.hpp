@@ -129,22 +129,6 @@ namespace gecs {
             data.pop_back();
         };
 
-        /*
-    template<class T>
-    void RemoveComponent(vector<T>& components, Entity& removedEntity, ComponentIndex componentTypeIndex) {
-        i32 typeIndex = static_cast<i32>(componentTypeIndex);
-        auto componentIndex = removedEntity.components.at(typeIndex);
-        if (componentIndex != -1) {
-            auto last = components.end() - 1;
-            FindEntity(last->entityId).components[typeIndex] = componentIndex;
-            auto removedComponent = components.begin() + componentIndex;
-            std::iter_swap(removedComponent, last);
-            components.pop_back();
-        }
-    }
-
-         */
-
         /* Functions used for logging purpose */
 
         [[nodiscard]] const Position& GetPos(size_t row) const;

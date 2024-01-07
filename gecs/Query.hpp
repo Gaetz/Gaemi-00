@@ -11,6 +11,7 @@
 #include "Types.hpp"
 #include "World.hpp"
 #include <functional>
+#include "TupleUtils.hpp"
 
 namespace gecs {
 
@@ -26,11 +27,11 @@ namespace gecs {
         }
 
         template<typename FuncT>
-        void ApplyOnElements(FuncT f) {
+        void ApplyOnElements(FuncT f, bool updating) {
             for(std::size_t i = 0; i < size; ++i) {
                 std::apply(f, cacheAoS[i]);
             }
-            shouldRefresh = true;
+            shouldRefresh = updating;
         }
 
         template<typename FuncT>
@@ -88,18 +89,26 @@ namespace gecs {
         friend QueryCache<ComponentTypes...>;
 
     public:
-        void Each(std::function<void(ComponentTypes&...)> f) {
+        void Update(std::function<void(ComponentTypes&...)> f) {
             CheckCache();
-            cache.ApplyOnElements(f);
+            cache.ApplyOnElements(f, true);
         }
 
-        void DeleteIf(std::function<bool(ComponentTypes&...)> f) {
+        void Read(std::function<void(const ComponentTypes&...)> f) {
             CheckCache();
+            cache.ApplyOnElements(f, false);
+        }
+
+        void DeleteIf(std::function<bool(const ComponentTypes&...)> f) {
+            if (cache.IsEmpty()) return;
+
             vector<Id> toDelete = cache.BuildDeleteList(f, entities);
+            if (toDelete.empty()) return;
+
             for(Id id : toDelete) {
                 world.DestroyEntity(id);
-                entities.erase(std::find(entities.begin(), entities.end(), id));
             }
+            Refresh();
         }
 
         void Apply() {
@@ -120,7 +129,7 @@ namespace gecs {
         void RefreshCache() {
             auto result = world.Query<ComponentTypes...>();
             entities = get<0>(result);
-            cache = QueryCache<ComponentTypes...>(tuple_tail(result));
+            cache = QueryCache<ComponentTypes...>(TupleTail(result));
         }
 
         void CheckCache() {
