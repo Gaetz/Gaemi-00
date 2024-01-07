@@ -9,6 +9,7 @@
 #include "Archetype.hpp"
 #include <tuple>
 #include <ranges>
+#include "QueryManager.hpp"
 
 namespace gecs {
 
@@ -35,6 +36,8 @@ namespace gecs {
     public:
         unordered_map<Id, ArchetypeRecord>& GetEntities() { return entityRegistry; }
         unordered_map<ArchetypeId, Archetype>& GetArchetypes() { return archetypeRegistry; }
+        unordered_map<ComponentId, ComponentArchetypes>& GetComponents() { return componentRegistry; }
+
 
         void Init();
         Id CreateEntity();
@@ -43,64 +46,14 @@ namespace gecs {
         Archetype* GetArchetype(const str& archetypeName);
         void LogWorld();
 
-        struct IdArchRow {
-            Id id {0};
-            ArchetypeId archId;
-            size_t row {0};
-        };
-
         template<typename... ComponentTypes>
         std::tuple<vector<Id>, vector<ComponentTypes>...> Query() {
-            vector<CompArchIdAndCol> filterMaterial = GetRelevantArchetypesAndCols<ComponentTypes...>();
-            if (filterMaterial.empty()) return {};
-            // We want relevant entities in the same order as the query
-
-            // Take all entities, filter them by archetype and then sort them by row
-            vector<IdArchRow> entitiesWithArchRows;
-            for (const auto& entity : entityRegistry) {
-                entitiesWithArchRows.push_back(IdArchRow { entity.first, entity.second.archetype->archetypeId, entity.second.row });
-            }
-
-            // Get relevant archetypes
-            ComponentId componentId = filterMaterial[0].componentId;
-            vector<CompArchIdAndCol> compFilter;
-            for (auto compArchCol : filterMaterial) {
-                if( compArchCol.componentId == componentId ) {
-                    compFilter.emplace_back(compArchCol);
-                }
-            }
-
-            auto filterLambda = [&compFilter](IdArchRow& a){
-                return std::find_if(compFilter.begin(), compFilter.end(), [&a](CompArchIdAndCol& filter){
-                    return filter.archId == a.archId;
-                }) != compFilter.end();
-            };
-            auto sortLambda = [=](IdArchRow a, IdArchRow b) {
-                return a.archId.to_ulong() < b.archId.to_ulong() ||
-                       (a.archId.to_ulong() == b.archId.to_ulong() && a.row < b.row);
-            };
-
-            // Filter entities by archetype existing in compFilter
-         //   entitiesWithArchRows = entitiesWithArchRows | std::views::filter();
-
-
-            /// TODO Sort after filtering
-
-            // Sort entities by archetype and row
-            std::sort(entitiesWithArchRows.begin(), entitiesWithArchRows.end(), sortLambda);
-
-            vector<Id> entities;
-            for (const auto& entity : entitiesWithArchRows | std::views::filter(filterLambda)) {
-                entities.push_back(entity.id);
-            }
-
-            // Get relevant component values in a tuple shape
-            return make_tuple(entities, QuerySingleComp<ComponentTypes>(filterMaterial)...);
+            return queryManager.Query<ComponentTypes...>();
         }
 
         template<typename... ComponentTypes>
         void ReintegrateQueryCache(std::tuple<vector<ComponentTypes>...> tuple) {
-            vector<CompArchIdAndCol> compArchCols = GetRelevantArchetypesAndCols<ComponentTypes...>();
+            vector<CompArchIdAndCol> compArchCols = queryManager.GetRelevantArchetypesAndCols<ComponentTypes...>();
             // From compArchCols, Get vector of vector of pairs of archetypes id and cols,one vector for each component type
             auto archsAndCols = GetArchetypeAndColumnIndices(compArchCols);
             // Get start indices for each archetype containing the component type
@@ -128,6 +81,7 @@ namespace gecs {
     private:
         u64 maxId { 0 };
         ArchetypeId defaultArchetype;
+        QueryManager queryManager;
 
         template<class T>
         T& GetComponent(Id entity) {
@@ -141,59 +95,6 @@ namespace gecs {
 
             const size_t componentColumn = archetypes[archetype->archetypeId];
             return archetype->components[componentColumn].GetRow<T>(record.row);
-        }
-
-        template <typename... ComponentTypes>
-        vector<CompArchIdAndCol> GetRelevantArchetypesAndCols() {
-            vector<CompArchIdAndCol> ret;
-            // Retrieve component ids from template
-            vector<ComponentId> componentIds = ToComponentIds<ComponentTypes...>();
-            // Create the minimal archetype id (bitset) we need
-            // to find our archetypes and component cols
-            std::bitset<32> pattern;
-            for (const auto componentId : componentIds) {
-                pattern.flip(static_cast<i32>(componentId));
-            }
-            // Check all archetypes by components to obtain component, archetypes and cols
-            for (const auto& c : componentRegistry) {
-                if (std::find(componentIds.begin(), componentIds.end(), c.first) == componentIds.end()) continue;
-                ComponentArchetypes archs = c.second;
-                for (const auto archIds : archs) {
-                    // We check the archetype contain the minimal components
-                    // We also exclude empty archetypes
-                    if ((archIds.first & pattern) == pattern && archetypeRegistry[archIds.first].GetRowCount() > 0) {
-                        ret.push_back(CompArchIdAndCol { c.first, archIds.first, archIds.second });
-                    }
-                }
-            }
-            std::sort(ret.begin(), ret.end(), [=](CompArchIdAndCol a, CompArchIdAndCol b) {
-                return a.componentId < b.componentId ||
-                       (a.componentId == b.componentId && a.archId.to_ulong() < b.archId.to_ulong());
-            });
-            return ret;
-        }
-
-        template<typename T>
-        vector<T> QuerySingleComp(const vector<CompArchIdAndCol>& filterMaterial) {
-            ComponentId componentId = ToComponentId<T>();
-            vector<CompArchIdAndCol> compFilter;
-            for (auto compArchCol : filterMaterial) {
-                if( compArchCol.componentId == componentId ) {
-                    compFilter.emplace_back(compArchCol);
-                }
-            }
-
-            vector<T> result;
-            for (const auto& compArchCol : compFilter) {
-                const ArchetypeId archId = compArchCol.archId;
-                const size_t column = compArchCol.columnIndex;
-                const auto count = archetypeRegistry[archId].components[column].Count();
-                for (u32 i = 0; i < count; ++i) {
-                    result.push_back(archetypeRegistry[archId].components[column].GetRowConst<T>(i));
-                }
-            }
-
-            return result;
         }
 
         u64 MoveEntity(const ArchetypeRecord& recordToUpdate, size_t row, Archetype* nextArchetype);

@@ -48,6 +48,11 @@ namespace gecs {
         size_t columnIndex { 0 };
     };
 
+    struct IdArchRow {
+        Id id {0};
+        ArchetypeId archId;
+        size_t row {0};
+    };
 }
 
 #endif //GECSS_TYPES_HPP
