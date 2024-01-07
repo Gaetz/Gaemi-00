@@ -10,7 +10,9 @@
 namespace gfile {
 
     enum class FileType {
-        Data = 0
+        Data = 0,
+        System = 1,
+        Texture = 2,
     };
 
     str FileTypePath(FileType fileType);
