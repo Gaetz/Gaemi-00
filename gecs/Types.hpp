@@ -53,6 +53,11 @@ namespace gecs {
         ArchetypeId archId;
         size_t row {0};
     };
+
+    class AbstractQuery {
+    public:
+        virtual ~AbstractQuery() = default;
+    };
 }
 
 #endif //GECSS_TYPES_HPP

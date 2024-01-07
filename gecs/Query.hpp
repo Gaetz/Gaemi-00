@@ -83,12 +83,16 @@ namespace gecs {
         }
     };
 
-
     template<typename... ComponentTypes>
-    class Query {
-        friend QueryCache<ComponentTypes...>;
-
+    class Query : AbstractQuery {
     public:
+        Query() = default;
+
+        explicit Query(std::tuple<vector<gecs::Id>, vector<ComponentTypes>...> res) {
+            entities = get<0>(res);
+            cache = QueryCache<ComponentTypes...>(TupleTail(res));
+        }
+
         void Update(std::function<void(ComponentTypes&...)> f) {
             CheckCache();
             cache.ApplyOnElements(f, true);
