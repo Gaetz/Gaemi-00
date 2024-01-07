@@ -27,12 +27,11 @@ SceneGame::SceneGame(Game& game) : game { game },
 }
 
 void SceneGame::Load() {
-    AssetsManager::LoadTexture("bg_sunset", "assets/sunset/images/bg_sunset.png", ToSceneId(SceneName::SceneGame));
-    AssetsManager::LoadTexture("player", "assets/sunset/images/player.png", ToSceneId(SceneName::SceneGame));
-    AssetsManager::LoadTexture("ghost", "assets/sunset/images/ghost.png", ToSceneId(SceneName::SceneGame));
-    AssetsManager::LoadTexture("projectile", "assets/sunset/images/projectile.png", ToSceneId(SceneName::SceneGame));
+    AssetsManager::LoadTexture("background", "background.png", ToSceneId(SceneName::SceneGame));
+    AssetsManager::LoadTexture("frame", "frame.png", ToSceneId(SceneName::SceneGame));
+    AssetsManager::LoadTexture("tiles", "tiles.png", ToSceneId(SceneName::SceneGame));
 
-    backgroundTexture = AssetsManager::GetTexture("bg_sunset");
+    backgroundTexture = AssetsManager::GetTexture("background");
 
     gecs::World& world = gecs::World::Instance();
     world.Init();

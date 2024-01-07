@@ -16,7 +16,13 @@ namespace gfile {
     class File {
     public:
         static unordered_map<str, f32> ReadFile(FileType fileType, const str& filename);
+        static unordered_map<str, f32> ReadFile(const str& path);
 
+        static void SetGameAssetsPath(const str& path);
+        [[nodiscard]] static str GetGameAssetsPath() ;
+
+    private:
+        static str gameAssetsPath;
     };
 
 }

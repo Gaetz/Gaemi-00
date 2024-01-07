@@ -19,7 +19,7 @@ public:
     Engine& operator=(Engine&) = delete;
 
     GAPI void Start(i32 windowWidth, i32 windowHeight, const str& gameName,
-                                     uptr<IGame>&& gameP) noexcept;
+                    const str& gameAssetsPath, uptr<IGame>&& gameP) noexcept;
 
     str gameName;
     uptr<IGame> game;
