@@ -22,7 +22,7 @@ namespace gecs {
             size = std::get<0>(cacheSoA).size();
             cacheAoS.reserve(size);
             UpdateAoS();
-            isPopulated = false;
+            isPopulated = true;
         }
 
         template<typename FuncT>
@@ -59,7 +59,7 @@ namespace gecs {
         vector<std::tuple<ComponentTypes...>> cacheAoS;
         
     private:
-        bool isPopulated{true};
+        bool isPopulated{false};
         bool shouldRefresh{false};
         size_t size{0};
 
@@ -107,17 +107,25 @@ namespace gecs {
             cache.ReintegrateInWorld(world);
         }
 
+        void Refresh() {
+            if (cache.IsEmpty()) return;
+            RefreshCache();
+        }
 
     private:
         World& world { World::Instance() };
-        QueryCache<ComponentTypes...> cache;
-        vector<Id> entities;
+        static inline QueryCache<ComponentTypes...> cache {};
+        static inline vector<Id> entities {};
+
+        void RefreshCache() {
+            auto result = world.Query<ComponentTypes...>();
+            entities = get<0>(result);
+            cache = QueryCache<ComponentTypes...>(tuple_tail(result));
+        }
 
         void CheckCache() {
-            if (cache.IsPopulated()) {
-                auto result = world.Query<ComponentTypes...>();
-                entities = get<0>(result);
-                cache = QueryCache<ComponentTypes...>(tuple_tail(result));
+            if (!cache.IsPopulated()) {
+                RefreshCache();
             }
         }
     };

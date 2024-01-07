@@ -44,7 +44,8 @@ void SceneGame::Load() {
         entity.AddComponent<gecs::Position>(pos);
         Velocity vel {static_cast<f32>(100), 0};
         entity.AddComponent<gecs::Velocity>(vel);
-        gecs::Sprite sprite { AssetsManager::GetTexture("ghost") };
+        gecs::Sprite sprite { AssetsManager::GetTexture("tiles") };
+        sprite.srcRect = Rect { 0, 0, 16, 16 };
         entity.AddComponent<gecs::Sprite>(sprite);
         entities.push_back(testEntityId);
     }
@@ -67,15 +68,20 @@ void SceneGame::Update(f32 dt) {
     q.DeleteIf([](Position& pos, Velocity& vel) {
         return pos.x > 700;
     });
+    q.Refresh();
 }
 
 void SceneGame::Draw() {
     render::DrawTexture(backgroundTexture, 0, 120, WHITE);
 
-    // Query all entities with a position and a sprite
-    auto posSprites = gecs::Query<Position, Sprite>();
+    /// TODO World should store queries and update them when needed
+    /// TODO We should have a QueryConst just for consulting data
+
+    auto posSprites = Query<Position, Sprite>();
+    posSprites.Refresh();
     posSprites.Each([](Position& pos, Sprite& spr) {
-        render::DrawTexture(spr.texture, pos.x, pos.y, WHITE);
+        Rect dst { pos.x, pos.y, spr.srcRect.width, spr.srcRect.height };
+        render::DrawSprite(spr.texture, spr.srcRect, dst, WHITE);
     });
 }
 
