@@ -3,6 +3,7 @@
 //
 
 #include "StringUtils.hpp"
+#include <cstring>
 
 namespace gplatform {
 

@@ -7,6 +7,7 @@
 #include "Log.hpp"
 #include "StringUtils.hpp"
 #include <sstream>
+#include <limits>
 
 namespace gecs {
 
@@ -220,8 +221,8 @@ namespace gecs {
     }
 
     u64 World::MoveEntity(const ArchetypeRecord& recordToUpdate, size_t row, Archetype* nextArchetype) {
-        u64 checkRow = std::numeric_limits<uint64_t>::max();
-        u64 newRow = std::numeric_limits<uint64_t>::max();
+        u64 checkRow = std::numeric_limits<u64>::max();
+        u64 newRow = std::numeric_limits<u64>::max();
         i32 checkColsDst { 0 }; // Used to avoid empty archetype case
         i32 checkColsSrc { 0 }; // Used to avoid empty archetype case
 
@@ -258,7 +259,7 @@ namespace gecs {
                 }
 
                 // Check row is the same for each column
-                if (checkRow != std::numeric_limits<uint64_t>::max()) {
+                if (checkRow != std::numeric_limits<u64>::max()) {
                     GASSERT_MSG(checkRow == newRow, "Row must be the same in all archetype columns");
                 }
                 checkRow = newRow;
@@ -270,7 +271,7 @@ namespace gecs {
             }
             ++checkColsDst;
         }
-        GASSERT_MSG(newRow != std::numeric_limits<uint64_t>::max() && checkColsDst > 0 && checkColsSrc > 0,
+        GASSERT_MSG(newRow != std::numeric_limits<u64>::max() && checkColsDst > 0 && checkColsSrc > 0,
                     "Row should exist");
         return newRow;
     }
