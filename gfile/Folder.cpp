@@ -9,7 +9,7 @@ namespace gfile {
     vector<str> Folder::ExploreFiles(const str &path) {
         vector<str> res;
         for (const auto &entry: std::filesystem::directory_iterator(path)) {
-            res.push_back(entry.path());
+            res.push_back(entry.path().string());
         }
         return res;
     }

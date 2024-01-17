@@ -35,7 +35,7 @@ namespace gecs {
     public:
         unordered_map<Id, ArchetypeRecord>& GetEntities() { return entityRegistry; }
         unordered_map<ArchetypeId, Archetype>& GetArchetypes() { return archetypeRegistry; }
-        const unordered_map<ArchetypeId, Archetype>& GetArchetypesConst() const { return archetypeRegistry; }
+        [[nodiscard]] const unordered_map<ArchetypeId, Archetype>& GetArchetypesConst() const { return archetypeRegistry; }
         unordered_map<ComponentId, ComponentArchetypes>& GetComponents() { return componentRegistry; }
 
 

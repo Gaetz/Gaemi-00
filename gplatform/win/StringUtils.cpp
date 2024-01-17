@@ -6,7 +6,7 @@
 
 namespace gplatform {
 
-    void StrCpy(char* dst, u32 length, char* src) {
+    void StrCpy(char* dst, u32 length, const char* src) {
         strcpy_s(dst, length, src);
     }
 
@@ -15,7 +15,7 @@ namespace gplatform {
     }
 
     size_t StrLen(char* s) {
-        return strlen_s(s);
+        return strlen(s);
     }
 
 }

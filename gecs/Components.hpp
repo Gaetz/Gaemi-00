@@ -9,6 +9,7 @@
 #include "Types.hpp"
 #include "Asserts.hpp"
 #include "Log.hpp"
+#include <algorithm>
 
 #include "Rect.hpp"
 using gmath::Rect;
