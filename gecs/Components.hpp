@@ -107,7 +107,7 @@ namespace gecs {
         }
 
         template<class T>
-        void ReplaceData(const vector<T>& newData) {
+        void ReplaceData(const vector<T>&& newData) {
             GASSERT_DEBUG(data.size() == newData.size())
             data.assign(newData.begin(), newData.end());
         }

@@ -9,79 +9,12 @@
 #include <unordered_map>
 #include "Defines.hpp"
 #include "Types.hpp"
-#include "World.hpp"
 #include <functional>
 #include "TupleUtils.hpp"
+#include "QueryCache.hpp"
+#include "QueryManager.hpp"
 
 namespace gecs {
-
-    template<typename... ComponentTypes>
-    class QueryCache {
-    public:
-        QueryCache() = default;
-        explicit QueryCache(const std::tuple<vector<ComponentTypes>...>& newCache): cacheSoA(newCache) {
-            size = std::get<0>(cacheSoA).size();
-            cacheAoS.reserve(size);
-            UpdateAoS();
-            isPopulated = true;
-        }
-
-        template<typename FuncT>
-        void ApplyOnElements(FuncT f, bool updating) {
-            for(std::size_t i = 0; i < size; ++i) {
-                std::apply(f, cacheAoS[i]);
-            }
-            shouldRefresh = updating;
-        }
-
-        template<typename FuncT>
-        vector<Id> BuildDeleteList(FuncT f, const vector<Id>& entities) {
-            vector<Id> toDelete;
-            for(std::size_t i = 0; i < size; ++i) {
-                if(std::apply(f, cacheAoS[i])) {
-                    toDelete.push_back(entities[i]);
-                }
-            }
-            return toDelete;
-        }
-
-        void ReintegrateInWorld(World& world) {
-            if (shouldRefresh) {
-                UpdateSoA();
-                shouldRefresh = false;
-            }
-            world.ReintegrateQueryCache<ComponentTypes...>(cacheSoA);
-        }
-
-        [[nodiscard]] bool IsPopulated() const { return isPopulated; }
-        [[nodiscard]] bool IsEmpty() const { return cacheAoS.empty(); }
-
-        std::tuple<vector<ComponentTypes>...> cacheSoA;
-        vector<std::tuple<ComponentTypes...>> cacheAoS;
-        
-    private:
-        bool isPopulated{false};
-        bool shouldRefresh{false};
-        size_t size{0};
-
-        void UpdateAoS() {
-            cacheAoS.clear();
-            for (size_t i = 0; i < size; ++i) {
-                std::tuple<ComponentTypes...> tuple;
-                std::apply([&](auto&&... comp) { ((comp = std::get<vector<std::decay_t<decltype(comp)>>>(cacheSoA)[i]), ...); }, tuple);
-                cacheAoS.emplace_back(std::move(tuple));
-            }
-        }
-
-        void UpdateSoA() {
-            // Empty vectors but memory allocation is kept
-            std::apply([](auto&&... vec) { (..., vec.clear()); }, cacheSoA);
-
-            for (size_t i = 0; i < size; ++i) {
-                std::apply([&](auto&&... vec) { (..., vec.push_back(std::get<ComponentTypes>(cacheAoS[i]))); }, cacheSoA);
-            }
-        }
-    };
 
     template<typename... ComponentTypes>
     class Query : AbstractQuery {
@@ -109,15 +42,14 @@ namespace gecs {
             vector<Id> toDelete = cache.BuildDeleteList(f, entities);
             if (toDelete.empty()) return;
 
-            for(Id id : toDelete) {
-                world.DestroyEntity(id);
-            }
+            QueryManager::Instance().DestroyEntities(toDelete);
             Refresh();
         }
 
         void Apply() {
             if (cache.IsEmpty()) return;
-            cache.ReintegrateInWorld(world);
+            const auto& lastCache = cache.RefreshAndReturnCache();
+            QueryManager::Instance().ReintegrateQueryCache<ComponentTypes...>(lastCache);
         }
 
         void Refresh() {
@@ -125,13 +57,13 @@ namespace gecs {
             RefreshCache();
         }
 
+
     private:
-        World& world { World::Instance() };
         static inline QueryCache<ComponentTypes...> cache {};
         static inline vector<Id> entities {};
 
         void RefreshCache() {
-            auto result = world.Query<ComponentTypes...>();
+            auto result = QueryManager::Instance().ComputeQuery<ComponentTypes...>();
             entities = get<0>(result);
             cache = QueryCache<ComponentTypes...>(TupleTail(result));
         }
