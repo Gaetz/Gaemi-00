@@ -9,7 +9,6 @@
 #include "Archetype.hpp"
 #include <tuple>
 #include <ranges>
-#include "QueryManager.hpp"
 
 namespace gecs {
 

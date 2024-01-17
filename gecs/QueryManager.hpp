@@ -16,7 +16,7 @@ namespace gecs {
     class QueryManager {
     public:
 
-        void DestroyEntities(const vector<Id>& toDelete);
+        static void DestroyEntities(const vector<Id>& toDelete);
 
         template <typename... ComponentTypes>
         vector<CompArchIdAndCol> GetRelevantArchetypesAndCols() {
@@ -114,14 +114,14 @@ namespace gecs {
         }
 
     private:
-        unordered_map<ArchetypeId, Archetype>& GetWorldArchetypes();
-        vector<IdArchRow> GetEntitiesWithArchsRows();
-        vector<CompArchIdAndCol> GetComponentsWithArchsCols(vector<ComponentId>&& componentIds, std::bitset<32> pattern);
-        Column GetColumn(ArchetypeId archId, size_t column);
-        vector<CompArchIdAndCol> FilterForOneComponent(const vector<CompArchIdAndCol>& filterMaterial, ComponentId componentId);
+        static unordered_map<ArchetypeId, Archetype>& GetWorldArchetypes();
+        static vector<IdArchRow> GetEntitiesWithArchsRows();
+        static vector<CompArchIdAndCol> GetComponentsWithArchsCols(vector<ComponentId>&& componentIds, std::bitset<32> pattern);
+        static Column GetColumn(ArchetypeId archId, size_t column);
+        static vector<CompArchIdAndCol> FilterForOneComponent(const vector<CompArchIdAndCol>& filterMaterial, ComponentId componentId);
 
-        vector<vector<std::pair<ArchetypeId, size_t>>> GetArchetypeAndColumnIndices(const vector<CompArchIdAndCol> &compArchCols);
-        vector<vector<size_t>> GetDataStartIndices(vector<CompArchIdAndCol> &compArchCols);
+        static vector<vector<std::pair<ArchetypeId, size_t>>> GetArchetypeAndColumnIndices(const vector<CompArchIdAndCol> &compArchCols);
+        static vector<vector<size_t>> GetDataStartIndices(vector<CompArchIdAndCol> &compArchCols);
 
         QueryStore store;
 
