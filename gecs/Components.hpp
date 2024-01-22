@@ -18,11 +18,9 @@ using gmath::Vec2;
 #include "unordered_map"
 using std::unordered_map;
 
-// This list of components is used to create the column
-// type, with a std::variant.
-#define COMPONENTS Position, Velocity, Sprite
-
 namespace gecs {
+
+    struct Column;
 
     struct Position {
         f32 x { 0.0f };
@@ -59,82 +57,6 @@ namespace gecs {
         Rect srcRect;
         Vec2 dstSize { 1.0f, 1.0f };
         Texture texture {};
-    };
-
-
-    template <class T>
-    ComponentId ToComponentId() {
-        if constexpr (std::is_same_v<T, Position>) {
-            return ComponentId::Position;
-        } else if constexpr (std::is_same_v<T, Velocity>) {
-            return ComponentId::Velocity;
-        } else if constexpr (std::is_same_v<T, Sprite>) {
-            return ComponentId::Sprite;
-        }
-    }
-
-    template <typename... ComponentTypes>
-    std::vector<ComponentId> ToComponentIds() {
-        std::vector<ComponentId> ret;
-
-        // Use fold expression to call ToComponentId for each type
-        (ret.push_back(ToComponentId<ComponentTypes>()), ...);
-
-        return ret;
-    }
-
-    class Column {
-    private:
-        u32 dataSize;
-        ComponentId componentId;
-        vector<std::variant<COMPONENTS>> data;
-
-    public:
-        template<class T>
-        void Init(size_t numberOfElements = 100) {
-            data.reserve(numberOfElements);
-            dataSize = sizeof(T);
-            componentId = ToComponentId<T>();
-        }
-
-        template<class T>
-        T& GetRow(size_t row) {
-            return std::get<T>(data[row]);
-        }
-
-        template<class T>
-        const T& GetRowConst(size_t row) const {
-            return std::get<T>(data[row]);
-        }
-
-        template<class T>
-        void ReplaceData(const vector<T>&& newData) {
-            GASSERT_DEBUG(data.size() == newData.size())
-            data.assign(newData.begin(), newData.end());
-        }
-
-        [[nodiscard]] size_t Count() const  { return data.size(); }
-        [[nodiscard]] ComponentId GetComponentId() const { return componentId; }
-
-
-        template<class T>
-        u64 AddElement(T element) {
-            data.push_back(std::move(element));
-            return data.size() - 1;
-        };
-
-        void RemoveElementBySwapping(u64 row) {
-            auto last = data.end() - 1;
-            auto removedElement = data.begin() + static_cast<i64>(row);
-            std::iter_swap(removedElement, last);
-            data.pop_back();
-        };
-
-        /* Functions used for logging purpose */
-
-        [[nodiscard]] const Position& GetPos(size_t row) const;
-        [[nodiscard]] const Velocity& GetVelocity(size_t row) const;
-        [[nodiscard]] const Sprite& GetSprite(size_t row) const;
     };
 
     str LogComponent(ComponentId componentId, const Column& column, size_t row);

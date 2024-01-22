@@ -6,18 +6,29 @@
 #define GECS_QUERYSTORE_HPP
 
 #include "Types.hpp"
+#include "Query.hpp"
 
 namespace gecs {
 
     class QueryStore {
-        unordered_map<std::bitset<32>, AbstractQuery> queries;
-
-
+        unordered_map<ArchetypeId, AbstractQuery> queries;
     public:
-        template<typename... ComponentTypes>
-        void Store(std::tuple<vector<gecs::Id>, vector<ComponentTypes>...> res) {
+        void Store(ArchetypeId key, AbstractQuery &&q);
 
+        /*
+        template<class ...ComponentTypes>
+        Query<ComponentTypes...> &Get() {
+            auto archId = ToArchetypeId<ComponentTypes...>();
+            return dynamic_cast<Query<ComponentTypes...>>(queries[archId]);
         }
+        */
+
+        AbstractQuery& Get(ArchetypeId key) {
+            return queries[key];
+        }
+
+
+        bool HasQuery(ArchetypeId archId);
     };
 }
 

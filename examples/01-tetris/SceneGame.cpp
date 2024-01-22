@@ -41,12 +41,12 @@ void SceneGame::Load() {
         auto testEntityId = world.CreateEntity();
         gecs::Entity entity = world.GetEntity(testEntityId);
         Position pos {static_cast<f32>(GetRandomValue(0, 500)), static_cast<f32>(0 + i * 10)};
-        entity.AddComponent<gecs::Position>(pos);
+        world.AddComponent<gecs::Position>(testEntityId, pos);
         Velocity vel {static_cast<f32>(100), 0};
-        entity.AddComponent<gecs::Velocity>(vel);
+        world.AddComponent<gecs::Velocity>(testEntityId, vel);
         gecs::Sprite sprite { AssetsManager::GetTexture("tiles") };
         sprite.srcRect = Rect { 0, 0, 16, 16 };
-        entity.AddComponent<gecs::Sprite>(sprite);
+        world.AddComponent<gecs::Sprite>(testEntityId, sprite);
         entities.push_back(testEntityId);
     }
 
@@ -58,7 +58,7 @@ void SceneGame::Load() {
 
 void SceneGame::Update(f32 dt) {
 
-    auto q = Query<Position, Velocity>();
+    auto q = gecs::World::Instance().Find<Position, Velocity>();
     q.Update([dt](Position& pos, const Velocity& vel) {
         const Vec2 newPos { pos.x + vel.x * dt, pos.y + vel.y * dt };
         pos.Set(newPos);
@@ -75,7 +75,7 @@ void SceneGame::Draw() {
 
     /// TODO World should store queries and update them when needed
 
-    auto posSprites = Query<Position, Sprite>();
+    auto posSprites = gecs::World::Instance().Find<Position, Sprite>();
     posSprites.Refresh();
     posSprites.Read([](const Position& pos, const Sprite& spr) {
         Rect dst { pos.x, pos.y, spr.srcRect.width, spr.srcRect.height };

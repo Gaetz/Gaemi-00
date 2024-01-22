@@ -8,7 +8,6 @@
 #include <ranges>
 #include "Types.hpp"
 #include "Components.hpp"
-#include "QueryStore.hpp"
 #include "Archetype.hpp"
 
 namespace gecs {
@@ -16,7 +15,11 @@ namespace gecs {
     class QueryManager {
     public:
 
+        ~QueryManager();
+
         static void DestroyEntities(const vector<Id>& toDelete);
+
+        AbstractQuery& Get(ArchetypeId key);
 
         template <typename... ComponentTypes>
         vector<CompArchIdAndCol> GetRelevantArchetypesAndCols() {
@@ -123,11 +126,11 @@ namespace gecs {
         static vector<vector<std::pair<ArchetypeId, size_t>>> GetArchetypeAndColumnIndices(const vector<CompArchIdAndCol> &compArchCols);
         static vector<vector<size_t>> GetDataStartIndices(vector<CompArchIdAndCol> &compArchCols);
 
-        QueryStore store;
+        class QueryStore* store {nullptr};
 
         // Singleton
     private:
-        QueryManager() = default;
+        QueryManager();
 
     public:
         static QueryManager& Instance() {
@@ -137,6 +140,10 @@ namespace gecs {
 
         QueryManager(QueryManager const&) = delete;
         void operator=(QueryManager const&) = delete;
+
+        bool HasQuery(ArchetypeId bitset1);
+
+        void Store(ArchetypeId archId, gecs::AbstractQuery &&query);
     };
 }
 #endif //GECS_QUERYMANAGER_HPP

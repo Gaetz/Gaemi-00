@@ -4,10 +4,22 @@
 
 #include "QueryManager.hpp"
 #include "World.hpp"
+#include "QueryStore.hpp"
 
 namespace gecs {
+    QueryManager::QueryManager() {
+        store = new QueryStore();
+    }
+
+    QueryManager::~QueryManager() {
+        delete store;
+    }
 
     using ComponentArchetypes = unordered_map<ArchetypeId, size_t>;
+
+    AbstractQuery& QueryManager::Get(ArchetypeId key) {
+        return store->Get(key);
+    }
 
     vector<IdArchRow> QueryManager::GetEntitiesWithArchsRows() {
         vector<IdArchRow> entitiesWithArchRows;
@@ -116,5 +128,13 @@ namespace gecs {
         }
         starts.emplace_back(currentStarts);
         return starts;
+    }
+
+    bool QueryManager::HasQuery(ArchetypeId archId) {
+        return store->HasQuery(archId);
+    }
+
+    void QueryManager::Store(ArchetypeId archId, AbstractQuery &&query) {
+        store->Store(archId, std::move(query));
     }
 }

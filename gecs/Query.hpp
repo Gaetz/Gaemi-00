@@ -17,7 +17,7 @@
 namespace gecs {
 
     template<typename... ComponentTypes>
-    class Query : AbstractQuery {
+    class Query : public AbstractQuery {
     public:
         Query() = default;
 
@@ -59,8 +59,8 @@ namespace gecs {
 
 
     private:
-        static inline QueryCache<ComponentTypes...> cache {};
-        static inline vector<Id> entities {};
+        QueryCache<ComponentTypes...> cache {};
+        vector<Id> entities {};
 
         void RefreshCache() {
             auto result = QueryManager::Instance().ComputeQuery<ComponentTypes...>();

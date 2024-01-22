@@ -9,6 +9,7 @@
 #include "Archetype.hpp"
 #include <tuple>
 #include <ranges>
+#include "Query.hpp"
 
 namespace gecs {
 
@@ -45,6 +46,53 @@ namespace gecs {
         static Entity GetEntity(Id entityId);
         Archetype* GetArchetype(const str& archetypeName);
         void LogWorld();
+
+        template<typename ...ComponentTypes>
+        Query<ComponentTypes...>& Find() {
+            QueryManager& queryManager = QueryManager::Instance();
+            ArchetypeId archId = ToArchetypeId<ComponentTypes...>();
+            if (!queryManager.HasQuery(archId)) {
+                Query<ComponentTypes...> query;
+                queryManager.Store(archId, std::move(query));
+            }
+            auto& ret = dynamic_cast<Query<ComponentTypes...>&>(queryManager.Get(archId));
+            return ret;
+        }
+
+        template<class T>
+        void AddComponent(Id id, T componentData) {
+            ComponentId component = ToComponentId<T>();
+            ArchetypeRecord& recordToUpdate = GetEntities()[id];
+            Archetype* nextArchetype = recordToUpdate.archetype->archetypeChanges[component].add;
+            // Add data in component column of new archetype
+            u64 newRow;
+            for (auto& column : nextArchetype->components) {
+                if (component != column.GetComponentId()) continue;
+                newRow = column.AddElement<T>(componentData);
+                break;
+            }
+            // Move previous archetype data in new archetype
+            if (recordToUpdate.archetype->archetypeId != 0) {
+                MoveEntity(recordToUpdate, recordToUpdate.row, nextArchetype);
+            }
+
+            // Update entity's row
+            recordToUpdate.archetype = nextArchetype;
+            recordToUpdate.row = newRow;
+        }
+
+        template<class T>
+        void RemoveComponent(Id id) {
+            ComponentId component = ToComponentId<T>();
+            ArchetypeRecord& recordToUpdate = GetEntities()[id];
+            Archetype* nextArchetype = recordToUpdate.archetype->archetypeChanges[component].remove;
+            // Move previous archetype data in new archetype
+            u64 newRow = MoveEntity(recordToUpdate, recordToUpdate.row, nextArchetype);
+            // Update entity's row
+            recordToUpdate.archetype = nextArchetype;
+            recordToUpdate.row = newRow;
+        }
+
 
     private:
         u64 maxId { 0 };

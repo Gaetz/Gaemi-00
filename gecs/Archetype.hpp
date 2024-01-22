@@ -6,7 +6,7 @@
 #define GECS_ARCHETYPE_HPP
 
 #include "Types.hpp"
-#include "Components.hpp"
+#include "Column.hpp"
 
 namespace gecs {
 
