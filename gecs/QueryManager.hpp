@@ -14,12 +14,7 @@ namespace gecs {
 
     class QueryManager {
     public:
-
-        ~QueryManager();
-
         static void DestroyEntities(const vector<Id>& toDelete);
-
-        AbstractQuery& Get(ArchetypeId key);
 
         template <typename... ComponentTypes>
         vector<CompArchIdAndCol> GetRelevantArchetypesAndCols() {
@@ -116,7 +111,17 @@ namespace gecs {
             }
         }
 
+        void Store(ArchetypeId key, void* q);
+
+        void* Get(ArchetypeId key) {
+            return queries[key];
+        }
+
+        bool HasQuery(ArchetypeId archId);
+
     private:
+        unordered_map<ArchetypeId, void*> queries;
+
         static unordered_map<ArchetypeId, Archetype>& GetWorldArchetypes();
         static vector<IdArchRow> GetEntitiesWithArchsRows();
         static vector<CompArchIdAndCol> GetComponentsWithArchsCols(vector<ComponentId>&& componentIds, std::bitset<32> pattern);
@@ -126,11 +131,11 @@ namespace gecs {
         static vector<vector<std::pair<ArchetypeId, size_t>>> GetArchetypeAndColumnIndices(const vector<CompArchIdAndCol> &compArchCols);
         static vector<vector<size_t>> GetDataStartIndices(vector<CompArchIdAndCol> &compArchCols);
 
-        class QueryStore* store {nullptr};
+        //class QueryStore* store {nullptr};
 
         // Singleton
     private:
-        QueryManager();
+        QueryManager() = default;
 
     public:
         static QueryManager& Instance() {
@@ -140,10 +145,6 @@ namespace gecs {
 
         QueryManager(QueryManager const&) = delete;
         void operator=(QueryManager const&) = delete;
-
-        bool HasQuery(ArchetypeId bitset1);
-
-        void Store(ArchetypeId archId, gecs::AbstractQuery &&query);
     };
 }
 #endif //GECS_QUERYMANAGER_HPP

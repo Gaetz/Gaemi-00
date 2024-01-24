@@ -52,11 +52,11 @@ namespace gecs {
             QueryManager& queryManager = QueryManager::Instance();
             ArchetypeId archId = ToArchetypeId<ComponentTypes...>();
             if (!queryManager.HasQuery(archId)) {
-                Query<ComponentTypes...> query;
-                queryManager.Store(archId, std::move(query));
+                void* query = new Query<ComponentTypes...>();
+                queryManager.Store(archId, query);
             }
-            auto& ret = dynamic_cast<Query<ComponentTypes...>&>(queryManager.Get(archId));
-            return ret;
+            auto ret = reinterpret_cast<Query<ComponentTypes...>*>(queryManager.Get(archId));
+            return *ret;
         }
 
         template<class T>

@@ -73,8 +73,6 @@ void SceneGame::Update(f32 dt) {
 void SceneGame::Draw() {
     render::DrawTexture(backgroundTexture, 0, 120, WHITE);
 
-    /// TODO World should store queries and update them when needed
-
     auto posSprites = gecs::World::Instance().Find<Position, Sprite>();
     posSprites.Refresh();
     posSprites.Read([](const Position& pos, const Sprite& spr) {
