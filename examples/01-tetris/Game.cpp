@@ -4,9 +4,9 @@
 
 #include "Game.hpp"
 #include "SceneGame.hpp"
-#include <ranges>
 
 void Game::Load() {
+    World::Instance().Init();
     AddScene(std::make_unique<SceneGame>(*this));
 }
 

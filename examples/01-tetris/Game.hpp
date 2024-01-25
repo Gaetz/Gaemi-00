@@ -2,8 +2,8 @@
 // Created by gaetz on 05/11/2022.
 //
 
-#ifndef SUNSET_REVERIES_GAME_HPP
-#define SUNSET_REVERIES_GAME_HPP
+#ifndef TETRIS_GAME_HPP
+#define TETRIS_GAME_HPP
 
 #include "../gaemi/IGame.hpp"
 #include "IScene.hpp"
@@ -29,4 +29,4 @@ private:
 };
 
 
-#endif //SUNSET_REVERIES_GAME_HPP
+#endif //TETRIS_GAME_HPP

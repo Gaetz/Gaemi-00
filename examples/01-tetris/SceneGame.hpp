@@ -10,8 +10,11 @@
 #include "Game.hpp"
 #include "../gecs/Types.hpp"
 #include "Vec2.hpp"
+#include "World.hpp"
+#include "Board.hpp"
 
 using gmath::Vec2;
+using gecs::World;
 
 class SceneGame : public IScene {
 public:
@@ -22,17 +25,13 @@ public:
     void Unload() override;
 
 private:
-    gecs::Id testEntityId;
-
+    World& world { World::Instance() };
     Game& game;
     Texture2D backgroundTexture {};
 
-    const f32 PLAYER_JUMP_MAX_PRESS_TIME;
-    const f32 PLAYER_HORIZONTAL_ACCELERATION;
-    const f32 PLAYER_JUMP_ACCELERATION;
-
-    const u32 PHYSICS_FRAME_REWIND_SPEED;
-    const u32 PHYSICS_FRAME_FORWARD_SPEED;
+    const i32 M;
+    const i32 N;
+    Board board;
 };
 
 
