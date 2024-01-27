@@ -17,32 +17,45 @@
 namespace gecs {
 
     template<typename... ComponentTypes>
-    class Query : public AbstractQuery {
+    class Query {
     public:
-        Query() = default;
-
-        explicit Query(std::tuple<vector<gecs::Id>, vector<ComponentTypes>...> res) {
-            entities = get<0>(res);
-            cache = QueryCache<ComponentTypes...>(TupleTail(res));
+        Query() {
+            RefreshCache();
         }
 
         void Update(std::function<void(ComponentTypes&...)> f) {
-            CheckCache();
             cache.ApplyOnElements(f, true);
         }
 
         void Read(std::function<void(const ComponentTypes&...)> f) {
-            CheckCache();
             cache.ApplyOnElements(f, false);
         }
 
         void DeleteIf(std::function<bool(const ComponentTypes&...)> f) {
             if (cache.IsEmpty()) return;
 
-            vector<Id> toDelete = cache.BuildDeleteList(f, entities);
+            vector<Id> toDelete = cache.BuildFilteredEntityList(f, entities);
             if (toDelete.empty()) return;
 
             QueryManager::Instance().DestroyEntities(toDelete);
+            Refresh();
+        }
+
+        template<class Component>
+        void RemoveIf(std::function<bool(const ComponentTypes&...)> f) {
+            if (cache.IsEmpty()) return;
+
+            vector<Id> removeCompEntities = cache.BuildFilteredEntityList(f, entities);
+            if (removeCompEntities.empty()) return;
+
+            // Apply so last modification (in AoS) is reintegrated in SoA and world
+            Apply();
+
+            auto& manager = QueryManager::Instance();
+            for (const auto& toRemove : removeCompEntities) {
+                manager.RemoveComponentFromEntity<Component>(toRemove);
+            }
+
             Refresh();
         }
 
@@ -50,6 +63,7 @@ namespace gecs {
             if (cache.IsEmpty()) return;
             const auto& lastCache = cache.RefreshAndReturnCache();
             QueryManager::Instance().ReintegrateQueryCache<ComponentTypes...>(lastCache);
+            /// TODO Could also update the cache of other queries
         }
 
         void Refresh() {
@@ -66,12 +80,6 @@ namespace gecs {
             auto result = QueryManager::Instance().ComputeQuery<ComponentTypes...>();
             entities = get<0>(result);
             cache = QueryCache<ComponentTypes...>(TupleTail(result));
-        }
-
-        void CheckCache() {
-            if (!cache.IsPopulated()) {
-                RefreshCache();
-            }
         }
     };
 }

@@ -220,6 +220,16 @@ namespace gecs {
         return Entity(entityId);
     }
 
+    void World::RemoveComponent(Id entityId, ComponentId componentId) {
+        ArchetypeRecord& recordToUpdate = GetEntities()[entityId];
+        Archetype* nextArchetype = recordToUpdate.archetype->archetypeChanges[componentId].remove;
+        // Move previous archetype data in new archetype
+        u64 newRow = MoveEntity(recordToUpdate, recordToUpdate.row, nextArchetype);
+        // Update entity's row
+        recordToUpdate.archetype = nextArchetype;
+        recordToUpdate.row = newRow;
+    }
+
     u64 World::MoveEntity(const ArchetypeRecord& recordToUpdate, size_t row, Archetype* nextArchetype) {
         u64 checkRow = std::numeric_limits<u64>::max();
         u64 newRow = std::numeric_limits<u64>::max();

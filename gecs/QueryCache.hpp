@@ -30,14 +30,22 @@ namespace gecs {
         }
 
         template<typename FuncT>
-        vector<Id> BuildDeleteList(FuncT f, const vector<Id>& entities) {
-            vector<Id> toDelete;
+        vector<Id> BuildFilteredEntityList(FuncT f, const vector<Id>& entities) {
+            vector<Id> list;
             for(std::size_t i = 0; i < size; ++i) {
                 if(std::apply(f, cacheAoS[i])) {
-                    toDelete.push_back(entities[i]);
+                    list.push_back(entities[i]);
                 }
             }
-            return toDelete;
+            return list;
+        }
+
+
+        const void RefreshCache() {
+            if (shouldRefresh) {
+                UpdateSoA();
+                shouldRefresh = false;
+            }
         }
 
         const std::tuple<vector<ComponentTypes>...>& RefreshAndReturnCache() {

@@ -126,4 +126,8 @@ namespace gecs {
         starts.emplace_back(currentStarts);
         return starts;
     }
+
+    void QueryManager::RemoveComponentFromWorld(Id EntityId, ComponentId componentId) {
+        World::Instance().RemoveComponent(EntityId, componentId);
+    }
 }

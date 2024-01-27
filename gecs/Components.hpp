@@ -57,42 +57,13 @@ namespace gecs {
         Rect srcRect;
         Vec2 dstSize { 1.0f, 1.0f };
         Texture texture {};
+        bool visible { true };
     };
 
     str LogComponent(ComponentId componentId, const Column& column, size_t row);
 
     class Entity;
 }
-
-
-
-
-/*
-class PositionColumn : public Column {
-public:
-    gecs::ComponentId id { gecs::ComponentId::Position };
-    vector<Position> data;
-
-    void* GetDataRow(size_t row) override {
-        return &data[row];
-    };
-
-    u64 AddElement(void* newData, size_t sizeOfData) override {
-        GASSERT_MSG(sizeof(Position) == sizeOfData, "New element size must be size of component column type (Position)")
-        auto* newDataPtr = static_cast<Position*>(newData);
-        Position newElement;
-        newElement.x = newDataPtr->x;
-        newElement.y = newDataPtr->y;
-        data.push_back(newElement);
-        return data.size() - 1;
-    }
-
-    void RemoveElement(u64 row) override {
-        data.erase(data.begin() + row);
-    };
-};
- */
-
 
 
 #endif //GECS_COMPONENTS_HPP

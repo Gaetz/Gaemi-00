@@ -95,11 +95,6 @@ namespace gecs {
         }
         return id;
     }
-
-    class AbstractQuery {
-    public:
-        virtual ~AbstractQuery() = default;
-    };
 }
 
 #endif //GECSS_TYPES_HPP

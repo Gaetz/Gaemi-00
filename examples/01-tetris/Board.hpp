@@ -6,23 +6,24 @@
 #define TETRIS_BOARD_HPP
 
 #include "Defines.hpp"
+#include "../../gecs/Types.hpp"
+
 
 class Board {
 public:
-    Board(i32 rows, i32 cols);
+    Board() = default;
+    Board(i32 x, i32 y, i32 cols, i32 rows, f32 tileSize);
+
+    void Reset();
+    void Set(f32 xPos, f32 yPos, i32 color);
+
+    bool IsOccupied(f32 xPos, f32 yPos);
 
 private:
+    i32 x;
+    i32 y;
+    f32 tileSize;
     vector<vector<i32>> data;
-
-    i32 figures[7][4] {
-            1, 3, 5, 7,
-            2, 4, 5, 7,
-            3, 5, 4, 6,
-            3, 5, 4, 7,
-            2, 3, 5, 7,
-            3, 5, 7, 6,
-            2, 3, 4, 5
-    };
 };
 
 

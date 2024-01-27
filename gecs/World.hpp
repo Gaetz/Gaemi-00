@@ -81,22 +81,7 @@ namespace gecs {
             recordToUpdate.row = newRow;
         }
 
-        template<class T>
-        void RemoveComponent(Id id) {
-            ComponentId component = ToComponentId<T>();
-            ArchetypeRecord& recordToUpdate = GetEntities()[id];
-            Archetype* nextArchetype = recordToUpdate.archetype->archetypeChanges[component].remove;
-            // Move previous archetype data in new archetype
-            u64 newRow = MoveEntity(recordToUpdate, recordToUpdate.row, nextArchetype);
-            // Update entity's row
-            recordToUpdate.archetype = nextArchetype;
-            recordToUpdate.row = newRow;
-        }
-
-
-    private:
-        u64 maxId { 0 };
-        ArchetypeId defaultArchetype;
+        void RemoveComponent(Id entityId, ComponentId componentId);
 
         template<class T>
         T& GetComponent(Id entity) {
@@ -111,6 +96,10 @@ namespace gecs {
             const size_t componentColumn = archetypes[archetype->archetypeId];
             return archetype->components[componentColumn].GetRow<T>(record.row);
         }
+
+    private:
+        u64 maxId { 0 };
+        ArchetypeId defaultArchetype;
 
         u64 MoveEntity(const ArchetypeRecord& recordToUpdate, size_t row, Archetype* nextArchetype);
 

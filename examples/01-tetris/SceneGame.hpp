@@ -29,9 +29,15 @@ private:
     Game& game;
     Texture2D backgroundTexture {};
 
-    const i32 M;
-    const i32 N;
+    const i32 BOARD_X;
+    const i32 BOARD_Y;
+    const i32 BOARD_WIDTH;
+    const i32 BOARD_HEIGHT;
+    const f32 BOARD_TILE_SIZE;
     Board board;
+    f32 timer { 0 };
+    f32 timeLimit { 0.5 };
+    i32 test { 0 };
 };
 
 

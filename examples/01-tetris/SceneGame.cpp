@@ -16,10 +16,23 @@ using gecs::Velocity;
 using gecs::Sprite;
 using gecs::Query;
 
+i32 figures[7][4]{
+        1, 3, 5, 7,
+        2, 4, 5, 7,
+        3, 5, 4, 6,
+        3, 5, 4, 7,
+        2, 3, 5, 7,
+        3, 5, 7, 6,
+        2, 3, 4, 5
+};
+
 SceneGame::SceneGame(Game &game) : game{game},
-                                   M{static_cast<i32>(AssetsManager::GetData("M"))},
-                                   N{static_cast<i32>(AssetsManager::GetData("N"))},
-                                   board{Board(M, N)} {
+                                   BOARD_WIDTH{static_cast<i32>(AssetsManager::GetData("BOARD_WIDTH"))},
+                                   BOARD_HEIGHT{static_cast<i32>(AssetsManager::GetData("BOARD_HEIGHT"))},
+                                   BOARD_X{static_cast<i32>(AssetsManager::GetData("BOARD_X"))},
+                                   BOARD_Y{static_cast<i32>(AssetsManager::GetData("BOARD_Y"))},
+                                   BOARD_TILE_SIZE{AssetsManager::GetData("BOARD_TILE_SIZE")} {
+
 
 }
 
@@ -29,56 +42,65 @@ void SceneGame::Load() {
     AssetsManager::LoadTexture("tiles", "tiles.png", ToSceneId(SceneName::SceneGame));
 
     backgroundTexture = AssetsManager::GetTexture("background");
+    board = Board(BOARD_X, BOARD_Y, BOARD_WIDTH, BOARD_HEIGHT, BOARD_TILE_SIZE);
 
-    vector<gecs::Id> entities;
-    for (u32 i = 0; i < 50; ++i) {
-        auto testEntityId = world.CreateEntity();
-        gecs::Entity entity = world.GetEntity(testEntityId);
-        Position pos{static_cast<f32>(GetRandomValue(0, 500)), static_cast<f32>(0 + i * 10)};
-        world.AddComponent<gecs::Position>(testEntityId, pos);
-        Velocity vel{static_cast<f32>(100), 0};
-        world.AddComponent<gecs::Velocity>(testEntityId, vel);
-        gecs::Sprite sprite{AssetsManager::GetTexture("tiles")};
-        sprite.srcRect = Rect{0, 0, 18, 18};
-        world.AddComponent<gecs::Sprite>(testEntityId, sprite);
-        entities.push_back(testEntityId);
-    }
-
-    world.DestroyEntity(entities[20]);
-
-
+    auto tileId = world.CreateEntity();
+    Position pos{static_cast<f32>(BOARD_X), static_cast<f32>(BOARD_Y)};
+    world.AddComponent<Position>(tileId, pos);
+    gecs::Sprite sprite{AssetsManager::GetTexture("tiles")};
+    sprite.srcRect = Rect{0, 0, BOARD_TILE_SIZE, BOARD_TILE_SIZE};
+    sprite.dstSize = Vec2{BOARD_TILE_SIZE, BOARD_TILE_SIZE};
+    world.AddComponent<Sprite>(tileId, sprite);
+    gecs::Velocity vel{0, BOARD_TILE_SIZE};
+    world.AddComponent<Velocity>(tileId, vel);
 }
 
 void SceneGame::Update(f32 dt) {
+    timer += dt;
+    if (timer > timeLimit) {
+        auto &falling = world.Find<Position, Velocity, Sprite>();
 
-    auto q = world.Find<Position, Velocity>();
-    q.Update([dt](Position &pos, const Velocity &vel) {
-        const Vec2 newPos{pos.x + vel.x * dt, pos.y + vel.y * dt};
-        pos.Set(newPos);
-    });
-    q.Apply();
+        test++;
+        if (test > 0 && test % 2 == 0) {
+            auto tileId = world.CreateEntity();
+            Position pos{static_cast<f32>(BOARD_X), static_cast<f32>(BOARD_Y)};
+            world.AddComponent<Position>(tileId, pos);
+            gecs::Sprite sprite{AssetsManager::GetTexture("tiles")};
+            sprite.srcRect = Rect{0, 0, BOARD_TILE_SIZE, BOARD_TILE_SIZE};
+            sprite.dstSize = Vec2{BOARD_TILE_SIZE, BOARD_TILE_SIZE};
+            world.AddComponent<Sprite>(tileId, sprite);
+            gecs::Velocity vel{0, BOARD_TILE_SIZE};
+            world.AddComponent<Velocity>(tileId, vel);
+            falling.Refresh();
+        }
 
-    q.DeleteIf([](const Position &pos, const Velocity &vel) {
-        return pos.x > 700;
-    });
+        timer -= timeLimit;
+        board.Reset();
+        falling.Update([this](Position &pos, Velocity &vel, Sprite &spr) {
+            pos.y += vel.y;
+            board.Set(pos.x, pos.y, 1);
+        });
+
+        falling.RemoveIf<Velocity>([this](const Position &pos, const Velocity &vel, const Sprite &spr) {
+            return pos.y >= BOARD_Y + (BOARD_HEIGHT - 1) * BOARD_TILE_SIZE
+                || board.IsOccupied(pos.x, pos.y + vel.y);
+        });
+        falling.Apply();
+    }
 }
 
 void SceneGame::Draw() {
-    render::DrawTexture(backgroundTexture, 0, 120, WHITE);
+    render::DrawTexture(backgroundTexture, 0, 0, WHITE);
 
     auto posSprites = world.Find<Position, Sprite>();
     posSprites.Refresh();
     posSprites.Read([](const Position &pos, const Sprite &spr) {
-        Rect dst{pos.x, pos.y, spr.srcRect.width, spr.srcRect.height};
+        if (!spr.visible) return;
+        Rect dst{pos.x, pos.y, spr.dstSize.x, spr.dstSize.y};
         render::DrawSprite(spr.texture, spr.srcRect, dst, WHITE);
     });
 }
 
-
 void SceneGame::Unload() {
     AssetsManager::UnloadSceneTextures(ToSceneId(SceneName::SceneGame));
 }
-
-
-
-

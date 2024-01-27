@@ -7,6 +7,7 @@
 
 #include "Defines.hpp"
 #include "Types.hpp"
+#include "World.hpp"
 
 namespace gecs {
 
@@ -18,6 +19,11 @@ namespace gecs {
     public:
         Id id;
         explicit Entity(u64 idRoot);
+
+        template<typename T>
+        T& GetComponent() {
+            return World::Instance().GetComponent<T>(id);
+        }
     };
 
 

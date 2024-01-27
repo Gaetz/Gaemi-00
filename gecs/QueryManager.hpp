@@ -111,6 +111,12 @@ namespace gecs {
             }
         }
 
+        template<typename T>
+        void RemoveComponentFromEntity(Id entityId) {
+            ComponentId componentId = ToComponentId<T>();
+            RemoveComponentFromWorld(entityId, componentId);
+        }
+
         void Store(ArchetypeId key, void* q);
 
         void* Get(ArchetypeId key) {
@@ -130,6 +136,8 @@ namespace gecs {
 
         static vector<vector<std::pair<ArchetypeId, size_t>>> GetArchetypeAndColumnIndices(const vector<CompArchIdAndCol> &compArchCols);
         static vector<vector<size_t>> GetDataStartIndices(vector<CompArchIdAndCol> &compArchCols);
+
+        void RemoveComponentFromWorld(Id entityId, ComponentId componentId);
 
         //class QueryStore* store {nullptr};
 
