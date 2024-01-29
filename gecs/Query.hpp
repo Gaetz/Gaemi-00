@@ -20,7 +20,7 @@ namespace gecs {
     class Query {
     public:
         Query() {
-            RefreshCache();
+            ResetCache();
         }
 
         void Update(std::function<void(ComponentTypes&...)> f) {
@@ -38,7 +38,7 @@ namespace gecs {
             if (toDelete.empty()) return;
 
             QueryManager::Instance().DestroyEntities(toDelete);
-            Refresh();
+            Reset();
         }
 
         template<class Component>
@@ -56,7 +56,7 @@ namespace gecs {
                 manager.RemoveComponentFromEntity<Component>(toRemove);
             }
 
-            Refresh();
+            Reset();
         }
 
         void Apply() {
@@ -66,9 +66,9 @@ namespace gecs {
             /// TODO Could also update the cache of other queries
         }
 
-        void Refresh() {
+        void Reset() {
             if (cache.IsEmpty()) return;
-            RefreshCache();
+            ResetCache();
         }
 
 
@@ -76,7 +76,7 @@ namespace gecs {
         QueryCache<ComponentTypes...> cache {};
         vector<Id> entities {};
 
-        void RefreshCache() {
+        void ResetCache() {
             auto result = QueryManager::Instance().ComputeQuery<ComponentTypes...>();
             entities = get<0>(result);
             cache = QueryCache<ComponentTypes...>(TupleTail(result));

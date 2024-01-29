@@ -61,7 +61,7 @@ void SceneGame::Update(f32 dt) {
         auto &falling = world.Find<Position, Velocity, Sprite>();
 
         test++;
-        if (test > 0 && test % 2 == 0) {
+        if (test > 0 && test % 3 == 0) {
             auto tileId = world.CreateEntity();
             Position pos{static_cast<f32>(BOARD_X), static_cast<f32>(BOARD_Y)};
             world.AddComponent<Position>(tileId, pos);
@@ -71,20 +71,26 @@ void SceneGame::Update(f32 dt) {
             world.AddComponent<Sprite>(tileId, sprite);
             gecs::Velocity vel{0, BOARD_TILE_SIZE};
             world.AddComponent<Velocity>(tileId, vel);
-            falling.Refresh();
+            falling.Reset();
         }
 
         timer -= timeLimit;
         board.Reset();
+
         falling.Update([this](Position &pos, Velocity &vel, Sprite &spr) {
             pos.y += vel.y;
             board.Set(pos.x, pos.y, 1);
         });
 
         falling.RemoveIf<Velocity>([this](const Position &pos, const Velocity &vel, const Sprite &spr) {
-            return pos.y >= BOARD_Y + (BOARD_HEIGHT - 1) * BOARD_TILE_SIZE
-                || board.IsOccupied(pos.x, pos.y + vel.y);
+            bool collides =  pos.y >= BOARD_Y + (BOARD_HEIGHT - 1) * BOARD_TILE_SIZE
+                             || board.IsOccupied(pos.x, pos.y + vel.y);
+            if(collides) {
+                board.Set(pos.x, pos.y, -1);
+            }
+            return collides;
         });
+
         falling.Apply();
     }
 }
@@ -93,7 +99,7 @@ void SceneGame::Draw() {
     render::DrawTexture(backgroundTexture, 0, 0, WHITE);
 
     auto posSprites = world.Find<Position, Sprite>();
-    posSprites.Refresh();
+    posSprites.Reset();
     posSprites.Read([](const Position &pos, const Sprite &spr) {
         if (!spr.visible) return;
         Rect dst{pos.x, pos.y, spr.dstSize.x, spr.dstSize.y};

@@ -12,7 +12,6 @@ using gecs::Sprite;
 
 Board::Board(i32 x, i32 y, i32 cols, i32 rows, f32 tileSize) :
         x{x}, y{y}, tileSize{tileSize} {
-    World &world = World::Instance();
     data.reserve(rows);
     for (i32 i = 0; i < rows; ++i) {
         data.push_back(vector<i32>());
@@ -30,7 +29,9 @@ Board::Board(i32 x, i32 y, i32 cols, i32 rows, f32 tileSize) :
 void Board::Reset() {
     for (auto &v: data) {
         for (auto &i: v) {
-            i = 0;
+            if (i != -1) {
+                i = 0;
+            }
         }
     }
 }

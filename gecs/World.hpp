@@ -101,7 +101,7 @@ namespace gecs {
         u64 maxId { 0 };
         ArchetypeId defaultArchetype;
 
-        u64 MoveEntity(const ArchetypeRecord& recordToUpdate, size_t row, Archetype* nextArchetype);
+        u64 MoveEntity(const ArchetypeRecord& recordToUpdate, size_t row, Archetype* nextArchetype, bool remove = false);
 
         // Singleton
     private:

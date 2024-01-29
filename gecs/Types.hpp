@@ -42,7 +42,6 @@ namespace gecs {
     str ArchetypeIdToString(ArchetypeId id);
     u32 ComponentIdToBitValue(ComponentId componentId);
 
-
     class Archetype;
 
     struct ArchetypeRecord {
@@ -85,6 +84,8 @@ namespace gecs {
 
         return ret;
     }
+
+    std::vector<ComponentId> ToComponentIds(ArchetypeId archetypeId);
 
     template <typename... ComponentTypes>
     ArchetypeId ToArchetypeId() {

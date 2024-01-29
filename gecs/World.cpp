@@ -224,13 +224,13 @@ namespace gecs {
         ArchetypeRecord& recordToUpdate = GetEntities()[entityId];
         Archetype* nextArchetype = recordToUpdate.archetype->archetypeChanges[componentId].remove;
         // Move previous archetype data in new archetype
-        u64 newRow = MoveEntity(recordToUpdate, recordToUpdate.row, nextArchetype);
+        u64 newRow = MoveEntity(recordToUpdate, recordToUpdate.row, nextArchetype, true);
         // Update entity's row
         recordToUpdate.archetype = nextArchetype;
         recordToUpdate.row = newRow;
     }
 
-    u64 World::MoveEntity(const ArchetypeRecord& recordToUpdate, size_t row, Archetype* nextArchetype) {
+    u64 World::MoveEntity(const ArchetypeRecord& recordToUpdate, size_t row, Archetype* nextArchetype, bool remove) {
         u64 checkRow = std::numeric_limits<u64>::max();
         u64 newRow = std::numeric_limits<u64>::max();
         i32 checkColsDst { 0 }; // Used to avoid empty archetype case
@@ -243,6 +243,7 @@ namespace gecs {
                                                               return record.second.archetype == currentArchetype &&
                                                                      record.second.row == lastRow;
                                                           });
+        vector<ComponentId> unmovedComponents = ToComponentIds(currentArchetype->archetypeId);
 
         // Insert in new archetype data from previous archetype
         for (Column& dstCol: nextArchetype->components) {
@@ -276,6 +277,7 @@ namespace gecs {
 
                 // Remove previous data from archetype, after saving data
                 srcCol.RemoveElementBySwapping(row);
+                unmovedComponents.erase(std::remove(unmovedComponents.begin(), unmovedComponents.end(), dstCol.GetComponentId()), unmovedComponents.end());
                 entityRecordFromLastRow->second.row = row;
                 ++checkColsSrc;
             }
@@ -283,6 +285,14 @@ namespace gecs {
         }
         GASSERT_MSG(newRow != std::numeric_limits<u64>::max() && checkColsDst > 0 && checkColsSrc > 0,
                     "Row should exist")
+
+        // Remove remaining component from previous archetype
+        if (remove) {
+            GASSERT_MSG(unmovedComponents.size() == 1, "Only one component should remain");
+            const ComponentId componentId = unmovedComponents[0];
+            currentArchetype->components[static_cast<i32>(componentId)].RemoveElementBySwapping(row);
+        }
+
         return newRow;
     }
 
