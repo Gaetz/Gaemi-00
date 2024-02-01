@@ -61,4 +61,12 @@ namespace gecs {
         }
         return componentIds;
     }
+
+    ArchetypeId ToArchetypeId(const std::vector<ComponentId>& comps) {
+        ArchetypeId id;
+        for (auto comp : comps) {
+            id.set(static_cast<size_t>(comp));
+        }
+        return id;
+    }
 }

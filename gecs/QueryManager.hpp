@@ -12,22 +12,35 @@
 
 namespace gecs {
 
+    /**
+     * The QueryManager is in charge of providing utilities for
+     * the query class and stored queries when they are requested.
+     *
+     * It must not include the World class. That is why some member
+     * functions just exist to get some data from world.
+     */
     class QueryManager {
     public:
+        /**
+         * Destroys entities and related data which ids are passed
+         * @param toDelete Entities' ids
+         */
         static void DestroyEntities(const vector<Id>& toDelete);
 
+        /**
+         * We want to get all archetypes for the templated list of components,
+         * and the columns in those archetypes that correspond to requested components.
+         * @tparam ComponentTypes Requested components
+         * @return Vector of CompArchIdAndCol, sorted by components then archetype id
+         */
         template <typename... ComponentTypes>
         vector<CompArchIdAndCol> GetRelevantArchetypesAndCols() {
-            // Retrieve component ids from template
             vector<ComponentId> componentIds = ToComponentIds<ComponentTypes...>();
             // Create the minimal archetype id (bitset) we need
             // to find our archetypes and component cols
-            std::bitset<32> pattern;
-            for (const auto componentId : componentIds) {
-                pattern.flip(static_cast<i32>(componentId));
-            }
+            ArchetypeId archetypeId = ToArchetypeId(componentIds);
 
-            return GetComponentsWithArchsCols(std::move(componentIds), pattern);
+            return GetComponentsWithArchsCols(std::move(componentIds), archetypeId);
         }
 
         template<typename T>
@@ -48,17 +61,27 @@ namespace gecs {
             return result;
         }
 
+        /**
+         * Look for requested component in all archetypes and organize the result
+         * as a tuple of component's data vectors, with data sorted in component then
+         * archetype id order. A vector of corresponding entities is also created.
+         *
+         * @tparam ComponentTypes Requested component combination (intersection)
+         * @return Tuple with a vector of entities' id then vectors of entities' component data.
+         */
         template<typename... ComponentTypes>
         std::tuple<vector<Id>, vector<ComponentTypes>...> ComputeQuery() {
             vector<CompArchIdAndCol> filterMaterial = GetRelevantArchetypesAndCols<ComponentTypes...>();
             if (filterMaterial.empty()) return {};
 
             // We want relevant entities in the same order as the query
-            // -- Take all entities, filter them by archetype and then sort them by row
+            // -- Take all entities with their archetyp ids and rows
             vector<IdArchRow> entitiesWithArchRows = GetEntitiesWithArchsRows();
 
             // -- Get relevant archetypes
             vector<CompArchIdAndCol> compFilter = FilterForOneComponent(filterMaterial, filterMaterial[0].componentId);
+
+            // Filter entities by archetype and then sort them by row
             auto filterLambda = [&compFilter](IdArchRow &a) {
                 return std::find_if(compFilter.begin(), compFilter.end(), [&a](CompArchIdAndCol &filter) {
                     return filter.archId == a.archId;
