@@ -30,7 +30,6 @@ namespace gecs {
     // type, with a std::variant.
     #define COMPONENTS Position, Velocity, Sprite
 
-
     enum class ComponentId {
         Position = 0,
         Velocity = 1,
