@@ -6,7 +6,7 @@
 #define GECS_ARCHETYPE_HPP
 
 #include "Types.hpp"
-#include "Components.hpp"
+#include "Column.hpp"
 
 namespace gecs {
 
@@ -34,4 +34,4 @@ namespace gecs {
 }
 
 
-#endif //SUNSET_REVERIES_ARCHETYPE_HPP
+#endif //GECS_ARCHETYPE_HPP

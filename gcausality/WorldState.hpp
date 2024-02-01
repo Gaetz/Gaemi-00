@@ -23,9 +23,12 @@ namespace gcausality {
             vector<Column> components;
 
             ArchetypeData& operator= (const ArchetypeData& newArchetypeData) {
+                if (this == &newArchetypeData) {
+                    return *this;
+                }
                 id = newArchetypeData.id;
                 archetypeId = newArchetypeData.archetypeId;
-                gplatform::StrCpy(name, strlen(newArchetypeData.name), newArchetypeData.name);
+                gplatform::StrCpy(name, 12, newArchetypeData.name);
                 components = newArchetypeData.components;
                 return *this;
             }

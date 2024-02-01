@@ -11,9 +11,13 @@
 
 using std::unordered_map;
 
+constexpr char defaultTextureId[] = "default";
+
 class AssetsManager {
 public:
-    static GAPI void LoadTexture(const str& name, const str& path, i32 sceneId);
+    static GAPI void Initialize(const str& gameAssetsPath);
+
+    static GAPI void LoadTexture(const str& name, const str& filename, i32 sceneId);
     static GAPI Texture GetTexture(const str& name);
     static GAPI void UnloadSceneTextures(i32 sceneId);
 
@@ -21,6 +25,8 @@ public:
     static GAPI f32 GetData(const str& name);
 
 private:
+    static void LoadSystemTexture(const str& name, const str& filename);
+
     static unordered_map<str, Texture> textures;
     static unordered_map<i32, str> sceneLoadedTextures;
 

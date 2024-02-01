@@ -12,6 +12,7 @@ using std::bitset;
 using std::unordered_map;
 
 #include "Defines.hpp"
+#include "Defines.hpp"
 
 namespace gecs {
 
@@ -20,6 +21,15 @@ namespace gecs {
 
     using Id = u64;
     using ArchetypeId = bitset<MAX_COMPONENTS>;
+
+    struct Position;
+    struct Velocity;
+    struct Sprite;
+
+    // This list of components is used to create the column
+    // type, with a std::variant.
+    #define COMPONENTS Position, Velocity, Sprite
+
 
     enum class ComponentId {
         Position = 0,
@@ -31,7 +41,6 @@ namespace gecs {
     ComponentId IndexToComponentId(i32 index);
     str ArchetypeIdToString(ArchetypeId id);
     u32 ComponentIdToBitValue(ComponentId componentId);
-
 
     class Archetype;
 
@@ -48,6 +57,45 @@ namespace gecs {
         size_t columnIndex { 0 };
     };
 
+    struct IdArchRow {
+        Id id {0};
+        ArchetypeId archId;
+        size_t row {0};
+    };
+
+
+    template <class T>
+    ComponentId ToComponentId() {
+        if constexpr (std::is_same_v<T, Position>) {
+            return ComponentId::Position;
+        } else if constexpr (std::is_same_v<T, Velocity>) {
+            return ComponentId::Velocity;
+        } else if constexpr (std::is_same_v<T, Sprite>) {
+            return ComponentId::Sprite;
+        }
+    }
+
+    template <typename... ComponentTypes>
+    std::vector<ComponentId> ToComponentIds() {
+        std::vector<ComponentId> ret;
+
+        // Use fold expression to call ToComponentId for each type
+        (ret.push_back(ToComponentId<ComponentTypes>()), ...);
+
+        return ret;
+    }
+
+    std::vector<ComponentId> ToComponentIds(ArchetypeId archetypeId);
+
+    template <typename... ComponentTypes>
+    ArchetypeId ToArchetypeId() {
+        std::vector<ComponentId> comps = ToComponentIds<ComponentTypes...>();
+        ArchetypeId id;
+        for (auto comp : comps) {
+            id.set(static_cast<size_t>(comp));
+        }
+        return id;
+    }
 }
 
 #endif //GECSS_TYPES_HPP

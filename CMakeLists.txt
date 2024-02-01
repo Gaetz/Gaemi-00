@@ -12,7 +12,7 @@ Here is the architecture of the gaemi engine.
 ]===]
 
 cmake_minimum_required(VERSION 3.20)
-project(sunset-reveries)
+project(gaemi-00)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 #if (UNIX)
@@ -89,9 +89,9 @@ add_subdirectory( glog )
 add_subdirectory( gfile )
 add_subdirectory( gmath )
 add_subdirectory( gecs )
-add_subdirectory( gcausality )
+#add_subdirectory( gcausality ) -- Not ready yet
 add_subdirectory( gaemi )
-add_subdirectory( sunset )
+add_subdirectory(examples/01-tetris)
 
 
 
@@ -102,7 +102,7 @@ if (UNIX)
 endif(UNIX)
 
 # Declaring our executable
-add_executable(${PROJECT_NAME} sunset/main.cpp)
+add_executable(${PROJECT_NAME} examples/01-tetris/main.cpp)
 target_link_libraries(${PROJECT_NAME} game gaemi)
 
 # C++ hardcode options

@@ -100,7 +100,7 @@ namespace jobs {
      * Wait until all threads become idle
      */
     GAPI void Wait();
-};
+}
 
 
 #endif //GAEMI_JOBS_HPP

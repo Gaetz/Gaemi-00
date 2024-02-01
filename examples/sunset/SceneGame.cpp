@@ -27,10 +27,10 @@ SceneGame::SceneGame(Game& game) : game { game },
 }
 
 void SceneGame::Load() {
-    AssetsManager::LoadTexture("bg_sunset", "assets/images/bg_sunset.png", ToSceneId(SceneName::SceneGame));
-    AssetsManager::LoadTexture("player", "assets/images/player.png", ToSceneId(SceneName::SceneGame));
-    AssetsManager::LoadTexture("ghost", "assets/images/ghost.png", ToSceneId(SceneName::SceneGame));
-    AssetsManager::LoadTexture("projectile", "assets/images/projectile.png", ToSceneId(SceneName::SceneGame));
+    AssetsManager::LoadTexture("bg_sunset", "assets/sunset/images/bg_sunset.png", ToSceneId(SceneName::SceneGame));
+    AssetsManager::LoadTexture("player", "assets/sunset/images/player.png", ToSceneId(SceneName::SceneGame));
+    AssetsManager::LoadTexture("ghost", "assets/sunset/images/ghost.png", ToSceneId(SceneName::SceneGame));
+    AssetsManager::LoadTexture("projectile", "assets/sunset/images/projectile.png", ToSceneId(SceneName::SceneGame));
 
     backgroundTexture = AssetsManager::GetTexture("bg_sunset");
 

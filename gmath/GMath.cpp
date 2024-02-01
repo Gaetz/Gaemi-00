@@ -3,7 +3,7 @@
 //
 
 #include "GMath.hpp"
-#include "Vec2.hpp"
+#include "../gplatform/MathUtils.hpp"
 
 #include <cmath>
 
@@ -98,7 +98,7 @@ namespace gmath {
     }
 
     f32 Pow(f32 base, f32 exponent) {
-        return std::powf(base, exponent);
+        return gplatform::Pow(base, exponent);
     }
 
 
