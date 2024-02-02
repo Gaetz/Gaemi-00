@@ -106,10 +106,18 @@ namespace gecs {
             return data;
         }
 
+        /**
+         * Reintegrate query component data in world's archetypes.
+         * It will compute in which archetype and column the data should be reintegrated,
+         * and where in the query's data starts for a specific archetype's column.
+         *
+         * @tparam ComponentTypes Query's component types, that will be reintegrated
+         * @param tuple Query's component data
+         */
         template<typename... ComponentTypes>
         void ReintegrateQueryCache(const std::tuple<vector<ComponentTypes>...>& tuple) {
             vector<CompArchIdAndCol> compArchCols = GetRelevantArchetypesAndCols<ComponentTypes...>();
-            // From compArchCols, Get vector of vector of pairs of archetypes id and cols,one vector for each component type
+            // From compArchCols, Get vector of vector of pairs of archetypes id and cols, one vector for each component type
             auto archsAndCols = GetArchetypeAndColumnIndices(compArchCols);
             // Get start indices for each archetype containing the component type
             vector<vector<size_t>> starts = GetDataStartIndices(compArchCols);
@@ -120,49 +128,122 @@ namespace gecs {
         }
 
 
+        /**
+         * Reintegrate one component type data in world's archetypes
+         * @tparam T Component type
+         * @param componentData Query's data for one component. Contains data for several archetypes.
+         * @param start For each archetype, the index where the data starts in the query's data, in the same order as archsAndCols
+         * @param archsAndCols Archetypes and columns where the data should be reintegrated, in the same order as start
+         */
         template<typename T>
-        void ReintegrateDataInColumn(const std::vector<T>&& tupleData, const vector<size_t>& start, const vector<std::pair<ArchetypeId, size_t>>& archsAndCols) {
+        void ReintegrateDataInColumn(const std::vector<T>&& componentData, const vector<size_t>& start, const vector<std::pair<ArchetypeId, size_t>>& archsAndCols) {
             unordered_map<ArchetypeId, Archetype>& archetypeRegistry = GetWorldArchetypes();
             for (u32 i = 0; i < start.size(); ++i) {
                 const auto archId = archsAndCols[i].first;
                 const auto column = archsAndCols[i].second;
                 const auto count = archetypeRegistry[archId].components[column].Count();
-                auto it = tupleData.begin() + start[i];
-                auto end = tupleData.begin() + start[i] + count;
+                auto it = componentData.begin() + start[i];
+                auto end = componentData.begin() + start[i] + count;
                 vector<T> newData = std::vector<T>(it, end);
                 archetypeRegistry[archId].components[column].ReplaceData<T>(std::move(newData));
             }
         }
 
+        /**
+         * Remove a component from an entity
+         * @tparam T Component type
+         * @param entityId Entity's id
+         */
         template<typename T>
         void RemoveComponentFromEntity(Id entityId) {
             ComponentId componentId = ToComponentId<T>();
             RemoveComponentFromWorld(entityId, componentId);
         }
 
+        /**
+         * Store a query in the query manager
+         * @param key Archetype id
+         * @param q Query
+         */
         void Store(ArchetypeId key, void* q);
 
+        /**
+         * Get a query from the query manager
+         * @param key Archetype id
+         * @return Query
+         */
         void* Get(ArchetypeId key) {
             return queries[key];
         }
 
+        /**
+         * Check if a query has already been requested and stored
+         * @param archId Archetype id
+         * @return True if the query is stored
+         */
         bool HasQuery(ArchetypeId archId);
 
     private:
+        /** Map of stored queries */
         unordered_map<ArchetypeId, void*> queries;
 
+        /** Utility, returns a reference to the world's archetypes */
         static unordered_map<ArchetypeId, Archetype>& GetWorldArchetypes();
+
+        /**
+         * Utility, returns entities with their archetypes and rows from world
+         * @return
+         */
         static vector<IdArchRow> GetEntitiesWithArchsRows();
-        static vector<CompArchIdAndCol> GetComponentsWithArchsCols(vector<ComponentId>&& componentIds, std::bitset<32> pattern);
-        static Column GetColumn(ArchetypeId archId, size_t column);
+
+        /**
+         * Check all archetypes by components to obtain component, archetypes and cols
+         * @param componentIds Relevant components
+         * @param pattern Minimal pattern for archetypes
+         * @return Vector of relevant component/archetype/column index data, ordered by component then archetype
+         */
+        static vector<CompArchIdAndCol> GetComponentsWithArchsCols(vector<ComponentId>&& componentIds, ArchetypeId pattern);
+
+        /**
+         * Utility, get a column from a world's archetype
+         * @param archId Archetype id
+         * @param column Column index
+         * @return Column
+         */
+        static Column& GetColumn(ArchetypeId archId, size_t column);
+
+        /**
+         * Filter component/archetype/column data for a specific component
+         * @param filterMaterial Data to filter
+         * @param componentId Component id
+         * @return Filtered data
+         */
         static vector<CompArchIdAndCol> FilterForOneComponent(const vector<CompArchIdAndCol>& filterMaterial, ComponentId componentId);
 
+        /**
+         * From compArchCols, Get vector of vector of pairs of archetypes id and cols, one vector for each component type
+         * @param compArchCols Vector of component ids with the component archetype/column index
+         * @return A collection of one vector per component type, each vector containing pairs of
+         * archetype id and column index, where components' data can be found
+         */
         static vector<vector<std::pair<ArchetypeId, size_t>>> GetArchetypeAndColumnIndices(const vector<CompArchIdAndCol> &compArchCols);
-        static vector<vector<size_t>> GetDataStartIndices(vector<CompArchIdAndCol> &compArchCols);
 
-        void RemoveComponentFromWorld(Id entityId, ComponentId componentId);
+        /**
+         * When we want to reintegrate query's component data, we must find where the data for a specific archetype
+         * is located. This function returns the start index for each archetype, grouped by component. It is sorted in
+         * an order that matches the GetArchetypeAndColumnIndices's function result.
+         * @param compArchCols Vector of component ids with the component archetype/column index
+         * @return For each component, each vector gives indices where the data starts for each archetype, in the query's data
+         */
+        static vector<vector<size_t>> GetDataStartIndices(const vector<CompArchIdAndCol> &compArchCols);
 
-        //class QueryStore* store {nullptr};
+        /**
+         * Calls world's function to remove a component from an entity
+         * @param entityId Entity's id we want a component removed from
+         * @param componentId Component's id to remove
+         */
+        static void RemoveComponentFromWorld(Id entityId, ComponentId componentId);
+
 
         // Singleton
     private:
