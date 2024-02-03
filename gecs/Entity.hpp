@@ -17,9 +17,23 @@ namespace gecs {
     class Entity {
 
     public:
+        /**
+         * Entity id
+         */
         Id id;
-        explicit Entity(u64 idRoot);
 
+        /**
+         * Create an entity with a specific id.
+         * @param idP Entity id
+         */
+        explicit Entity(u64 idP);
+
+        /**
+         * Shortcut to get an entity's component.
+         * Useful only when targeting a specific entity. For multiple entities, use a query.
+         * @tparam T Component type
+         * @return Reference to the component
+         */
         template<typename T>
         T& GetComponent() {
             return World::Instance().GetComponent<T>(id);
