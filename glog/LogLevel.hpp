@@ -5,6 +5,10 @@
 #ifndef GLOG_LOGLEVEL_HPP
 #define GLOG_LOGLEVEL_HPP
 
+/**
+ * @brief Log type and level of gravity
+ * @details This enum class is used to define the level of gravity of a log message. It is used to filter the log messages.
+ */
 enum class LogLevel {
     Fatal = 0,
     Error = 1,

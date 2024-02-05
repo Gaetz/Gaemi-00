@@ -8,6 +8,11 @@
 #include "Defines.hpp"
 
 namespace gplatform {
+    /**
+     * Get date on 19 chars, for logging purpose.
+     * Platform abstraction.
+     * @return Date on 19 chars
+     */
     array<char, 19> GetDate();
 }
 
