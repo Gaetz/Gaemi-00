@@ -20,30 +20,27 @@ namespace gecs {
 
     vector<IdArchRow> QueryManager::GetEntitiesWithArchsRows() {
         vector<IdArchRow> entitiesWithArchRows;
-        for (const auto &entity: World::Instance().GetEntities()) {
+        const auto& entities = World::Instance().GetEntities();
+        entitiesWithArchRows.reserve(entities.size());
+        for (const auto &entity: entities) {
             entitiesWithArchRows.push_back(
                     IdArchRow{entity.first, entity.second.archetype->archetypeId, entity.second.row});
         }
         return entitiesWithArchRows;
     }
 
-    /**
-     * Check all archetypes by components to obtain component, archetypes and cols
-     * @param componentIds Relevant components
-     * @param pattern Minimal pattern for archetypes
-     * @return Vector of relevant component/archetype/column index data, ordered by component then archetype
-     */
-    vector<CompArchIdAndCol> QueryManager::GetComponentsWithArchsCols(vector<ComponentId>&& componentIds, std::bitset<32> pattern) {
-
+    vector<CompArchIdAndCol> QueryManager::GetComponentsWithArchsCols(vector<ComponentId>&& componentIds, ArchetypeId pattern) {
         vector<CompArchIdAndCol> res;
         World& world = World::Instance();
-        for (const auto& c : world.GetComponents()) {
+        const auto& archetypes = world.GetArchetypes();
+        const auto& components = world.GetComponents();
+        for (const auto& c : components) {
             if (std::find(componentIds.begin(), componentIds.end(), c.first) == componentIds.end()) continue;
             ComponentArchetypes archs = c.second;
             for (const auto archIds : archs) {
                 // We check the archetype contain the minimal components
                 // We also exclude empty archetypes
-                if ((archIds.first & pattern) == pattern && (world.GetArchetypes())[archIds.first].GetRowCount() > 0) {
+                if ((archIds.first & pattern) == pattern && archetypes.at(archIds.first).GetRowCount() > 0) {
                     res.push_back(CompArchIdAndCol { c.first, archIds.first, archIds.second });
                 }
             }
@@ -57,7 +54,7 @@ namespace gecs {
         return res;
     }
 
-    Column QueryManager::GetColumn(ArchetypeId archId, size_t column) {
+    Column& QueryManager::GetColumn(ArchetypeId archId, size_t column) {
         return (World::Instance().GetArchetypes())[archId].components[column];
     }
 
@@ -100,7 +97,7 @@ namespace gecs {
         return ret;
     }
 
-    vector<vector<size_t>> QueryManager::GetDataStartIndices(vector<CompArchIdAndCol> &compArchCols) {
+    vector<vector<size_t>> QueryManager::GetDataStartIndices(const vector<CompArchIdAndCol> &compArchCols) {
         const auto& archetypeRegistry = World::Instance().GetArchetypesConst();
         ComponentId currentCompId = compArchCols[0].componentId;
         vector<vector<size_t>> starts {};

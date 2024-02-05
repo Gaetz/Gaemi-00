@@ -8,6 +8,12 @@
 #include "Defines.hpp"
 
 namespace gplatform {
+    /**
+     * Write a message to the console.
+     * Platform abstraction.
+     * @param message The message you want to write
+     * @param level Severity level
+     */
     void ConsoleWrite(const str& message, i32 level);
 
 }

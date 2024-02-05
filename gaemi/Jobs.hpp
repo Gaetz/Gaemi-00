@@ -11,21 +11,23 @@
 
 namespace jobs {
 
-    // A Dispatched job will receive this as function argument:
+    /** A Dispatched job will receive this as function argument. */
     struct JobDispatchArgs
     {
         u32 jobIndex;
         u32 groupIndex;
     };
 
-    // Fixed size very simple thread safe ring buffer
+    /** Fixed size very simple thread safe ring buffer */
     template <typename T, size_t capacity>
     class ThreadSafeRingBuffer
     {
     public:
-        // Push an item to the end if there is free space
-        //  Returns true if succesful
-        //  Returns false if there is not enough space
+
+        /**
+         * Push an item to the end if there is free space
+         * @return True if successful, false if there is not enough space
+         */
         inline bool PushBack(const T& item)
         {
             bool result = false;

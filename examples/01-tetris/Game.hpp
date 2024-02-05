@@ -5,9 +5,14 @@
 #ifndef TETRIS_GAME_HPP
 #define TETRIS_GAME_HPP
 
-#include "../gaemi/IGame.hpp"
+#include "IGame.hpp"
 #include "IScene.hpp"
 
+/**
+ * @brief Game class implementation
+ * @details This class is the main class of the game. It is responsible for loading, updating, drawing and unloading
+ * the game, and manage scenes.
+ */
 class Game : public IGame {
 public:
     Game() = default;

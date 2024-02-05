@@ -8,6 +8,13 @@
 #include "Defines.hpp"
 #include <tuple>
 
+/**
+ * Get the tail of a tuple, that is, a tuple with the first element removed.
+ * @tparam T First type of the tuple
+ * @tparam Ts Other types of the tuple
+ * @param t The tuple
+ * @return Tail of the tuple
+ */
 template <class T, class... Ts>
 constexpr std::tuple<Ts...> TupleTail(const std::tuple<T, Ts...>& t) {
     return std::apply([](auto, auto&&... tail) {

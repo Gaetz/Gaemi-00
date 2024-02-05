@@ -101,7 +101,6 @@ void SceneGame::Draw() {
     auto posSprites = world.Find<Position, Sprite>();
     posSprites.Reset();
     posSprites.Read([](const Position &pos, const Sprite &spr) {
-        if (!spr.visible) return;
         Rect dst{pos.x, pos.y, spr.dstSize.x, spr.dstSize.y};
         render::DrawSprite(spr.texture, spr.srcRect, dst, WHITE);
     });
