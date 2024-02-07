@@ -13,6 +13,7 @@ class IGame;
 
 class Engine {
 public:
+    Engine() = default;
     Engine(Engine&) = delete;
     Engine& operator=(Engine&) = delete;
 

@@ -84,6 +84,8 @@ endif()
 
 
 # Add code.
+set(GAME_DIR examples/shader02-texture)
+
 add_subdirectory( gplatform )
 add_subdirectory( glog )
 add_subdirectory( gfile )
@@ -91,7 +93,7 @@ add_subdirectory( gmath )
 add_subdirectory( gecs )
 #add_subdirectory( gcausality ) -- Not ready yet
 add_subdirectory( gaemi )
-add_subdirectory(examples/01-tetris)
+add_subdirectory( ${GAME_DIR} )
 
 
 
@@ -102,7 +104,7 @@ if (UNIX)
 endif(UNIX)
 
 # Declaring our executable
-add_executable(${PROJECT_NAME} examples/01-tetris/main.cpp)
+add_executable(${PROJECT_NAME} ${GAME_DIR}/main.cpp)
 target_link_libraries(${PROJECT_NAME} game gaemi)
 
 # C++ hardcode options

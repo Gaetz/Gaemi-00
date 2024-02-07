@@ -5,6 +5,7 @@
 #include <cmath>
 #include "Renderer.hpp"
 #include "raylib.h"
+#include "AssetsManager.hpp"
 
 namespace render {
     void BeginDraw() {
@@ -41,6 +42,25 @@ namespace render {
 
     void DrawDefaultText(const str& text, const Vec2& pos, i32 fontSize, Color color) {
         ::DrawText(text.c_str(), gmath::Round(pos.x), gmath::Round(pos.y), fontSize, color);
+    }
+
+    void BeginShaderMode(const str& shaderName) {
+        ::BeginShaderMode(AssetsManager::GetShader(shaderName));
+    }
+
+    void EndShaderMode() {
+        ::EndShaderMode();
+    }
+
+    void SetShaderVec2(const str& shaderName, const str& location, Vec2 vec2) {
+        Shader shader = AssetsManager::GetShader(shaderName);
+        const auto value = vec2.ToRaylib();
+        ::SetShaderValue(shader, GetShaderLocation(shader, location.c_str()), &value, SHADER_UNIFORM_VEC2);
+    }
+    void SetShaderVec4(const str& shaderName, const str& location, Vec4 vec4) {
+        const Shader shader = AssetsManager::GetShader(shaderName);
+        const auto value = vec4.ToRaylib();
+        ::SetShaderValue(shader, GetShaderLocation(shader, location.c_str()), &value, SHADER_UNIFORM_VEC4);
     }
 
 }

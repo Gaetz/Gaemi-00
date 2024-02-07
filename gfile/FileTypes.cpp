@@ -17,6 +17,9 @@ namespace gfile {
             case FileType::Texture: {
                 return gfile::File::GetGameAssetsPath() + "/images/";
             }
+            case FileType::Shader: {
+                return gfile::File::GetGameAssetsPath() + "/shaders/";
+            }
             default: {
                 return "";
             }

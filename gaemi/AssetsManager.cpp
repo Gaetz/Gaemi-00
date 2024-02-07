@@ -14,6 +14,7 @@ using gfile::FileType;
 unordered_map<str, Texture> AssetsManager::textures {};
 unordered_map<i32, str> AssetsManager::sceneLoadedTextures {};
 unordered_map<str, f32> AssetsManager::data {};
+unordered_map<str, Shader> AssetsManager::shaders {};
 
 void AssetsManager::Initialize(const str& gameAssetsPath) {
     // Setting default folders
@@ -58,6 +59,11 @@ void AssetsManager::UnloadSceneTextures(i32 sceneId) {
 
 void AssetsManager::LoadData() {
 
+    if (!Folder::Exists(gfile::FileTypePath(FileType::Data))) {
+        LOG(LogLevel::Warning) << "No data in game data path";
+        return;
+    }
+
     vector<str> dataFiles = Folder::ExploreFiles(gfile::FileTypePath(FileType::Data));
     for (const str& file : dataFiles) {
         const unordered_map<str, f32> fileData { std::move(File::ReadFile(file)) };
@@ -78,5 +84,22 @@ f32 AssetsManager::GetData(const str &name) {
     return data.at(name);
 }
 
+void AssetsManager::LoadShader(const str& name, const str& vsFilename, const str& fsFilename) {
+    const str vsPath = gfile::FileTypePath(FileType::Shader) + vsFilename;
+    const str fsPath = gfile::FileTypePath(FileType::Shader) + fsFilename;
+    shaders[name] = ::LoadShader(vsPath.c_str(), fsPath.c_str());
+}
+
+void AssetsManager::LoadFragmentShader(const str& name, const str& fsFilename) {
+    const str fsPath = gfile::FileTypePath(FileType::Shader) + fsFilename;
+    shaders[name] = ::LoadShader(nullptr, fsPath.c_str());
+}
+
+Shader AssetsManager::GetShader(const str& name) {
+    if (!shaders.contains(name)) {
+        LOG(LogLevel::Error) << "Shader [" << name << "] does not exist in AssetsManager. Returning default shader.";
+    }
+    return shaders.at(name);
+}
 
 

@@ -24,11 +24,16 @@ public:
     static void LoadData();
     static GAPI f32 GetData(const str& name);
 
+    static GAPI void LoadShader(const str& name, const str& vsFilename, const str& fsFilename);
+    static GAPI void LoadFragmentShader(const str& name, const str& fsFilename);
+    static GAPI Shader GetShader(const str& name);
+
 private:
     static void LoadSystemTexture(const str& name, const str& filename);
 
     static unordered_map<str, Texture> textures;
     static unordered_map<i32, str> sceneLoadedTextures;
+    static unordered_map<str, Shader> shaders;
 
     static unordered_map<str, f32> data;
 };
