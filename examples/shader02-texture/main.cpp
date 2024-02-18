@@ -11,7 +11,7 @@ int main()
     Log::Restart();
 
     Engine engine;
-    engine.Start(1280, 720, "Tetris", "assets/shader01-start", std::make_unique<Game>());
+    engine.Start(1280, 720, "Tetris", "assets/shader02-texture", std::make_unique<Game>());
 
     return 0;
 }

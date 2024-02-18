@@ -18,7 +18,7 @@ public:
     static GAPI void Initialize(const str& gameAssetsPath);
 
     static GAPI void LoadTexture(const str& name, const str& filename, i32 sceneId);
-    static GAPI Texture GetTexture(const str& name);
+    static GAPI Texture& GetTexture(const str& name);
     static GAPI void UnloadSceneTextures(i32 sceneId);
 
     static void LoadData();

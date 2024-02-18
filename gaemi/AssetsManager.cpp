@@ -40,7 +40,7 @@ void AssetsManager::LoadSystemTexture(const str &name, const str &filename) {
 }
 
 
-Texture AssetsManager::GetTexture(const str& name) {
+Texture& AssetsManager::GetTexture(const str& name) {
     if (!textures.contains(name)) {
         LOG(LogLevel::Error) << "Texture [" << name << "] does not exist in AssetsManager. Returning default texture.";
         return textures.at(defaultTextureId);

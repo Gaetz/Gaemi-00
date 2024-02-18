@@ -20,11 +20,11 @@ namespace render {
         EndDrawing();
     }
 
-    void DrawTexture(Texture texture, i32 x, i32 y, Color tint) {
+    void DrawTexture(const Texture& texture, i32 x, i32 y, Color tint) {
         ::DrawTexture(texture, x, y, tint);
     }
 
-    void DrawSprite(Texture texture2D, Rect srcRect, Rect dstRect, Color tint) {
+    void DrawSprite(const Texture& texture2D, Rect srcRect, Rect dstRect, Color tint) {
         ::DrawTexturePro(texture2D, srcRect.ToRaylib(), dstRect.ToRaylib(), { 0, 0 }, 0, tint);
     }
 
@@ -52,6 +52,14 @@ namespace render {
         ::EndShaderMode();
     }
 
+    void SetTextureWrap(const Texture& texture2D, TextureWrapMode mode) {
+        ::SetTextureWrap(texture2D, static_cast<int>(mode));
+    }
+
+    void SetTextureFilter(const Texture& texture2D, TextureFilterMode mode) {
+        ::SetTextureFilter(texture2D, static_cast<int>(mode));
+    }
+
     void SetShaderVec2(const str& shaderName, const str& location, Vec2 vec2) {
         Shader shader = AssetsManager::GetShader(shaderName);
         const auto value = vec2.ToRaylib();
@@ -62,5 +70,15 @@ namespace render {
         const auto value = vec4.ToRaylib();
         ::SetShaderValue(shader, GetShaderLocation(shader, location.c_str()), &value, SHADER_UNIFORM_VEC4);
     }
+
+    void SetShaderSampler2D(const str& shaderName, const str& location, const Texture2D& tex) {
+        const Shader shader = AssetsManager::GetShader(shaderName);
+        ::SetShaderValueTexture(shader, GetShaderLocation(shader, location.c_str()), tex);
+    }
+
+    void GenerateTextureMipmaps(Texture& tex) {
+        ::GenTextureMipmaps(&tex);
+    }
+
 
 }

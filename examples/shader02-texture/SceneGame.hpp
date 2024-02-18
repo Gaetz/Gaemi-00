@@ -17,7 +17,7 @@ using gecs::World;
 
 class SceneGame : public IScene {
 public:
-    SceneGame(Game& game);
+    explicit SceneGame(Game& game);
     void Load() override;
     void Update(f32 dt) override;
     void Draw() override;
