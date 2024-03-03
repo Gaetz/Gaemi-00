@@ -20,7 +20,7 @@ void Engine::Start(i32 windowWidth, i32 windowHeight, const str& gameNameP,
     jobs::Initialize();
 
     Window window { windowWidth, windowHeight, gameName };
-    SetTargetFPS(5000);
+    SetTargetFPS(60);
     LOG(LogLevel::Info) << "Window initialized";
 
     AssetsManager::Initialize(gameAssetsPathP);

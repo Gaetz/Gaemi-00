@@ -84,7 +84,7 @@ endif()
 
 
 # Add code.
-set(GAME_DIR examples/shader02-texture)
+set(GAME_DIR examples/sandfall)
 
 add_subdirectory( gplatform )
 add_subdirectory( glog )
