@@ -36,8 +36,8 @@ private:
     World& world { World::Instance() };
 
     const f32 ATOM_WIDTH;
-    const u32 SCREEN_WIDTH;
-    const u32 SCREEN_HEIGHT;
+    const i32 SCREEN_WIDTH;
+    const i32 SCREEN_HEIGHT;
 
     vector<vector<i32>> grid {};
     vector<vector<i32>> nextGrid {};
