@@ -84,7 +84,7 @@ endif()
 
 
 # Add code.
-set(GAME_DIR examples/sandfall)
+set(GAME_DIR examples/01-tetris)
 
 add_subdirectory( gplatform )
 add_subdirectory( glog )
