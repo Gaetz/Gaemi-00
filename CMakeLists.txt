@@ -84,7 +84,7 @@ endif()
 
 
 # Add code.
-set(GAME_DIR examples/01-tetris)
+set(GAME_DIR examples/shader03-functions)
 
 add_subdirectory( gplatform )
 add_subdirectory( glog )
