@@ -19,9 +19,9 @@ void main() {
     vec3 white = vec3(1.0, 1.0, 1.0);
 
     if (fragTexCoord.y < 0.5) {
-        colour = mix(red, blue, fragTexCoord.x);
+        colour = mix(red, blue, value1);
     } else {
-        colour = mix(red, blue, smoothstep(0.0, 1.0, fragTexCoord.x));
+        colour = mix(red, blue, value2);
     }
     // Line is black on the line and white elsewhere
     // so we will draw white at the line location and colour elsewhere
@@ -32,8 +32,13 @@ void main() {
     finalColor = vec4(colour, 1.0);
 }
 
-// Exercise 1.
+// Exercise 1. Three sections.
 // Have 3 sections instead of two : step function, mix function and smoothstep function
 
-// Exercise 2.
-// Load a texture and run the colours through smoothetep before displaying the texture
+// Exercise 2. Texture smoothstep.
+// Load a texture and run the colours through smoothstep before displaying the texture
+
+// Exercise 3. min, max, clamp.
+// Change value2 to min(fragTexCoord.x, 0.25), max(fragTexCoord.x, 0.75), clamp(fragTexCoord.x, 0.25, 0.75).
+// How clamp is linked to min and max ?
+
