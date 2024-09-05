@@ -37,8 +37,7 @@ void SceneGame::Update(f32 dt) {
 
 void SceneGame::Draw() {
     render::BeginShaderMode("shader");
-    render::SetShaderVec4("shader", "color1", Vec4(1, 0, 0, 1));
-    render::SetShaderVec4("shader", "color2", Vec4(0, 0, 1, 1));
+    render::SetShaderVec2("shader", "resolution", Vec2(600, 600));
 
     render::DrawTexture(shaderTexture, 128, 60, WHITE);
     render::EndShaderMode();

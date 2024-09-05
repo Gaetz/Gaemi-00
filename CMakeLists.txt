@@ -84,7 +84,7 @@ endif()
 
 
 # Add code.
-set(GAME_DIR examples/shader03-functions)
+set(GAME_DIR examples/shader04-fract)
 
 add_subdirectory( gplatform )
 add_subdirectory( glog )
