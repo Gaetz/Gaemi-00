@@ -58,6 +58,7 @@ namespace render {
     GAPI void SetShaderInt(const str& shaderName, const str& location, i32 value);
     GAPI void SetShaderFloat(const str& shaderName, const str& location, f32 value);
     GAPI void SetShaderVec2(const str& shaderName, const str& location, Vec2 vec2);
+    GAPI void SetShaderVec3(const str& shaderName, const str& location, Vec3 vec3);
     GAPI void SetShaderVec4(const str& shaderName, const str& location, Vec4 vec4);
     GAPI void SetShaderSampler2D(const str& shaderName, const str& location, const Texture2D& tex);
 }

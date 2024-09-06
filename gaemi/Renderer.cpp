@@ -75,11 +75,13 @@ namespace render {
         const auto value = vec2.ToRaylib();
         ::SetShaderValue(shader, GetShaderLocation(shader, location.c_str()), &value, SHADER_UNIFORM_VEC2);
     }
+
     void SetShaderVec3(const str& shaderName, const str& location, Vec3 vec3) {
         Shader shader = AssetsManager::GetShader(shaderName);
         const auto value = vec3.ToRaylib();
         ::SetShaderValue(shader, GetShaderLocation(shader, location.c_str()), &value, SHADER_UNIFORM_VEC3);
     }
+
     void SetShaderVec4(const str& shaderName, const str& location, Vec4 vec4) {
         const Shader shader = AssetsManager::GetShader(shaderName);
         const auto value = vec4.ToRaylib();
