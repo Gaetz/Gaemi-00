@@ -82,11 +82,11 @@ void main() {
 // Try using the following functions: fract, ceil, round, floor and mod.
 // Here ar two new functions to try:
 
-// inverseLerp(current, min, max) {
+// float inverseLerp(float current, float min, float max) {
 //     return (current - min) / (max - min);
 // }
-
-// remap(current, inMin, inMax, outMin, outMax) {
-//     float = inverseLerp(current, inMin, inMax);
+//
+// float remap(float current, float inMin, float inMax, float outMin, float outMax) {
+//     float t = inverseLerp(current, inMin, inMax);
 //     return mix(outMin, outMax, t);
 // }

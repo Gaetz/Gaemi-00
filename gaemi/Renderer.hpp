@@ -8,12 +8,14 @@
 #include "Defines.hpp"
 #include "Rect.hpp"
 #include "Vec4.hpp"
+#include "Vec3.hpp"
 
 struct Texture;
 struct Color;
 
 using gmath::Vec2;
 using gmath::Rect;
+using gmath::Vec3;
 using gmath::Vec4;
 
 namespace render {
@@ -53,6 +55,8 @@ namespace render {
     GAPI void BeginShaderMode(const str& shaderName);
     GAPI void EndShaderMode();
 
+    GAPI void SetShaderInt(const str& shaderName, const str& location, i32 value);
+    GAPI void SetShaderFloat(const str& shaderName, const str& location, f32 value);
     GAPI void SetShaderVec2(const str& shaderName, const str& location, Vec2 vec2);
     GAPI void SetShaderVec4(const str& shaderName, const str& location, Vec4 vec4);
     GAPI void SetShaderSampler2D(const str& shaderName, const str& location, const Texture2D& tex);

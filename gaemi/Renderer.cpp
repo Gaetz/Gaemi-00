@@ -60,10 +60,25 @@ namespace render {
         ::SetTextureFilter(texture2D, static_cast<int>(mode));
     }
 
+    void SetShaderInt(const str& shaderName, const str& location, i32 value) {
+        Shader shader = AssetsManager::GetShader(shaderName);
+        ::SetShaderValue(shader, GetShaderLocation(shader, location.c_str()), &value, SHADER_UNIFORM_INT);
+    }
+
+    void SetShaderFloat(const str& shaderName, const str& location, f32 value) {
+        Shader shader = AssetsManager::GetShader(shaderName);
+        ::SetShaderValue(shader, GetShaderLocation(shader, location.c_str()), &value, SHADER_UNIFORM_FLOAT);
+    }
+
     void SetShaderVec2(const str& shaderName, const str& location, Vec2 vec2) {
         Shader shader = AssetsManager::GetShader(shaderName);
         const auto value = vec2.ToRaylib();
         ::SetShaderValue(shader, GetShaderLocation(shader, location.c_str()), &value, SHADER_UNIFORM_VEC2);
+    }
+    void SetShaderVec3(const str& shaderName, const str& location, Vec3 vec3) {
+        Shader shader = AssetsManager::GetShader(shaderName);
+        const auto value = vec3.ToRaylib();
+        ::SetShaderValue(shader, GetShaderLocation(shader, location.c_str()), &value, SHADER_UNIFORM_VEC3);
     }
     void SetShaderVec4(const str& shaderName, const str& location, Vec4 vec4) {
         const Shader shader = AssetsManager::GetShader(shaderName);

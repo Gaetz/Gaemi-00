@@ -3,6 +3,7 @@
 //
 #ifndef GPLATFORM_DEFINES_HPP
 #define GPLATFORM_DEFINES_HPP
+#pragma warning(disable: 4514) // Not interesting: unreferenced inline function has been removed
 
 #include <string>
 #include <vector>

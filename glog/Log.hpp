@@ -49,9 +49,9 @@ public:
 
 private:
     std::ostringstream stream;
-    static std::ofstream file;
     LogLevel logLevel { LogLevel::Trace };
 
+    static std::ofstream file;
     static str GetLabel(LogLevel level);
 };
 
