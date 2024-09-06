@@ -80,13 +80,3 @@ void main() {
 
 // Exercices:
 // Try using the following functions: fract, ceil, round, floor and mod.
-// Here ar two new functions to try:
-
-// float inverseLerp(float current, float min, float max) {
-//     return (current - min) / (max - min);
-// }
-//
-// float remap(float current, float inMin, float inMax, float outMin, float outMax) {
-//     float t = inverseLerp(current, inMin, inMax);
-//     return mix(outMin, outMax, t);
-// }
