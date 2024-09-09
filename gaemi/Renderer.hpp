@@ -61,6 +61,7 @@ namespace render {
     GAPI void SetShaderVec3(const str& shaderName, const str& location, Vec3 vec3);
     GAPI void SetShaderVec4(const str& shaderName, const str& location, Vec4 vec4);
     GAPI void SetShaderSampler2D(const str& shaderName, const str& location, const Texture2D& tex);
+    GAPI void SetShaderSamplerCube(const str& shaderName, const str& location, const TextureCubemap& tex);
 }
 
 #endif //GAEMI_RENDERER_HPP

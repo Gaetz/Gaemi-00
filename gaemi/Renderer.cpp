@@ -93,6 +93,11 @@ namespace render {
         ::SetShaderValueTexture(shader, GetShaderLocation(shader, location.c_str()), tex);
     }
 
+    void SetShaderSamplerCube(const str& shaderName, const str& location, const TextureCubemap& tex) {
+        const Shader shader = AssetsManager::GetShader(shaderName);
+        ::SetShaderValueTexture(shader, GetShaderLocation(shader, location.c_str()), tex);
+    }
+
     void GenerateTextureMipmaps(Texture& tex) {
         ::GenTextureMipmaps(&tex);
     }

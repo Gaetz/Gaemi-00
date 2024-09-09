@@ -1,4 +1,5 @@
 #version 330
+#extension GL_NV_shadow_samplers_cube : enable
 
 in vec3 fragPosition;
 in vec2 fragTexCoord;
@@ -7,6 +8,7 @@ in vec3 fragNormal;
 
 uniform float time;
 uniform vec3 camPosition;
+uniform samplerCube skybox;
 
 out vec4 finalColor;
 
@@ -50,14 +52,19 @@ void main() {
     // 3. Diffuse lighting
     vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
     vec3 lightColour = vec3(1.0, 1.0, 0.9);
-    float lambertian = max(0.0, dot(fragNormal, lightDir));
-    vec3 diffuse = lightColour * lambertian;
-    lighting = ambient * 0.1 + hemi * 0.5 + diffuse * 0.5;
+    float lambertian = max(0.0, dot(lightDir, fragNormal));
+    vec3 diffuse = lambertian * lightColour;
+    lighting = ambient * 0.0 + hemi * 0.0 + diffuse * 1.0;
 
     // 4. Phong specular lighting
     vec3 r = normalize(reflect(-lightDir, fragNormal));
-    float phongValue = pow(max(0.0, dot(r, viewDir)), 32);
+    float phongValue = pow(max(0.0, dot(viewDir, r)), 32.0);
     vec3 specular = vec3(phongValue);
+
+    // 5. Reflection specular cubemap (image base lighting)
+    vec3 iblCoord = normalize(reflect(-viewDir, fragNormal));
+    vec3 iblSample = textureCube(skybox, iblCoord).xyz;
+    specular += iblSample * 0.5;
 
     vec3 colour = baseColour * lighting + specular;
     colour = linearToSRGBApprox(colour); // Improves the lighting

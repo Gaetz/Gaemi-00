@@ -24,26 +24,38 @@ SceneGame::SceneGame(Game &game) : game{game}
 
 void SceneGame::Load() {
     AssetsManager::LoadShader("shader-lighting", "shader-lighting.vs", "shader-lighting.fs");
-    model = LoadModel("assets/shader06-lighting/models/suzanne.glb");
-    camera.position = { 2.0f, 1.5f, 3.0f };
-    camera.target = { 0.0f, 0.0f, 0.0f };
-    camera.up = { 0.0f, 1.0f, 0.0f };
-    camera.fovy = 45.0f;
-    camera.projection = CAMERA_PERSPECTIVE;
+    model_ = LoadModel("assets/shader06-lighting/models/suzanne.glb");
+    camera_.position = { -3.0f, 2.0f, -1.0f };
+    camera_.target = { 0.0f, 0.0f, 0.0f };
+    camera_.up = { 0.0f, 1.0f, 0.0f };
+    camera_.fovy = 45.0f;
+    camera_.projection = CAMERA_PERSPECTIVE;
 
-    model.materials[0].shader = AssetsManager::GetShader("shader-lighting");
+    Image cubemapImage = LoadImage("assets/shader06-lighting/textures/cubemap_sky.png");
+    skyboxTexture_ = LoadTextureCubemap(cubemapImage, CUBEMAP_LAYOUT_CROSS_FOUR_BY_THREE);
+    UnloadImage(cubemapImage);
+    render::SetShaderSamplerCube("shader-lighting", "skybox", skyboxTexture_);
+
+    //Mesh cube = GenMeshCube(1.0f, 1.0f, 1.0f);
+    //skyboxCube_ = LoadModelFromMesh(cube);
+
+    model_.materials[0].shader = AssetsManager::GetShader("shader-lighting");
 }
 
 void SceneGame::Update(f32 dt) {
-    totalTime += dt;
+    totalTime_ += dt;
 
+    camera_.position.x += sinf(totalTime_) * 3.0f * dt;
+    camera_.position.z += cos(totalTime_) * 3.0f * dt;
 }
 
 void SceneGame::Draw() {
-    BeginMode3D(camera);
-    Vec3 camPosition { camera.position.x, camera.position.y, camera.position.z };
+    BeginMode3D(camera_);
+    Vec3 camPosition { camera_.position.x, camera_.position.y, camera_.position.z };
     render::SetShaderVec3("shader-lighting", "camPosition", camPosition);
-    DrawModel(model, { 0.0f, 0.0f, 0.0f }, 0.5f, WHITE);
+    render::SetShaderSamplerCube("shader-lighting", "skybox", skyboxTexture_);
+
+    DrawModel(model_, { 0.0f, 0.0f, 0.0f }, 0.5f, WHITE);
     DrawGrid(10, 1.0f);
     EndMode3D();
 }

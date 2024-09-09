@@ -26,12 +26,13 @@ public:
 private:
     World& world { World::Instance() };
     Game& game;
-    Texture2D shaderTexture;
 
-    Model model {};
-    Camera camera {};
+    Model model_ {};
+    Camera camera_ {};
+    TextureCubemap skyboxTexture_ {};
+    //Model skyboxCube_ {};
 
-    float totalTime { 0.0f };
+    float totalTime_ { 0.0f };
 };
 
 
