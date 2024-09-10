@@ -31,14 +31,6 @@ void SceneGame::Load() {
     camera_.fovy = 45.0f;
     camera_.projection = CAMERA_PERSPECTIVE;
 
-    Image cubemapImage = LoadImage("assets/shader06-lighting/textures/cubemap_sky.png");
-    skyboxTexture_ = LoadTextureCubemap(cubemapImage, CUBEMAP_LAYOUT_LINE_VERTICAL);
-    UnloadImage(cubemapImage);
-    render::SetShaderSamplerCube("shader-lighting", "skybox", skyboxTexture_);
-
-    //Mesh cube = GenMeshCube(1.0f, 1.0f, 1.0f);
-    //skyboxCube_ = LoadModelFromMesh(cube);
-
     model_.materials[0].shader = AssetsManager::GetShader("shader-lighting");
 }
 
@@ -53,7 +45,6 @@ void SceneGame::Draw() {
     BeginMode3D(camera_);
     Vec3 camPosition { camera_.position.x, camera_.position.y, camera_.position.z };
     render::SetShaderVec3("shader-lighting", "camPosition", camPosition);
-    render::SetShaderSamplerCube("shader-lighting", "skybox", skyboxTexture_);
 
     DrawModel(model_, { 0.0f, 0.0f, 0.0f }, 0.5f, WHITE);
     DrawGrid(10, 1.0f);
