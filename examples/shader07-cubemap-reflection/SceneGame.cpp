@@ -40,14 +40,14 @@ void SceneGame::Load() {
     int v[1] { MATERIAL_MAP_CUBEMAP };
     SetShaderValue(skyboxCube_.materials[0].shader, GetShaderLocation(skyboxCube_.materials[0].shader, "environmentMap"), v, SHADER_UNIFORM_INT);
 
+    model_.materials[0].shader = AssetsManager::GetShader("shader-lighting");
+    SetShaderValue(model_.materials[0].shader, GetShaderLocation(model_.materials[0].shader, "environmentMap"), v, SHADER_UNIFORM_INT);
+
     Image cubemapImage = LoadImage("assets/shader07-cubemap-reflection/textures/cubemap_sky.png");
     skyboxTexture_ = LoadTextureCubemap(cubemapImage, CUBEMAP_LAYOUT_LINE_VERTICAL);
     skyboxCube_.materials[0].maps[MATERIAL_MAP_CUBEMAP].texture = skyboxTexture_;
+    model_.materials[0].maps[MATERIAL_MAP_CUBEMAP].texture = skyboxTexture_;
     UnloadImage(cubemapImage);
-
-
-    model_.materials[0].shader = AssetsManager::GetShader("shader-lighting");
-    render::SetShaderSamplerCube("shader-lighting", "skybox", skyboxTexture_);
 }
 
 void SceneGame::Update(f32 dt) {
@@ -61,7 +61,7 @@ void SceneGame::Draw() {
     BeginMode3D(camera_);
     Vec3 camPosition { camera_.position.x, camera_.position.y, camera_.position.z };
     render::SetShaderVec3("shader-lighting", "camPosition", camPosition);
-    render::SetShaderSamplerCube("shader-lighting", "skybox", skyboxTexture_);
+    //render::SetShaderSamplerCube("shader-lighting", "skybox", skyboxTexture_);
 
     // We are inside the cube, we need to disable backface culling!
     rlDisableBackfaceCulling();

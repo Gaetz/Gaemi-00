@@ -1,5 +1,4 @@
 #version 330
-#extension GL_NV_shadow_samplers_cube : enable
 
 in vec3 fragPosition;
 in vec2 fragTexCoord;
@@ -8,6 +7,7 @@ in vec3 fragNormal;
 
 uniform float time;
 uniform vec3 camPosition;
+uniform samplerCube environmentMap;
 
 out vec4 finalColor;
 
@@ -50,6 +50,16 @@ void main() {
     vec3 r = normalize(reflect(-lightDir, fragNormal));
     float phongValue = pow(max(0.0, dot(viewDir, r)), 32.0);
     vec3 specular = vec3(phongValue);
+
+    // 1. Image Based Lighting (cubemap)
+    vec3 iblCoord = normalize(reflect(-viewDir, fragNormal));
+    vec3 ibl = texture(environmentMap, iblCoord).rgb;
+    specular += ibl * 0.5;
+
+    // 2. Fresnel rim lighting
+    float fresnel = 1.0 - max(0.0, dot(viewDir, fragNormal));
+    fresnel = pow(fresnel, 2.0);
+    specular *= fresnel;
 
     vec3 colour = baseColour * lighting + specular;
     colour = linearToSRGBApprox(colour); // Improves the lighting
