@@ -25,14 +25,14 @@ SceneGame::SceneGame(Game &game) : game{game}
 void SceneGame::Load() {
     AssetsManager::LoadShader("shader-lighting", "shader-lighting.vs", "shader-lighting.fs");
     model_ = LoadModel("assets/shader06-lighting/models/suzanne.glb");
-    camera_.position = { -3.0f, 2.0f, -1.0f };
+    camera_.position = { -3.0f, 0.4f, -1.0f };
     camera_.target = { 0.0f, 0.0f, 0.0f };
     camera_.up = { 0.0f, 1.0f, 0.0f };
     camera_.fovy = 45.0f;
     camera_.projection = CAMERA_PERSPECTIVE;
 
     Image cubemapImage = LoadImage("assets/shader06-lighting/textures/cubemap_sky.png");
-    skyboxTexture_ = LoadTextureCubemap(cubemapImage, CUBEMAP_LAYOUT_CROSS_FOUR_BY_THREE);
+    skyboxTexture_ = LoadTextureCubemap(cubemapImage, CUBEMAP_LAYOUT_LINE_VERTICAL);
     UnloadImage(cubemapImage);
     render::SetShaderSamplerCube("shader-lighting", "skybox", skyboxTexture_);
 

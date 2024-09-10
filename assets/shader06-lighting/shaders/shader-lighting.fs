@@ -8,7 +8,6 @@ in vec3 fragNormal;
 
 uniform float time;
 uniform vec3 camPosition;
-uniform samplerCube skybox;
 
 out vec4 finalColor;
 
@@ -53,18 +52,28 @@ void main() {
     vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
     vec3 lightColour = vec3(1.0, 1.0, 0.9);
     float lambertian = max(0.0, dot(lightDir, fragNormal));
+
+    // 5a. Cel shading for diffuse lighting
+    float fullShadow = smoothstep(0.5, 0.505, lambertian);
+    //float partialShadow = smoothstep(0.65, 0.655, lambertian) * 0.5 + 0.5;
+
+    // 5c. Cel shading for hemi light, as rim light
+    float fresnel = 1.0 - max(0.0, dot(fragNormal, viewDir));
+    fresnel = pow(fresnel, 4.0);
+    fresnel *= step(0.5, fresnel);
+
+    lambertian = lambertian * fullShadow;
+    //lambertian = lambertian * partialShadow;
     vec3 diffuse = lambertian * lightColour;
-    lighting = ambient * 0.0 + hemi * 0.0 + diffuse * 1.0;
+    lighting = ambient * 0.1 + hemi * (fresnel + 0.2) + diffuse * 0.7;
 
     // 4. Phong specular lighting
     vec3 r = normalize(reflect(-lightDir, fragNormal));
     float phongValue = pow(max(0.0, dot(viewDir, r)), 32.0);
     vec3 specular = vec3(phongValue);
 
-    // 5. Reflection specular cubemap (image base lighting)
-    vec3 iblCoord = normalize(reflect(-viewDir, fragNormal));
-    vec3 iblSample = textureCube(skybox, iblCoord).xyz;
-    specular += iblSample * 0.5;
+    // 5b. Cel shading for specular lighting
+    specular = smoothstep(0.5, 0.51, specular);
 
     vec3 colour = baseColour * lighting + specular;
     colour = linearToSRGBApprox(colour); // Improves the lighting
