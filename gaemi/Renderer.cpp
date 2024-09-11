@@ -6,6 +6,7 @@
 #include "Renderer.hpp"
 #include "raylib.h"
 #include "AssetsManager.hpp"
+#include "rlgl.h"
 
 namespace render {
     void BeginDraw() {
@@ -18,6 +19,14 @@ namespace render {
 
     void EndDraw() {
         EndDrawing();
+    }
+
+    void BeginMode3D(const Cam3D& camera) {
+        ::BeginMode3D(camera.ToRaylib());
+    }
+
+    void EndMode3D() {
+        ::EndMode3D();
     }
 
     void DrawTexture(const Texture& texture, i32 x, i32 y, Color tint) {
@@ -104,5 +113,19 @@ namespace render {
         ::GenTextureMipmaps(&tex);
     }
 
+    void EnableBackfaceCulling() {
+        ::rlEnableBackfaceCulling();
+    }
 
+    void DisableBackfaceCulling() {
+        ::rlDisableBackfaceCulling();
+    }
+
+    void EnableDepthMask() {
+        ::rlEnableDepthMask();
+    }
+
+    void DisableDepthMask() {
+        ::rlDisableDepthMask();
+    }
 }

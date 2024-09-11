@@ -18,8 +18,13 @@ namespace gmath {
         f32 z;
 
         Vec3();
-        explicit Vec3(f32 x, f32 y, f32 z);
+        explicit Vec3(f32 x_, f32 y_, f32 z_);
         [[nodiscard]] str Log() const;
+
+        static const Vec3 zero;
+        static const Vec3 up;
+        static const Vec3 right;
+        static const Vec3 front;
 
         // Arithmetic operators
 
@@ -53,7 +58,7 @@ namespace gmath {
         }
 
         // Conversions
-        Vector3 ToRaylib() {
+        Vector3 ToRaylib() const {
             return Vector3 { x, y, z };
         }
     };

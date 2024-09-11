@@ -11,9 +11,12 @@
 #include "../gecs/Types.hpp"
 #include "Vec2.hpp"
 #include "World.hpp"
+#include "Cam3D.hpp"
 
 using gmath::Vec2;
+using gmath::Vec3;
 using gecs::World;
+using render::Cam3D;
 
 class SceneGame : public IScene {
 public:
@@ -27,12 +30,12 @@ private:
     World& world { World::Instance() };
     Game& game;
 
-    Model model_ {};
-    Camera camera_ {};
-    TextureCubemap skyboxTexture_ {};
-    Model skyboxCube_ {};
+    Model model {};
+    Cam3D camera { Vec3 { -3.0f, 0.4f, -1.0f } };
+    TextureCubemap skyboxTexture {};
+    Model skyboxCube {};
 
-    float totalTime_ { 0.0f };
+    float totalTime { 0.0f };
 };
 
 

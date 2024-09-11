@@ -10,9 +10,14 @@ namespace gmath {
         x { 0 }, y { 0 }, z { 0 }
     {}
 
-    Vec3::Vec3(f32 xP, f32 yP, f32 zP) :
-        x { xP }, y { yP }, z { zP }
+    Vec3::Vec3(f32 x_, f32 y_, f32 z_) :
+            x { x_ }, y { y_ }, z { z_ }
     {}
+
+    const Vec3 Vec3::zero {0.0f, 0.0f , 0.0f};
+    const Vec3 Vec3::up {0.0f, 1.0f , 0.0f};
+    const Vec3 Vec3::right {1.0f, 0.0f , 0.0f};
+    const Vec3 Vec3::front {0.0f, 0.0f , 1.0f};
 
     Vec3& Vec3::operator+=(const Vec3& r) {
         x += r.x;

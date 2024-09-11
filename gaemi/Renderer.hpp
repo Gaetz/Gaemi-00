@@ -9,6 +9,7 @@
 #include "Rect.hpp"
 #include "Vec4.hpp"
 #include "Vec3.hpp"
+#include "Cam3D.hpp"
 
 struct Texture;
 struct Color;
@@ -37,10 +38,12 @@ namespace render {
     };
 
     void BeginDraw();
+    void BeginMode3D(const Cam3D& camera);
 
     void ClearScreen();
 
     void EndDraw();
+    void EndMode3D();
 
     GAPI void DrawTexture(const Texture& texture2D, i32 x, i32 y, Color tint);
     GAPI void DrawSprite(const Texture& texture2D, Rect srcRect, Rect dstRect, Color tint);
@@ -54,6 +57,10 @@ namespace render {
 
     GAPI void BeginShaderMode(const str& shaderName);
     GAPI void EndShaderMode();
+    GAPI void EnableBackfaceCulling();
+    GAPI void DisableBackfaceCulling();
+    GAPI void EnableDepthMask();
+    GAPI void DisableDepthMask();
 
     GAPI void SetShaderInt(const str& shaderName, const str& location, i32 value);
     GAPI void SetShaderFloat(const str& shaderName, const str& location, f32 value);
