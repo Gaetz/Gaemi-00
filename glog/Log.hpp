@@ -50,6 +50,7 @@ public:
 private:
     std::ostringstream stream;
     LogLevel logLevel { LogLevel::Trace };
+    char pad[4];
 
     static std::ofstream file;
     static str GetLabel(LogLevel level);

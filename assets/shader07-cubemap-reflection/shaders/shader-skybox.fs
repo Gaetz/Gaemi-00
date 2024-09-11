@@ -14,11 +14,6 @@ void main()
     // Fetch color from texture map
     vec3 colour = texture(environmentMap, fragPosition).rgb;
 
-    // Gamma correction
-    colour = colour/(colour + vec3(1.0));
-    colour = pow(colour, vec3(1.0/2.2));
-
-
     // Calculate final fragment color
     finalColor = vec4(colour, 1.0);
 }
