@@ -23,7 +23,7 @@ SceneGame::SceneGame(Game &game) : game{game}
 }
 
 void SceneGame::Load() {
-    AssetsManager::LoadFragmentShader("shader", "shader.fs");
+    AssetsManager::LoadFragmentShader("shader", "shader.frag");
     shaderTexture = AssetsManager::GenerateTexture(1024, 600, BLANK);
 }
 

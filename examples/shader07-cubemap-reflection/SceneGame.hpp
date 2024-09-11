@@ -31,7 +31,7 @@ private:
     Game& game;
 
     Model model {};
-    Cam3D camera { Vec3 { -3.0f, 0.4f, -1.0f } };
+    Cam3D camera { Vec3 { -3.0f, 1.0f, -1.0f }, Vec3 { 0.0f, -0.25f, 0.0f } };
     TextureCubemap skyboxTexture {};
     Model skyboxCube {};
 

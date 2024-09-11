@@ -26,7 +26,7 @@ void SceneGame::Load() {
     AssetsManager::LoadTexture("frame", "frame.png", ToSceneId(SceneName::SceneGame));
     AssetsManager::LoadTexture("mask", "mask.png", ToSceneId(SceneName::SceneGame));
 
-    AssetsManager::LoadFragmentShader("shader", "shader.fs");
+    AssetsManager::LoadFragmentShader("shader", "shader.frag");
 
     Texture& frame = AssetsManager::GetTexture("frame");
     Texture& mask = AssetsManager::GetTexture("mask");

@@ -23,7 +23,7 @@ SceneGame::SceneGame(Game &game) : game{game}
 }
 
 void SceneGame::Load() {
-    AssetsManager::LoadShader("shader-lighting", "shader-lighting.vs", "shader-lighting.fs");
+    AssetsManager::LoadShader("shader-lighting", "shader-lighting.vert", "shader-lighting.frag");
     AssetsManager::LoadModel("suzanne", "suzanne.glb", ToSceneId(SceneName::SceneGame));
     model_ = AssetsManager::GetModel("suzanne");
     camera_.position = { -3.0f, 0.4f, -1.0f };

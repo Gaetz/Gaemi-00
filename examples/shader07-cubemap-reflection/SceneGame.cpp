@@ -23,8 +23,8 @@ SceneGame::SceneGame(Game &game) : game{game}
 }
 
 void SceneGame::Load() {
-    AssetsManager::LoadShader("shader-lighting", "shader-lighting.vs", "shader-lighting.fs");
-    AssetsManager::LoadShader("shader-skybox", "shader-skybox.vs", "shader-skybox.fs");
+    AssetsManager::LoadShader("shader-lighting", "shader-lighting.vert", "shader-lighting.frag");
+    AssetsManager::LoadShader("shader-skybox", "shader-skybox.vert", "shader-skybox.frag");
     AssetsManager::LoadModel("suzanne", "suzanne.glb", ToSceneId(SceneName::SceneGame));
 
     model = AssetsManager::GetModel("suzanne");
