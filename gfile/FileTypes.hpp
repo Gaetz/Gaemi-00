@@ -18,6 +18,7 @@ namespace gfile {
         System = 1,
         Texture = 2,
         Shader = 3,
+        Model = 4,
     };
 
     /**

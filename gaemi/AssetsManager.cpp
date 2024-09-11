@@ -15,6 +15,8 @@ unordered_map<str, Texture> AssetsManager::textures {};
 unordered_map<i32, str> AssetsManager::sceneLoadedTextures {};
 unordered_map<str, f32> AssetsManager::data {};
 unordered_map<str, Shader> AssetsManager::shaders {};
+unordered_map<str, Model> AssetsManager::models {};
+unordered_map<i32, str> AssetsManager::sceneLoadedModels {};
 
 void AssetsManager::Initialize(const str& gameAssetsPath) {
     // Setting default folders
@@ -23,18 +25,31 @@ void AssetsManager::Initialize(const str& gameAssetsPath) {
         return;
     }
     File::SetGameAssetsPath(gameAssetsPath);
-    // Default image for invalid textures
+    // Default assets
     LoadSystemTexture(defaultTextureId, "invalid-texture.png");
+    LoadSystemModel(defaultModelId);
 }
 
 void AssetsManager::LoadTexture(const str& name, const str& filename, i32 sceneId) {
-    Texture texture = ::LoadTexture((gfile::FileTypePath(gfile::FileType::Texture)+filename).c_str());
+    str path = gfile::FileTypePath(gfile::FileType::Texture)+filename;
+    Texture texture = ::LoadTexture(path.c_str());
     textures.emplace(name, texture);
     sceneLoadedTextures.emplace(sceneId, name);
 }
 
+void AssetsManager::LoadTextureCubemap(const str& name, const str& filename, CubemapTextureLayout layout, i32 sceneId) {
+    str path = gfile::FileTypePath(gfile::FileType::Texture)+filename;
+    Image cubemapImage = ::LoadImage(path.c_str());
+    Texture cubemapTex = ::LoadTextureCubemap(cubemapImage, static_cast<i32>(layout));
+    ::UnloadImage(cubemapImage);
+    textures.emplace(name, cubemapTex);
+    sceneLoadedTextures.emplace(sceneId, name);
+}
+
+
 void AssetsManager::LoadSystemTexture(const str &name, const str &filename) {
-    Texture texture = ::LoadTexture((gfile::FileTypePath(gfile::FileType::System)+filename).c_str());
+    str path = gfile::FileTypePath(gfile::FileType::System)+filename;
+    Texture texture = ::LoadTexture(path.c_str());
     textures.emplace(name, texture);
     sceneLoadedTextures.emplace(-1, name);
 }
@@ -56,6 +71,14 @@ void AssetsManager::UnloadSceneTextures(i32 sceneId) {
         }
     }
 }
+
+Texture AssetsManager::GenerateTexture(i32 width, i32 height, Color color) {
+    Image image = GenImageColor(width, height, color);
+    Texture texture = LoadTextureFromImage(image);
+    UnloadImage(image);
+    return texture;
+}
+
 
 void AssetsManager::LoadData() {
 
@@ -90,6 +113,11 @@ void AssetsManager::LoadShader(const str& name, const str& vsFilename, const str
     shaders[name] = ::LoadShader(vsPath.c_str(), fsPath.c_str());
 }
 
+void AssetsManager::LoadVertexShader(const str& name, const str& vsFilename) {
+    const str vsPath = gfile::FileTypePath(FileType::Shader) + vsFilename;
+    shaders[name] = ::LoadShader(vsPath.c_str(), nullptr);
+}
+
 void AssetsManager::LoadFragmentShader(const str& name, const str& fsFilename) {
     const str fsPath = gfile::FileTypePath(FileType::Shader) + fsFilename;
     shaders[name] = ::LoadShader(nullptr, fsPath.c_str());
@@ -97,9 +125,46 @@ void AssetsManager::LoadFragmentShader(const str& name, const str& fsFilename) {
 
 Shader AssetsManager::GetShader(const str& name) {
     if (!shaders.contains(name)) {
-        LOG(LogLevel::Error) << "Shader [" << name << "] does not exist in AssetsManager. Returning default shader.";
+        LOG(LogLevel::Error) << "Shader [" << name << "] does not exist in AssetsManager.";
     }
     return shaders.at(name);
 }
 
+void AssetsManager::LoadModel(const str& name, const str& filename, i32 sceneId) {
+    str path = gfile::FileTypePath(gfile::FileType::Model)+filename;
+    Model model = ::LoadModel(path.c_str());
+    models.emplace(name, model);
+    sceneLoadedTextures.emplace(sceneId, name);
+}
+
+void AssetsManager::LoadSystemModel(const str &name) {
+    Mesh cube = GenMeshCube(1.0f, 1.0f, 1.0f);
+    Model defaultCube = ::LoadModelFromMesh(cube);
+    models.emplace(name, defaultCube);
+    sceneLoadedModels.emplace(-1, name);
+}
+
+
+Model& AssetsManager::GetModel(const str& name) {
+    if (!models.contains(name)) {
+        LOG(LogLevel::Error) << "Model [" << name << "] does not exist in AssetsManager. Returning default model.";
+        return models.at(defaultModelId);
+    }
+    return models.at(name);
+}
+
+void AssetsManager::UnloadSceneModels(i32 sceneId) {
+    for (auto& modelId : sceneLoadedModels) {
+        if (modelId.first == sceneId) {
+            ::UnloadModel(GetModel(modelId.second));
+            models.erase(modelId.second);
+        }
+    }
+}
+
+Model AssetsManager::GenerateCube(f32 sizeX, f32 sizeY, f32 sizeZ) {
+    Mesh cube = ::GenMeshCube(sizeX, sizeY, sizeZ);
+    Model model = ::LoadModelFromMesh(cube);
+    return model;
+}
 

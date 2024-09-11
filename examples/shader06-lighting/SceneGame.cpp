@@ -24,7 +24,8 @@ SceneGame::SceneGame(Game &game) : game{game}
 
 void SceneGame::Load() {
     AssetsManager::LoadShader("shader-lighting", "shader-lighting.vs", "shader-lighting.fs");
-    model_ = LoadModel("assets/shader06-lighting/models/suzanne.glb");
+    AssetsManager::LoadModel("suzanne", "suzanne.glb", ToSceneId(SceneName::SceneGame));
+    model_ = AssetsManager::GetModel("suzanne");
     camera_.position = { -3.0f, 0.4f, -1.0f };
     camera_.target = { 0.0f, 0.0f, 0.0f };
     camera_.up = { 0.0f, 1.0f, 0.0f };
@@ -53,4 +54,5 @@ void SceneGame::Draw() {
 
 void SceneGame::Unload() {
     //AssetsManager::UnloadSceneTextures(ToSceneId(SceneName::SceneGame));
+    AssetsManager::UnloadSceneModels(ToSceneId(SceneName::SceneGame));
 }

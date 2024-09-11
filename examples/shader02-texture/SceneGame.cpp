@@ -23,8 +23,8 @@ SceneGame::SceneGame(Game &game) : game{game}
 }
 
 void SceneGame::Load() {
-    AssetsManager::LoadTexture("frame", "frame.png", static_cast<i32>(SceneName::SceneGame));
-    AssetsManager::LoadTexture("mask", "mask.png", static_cast<i32>(SceneName::SceneGame));
+    AssetsManager::LoadTexture("frame", "frame.png", ToSceneId(SceneName::SceneGame));
+    AssetsManager::LoadTexture("mask", "mask.png", ToSceneId(SceneName::SceneGame));
 
     AssetsManager::LoadFragmentShader("shader", "shader.fs");
 
@@ -37,9 +37,7 @@ void SceneGame::Load() {
     render::SetTextureWrap(mask, render::TextureWrapMode::Repeat);
     render::SetTextureFilter(mask, render::TextureFilterMode::Trilinear);
 
-    Image imBlank = GenImageColor(1024, 600, BLANK);
-    shaderTexture = LoadTextureFromImage(imBlank);
-    UnloadImage(imBlank);
+    shaderTexture = AssetsManager::GenerateTexture(1024, 600, BLANK);
 
     // For the first example
     //shaderTexture = AssetsManager::GetTexture("frame");

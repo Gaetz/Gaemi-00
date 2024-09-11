@@ -15,10 +15,13 @@ namespace gfile {
                 return gfile::File::GetGameAssetsPath() + "/system/";
             }
             case FileType::Texture: {
-                return gfile::File::GetGameAssetsPath() + "/images/";
+                return gfile::File::GetGameAssetsPath() + "/textures/";
             }
             case FileType::Shader: {
                 return gfile::File::GetGameAssetsPath() + "/shaders/";
+            }
+            case FileType::Model: {
+                return gfile::File::GetGameAssetsPath() + "/models/";
             }
             default: {
                 return "";

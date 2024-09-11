@@ -24,9 +24,7 @@ SceneGame::SceneGame(Game &game) : game{game}
 
 void SceneGame::Load() {
     AssetsManager::LoadFragmentShader("shader", "shader.fs");
-    Image imBlank = GenImageColor(1024, 600, BLANK);
-    shaderTexture = LoadTextureFromImage(imBlank);
-    UnloadImage(imBlank);
+    shaderTexture = AssetsManager::GenerateTexture(1024, 600, BLANK);
 }
 
 void SceneGame::Update(f32 dt) {

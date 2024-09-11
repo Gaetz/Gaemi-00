@@ -26,7 +26,9 @@ SceneGame::SceneGame(Game &game) : game{game}
 void SceneGame::Load() {
     AssetsManager::LoadShader("shader-lighting", "shader-lighting.vs", "shader-lighting.fs");
     AssetsManager::LoadShader("shader-skybox", "shader-skybox.vs", "shader-skybox.fs");
-    model_ = LoadModel("assets/shader07-cubemap-reflection/models/suzanne.glb");
+    AssetsManager::LoadModel("suzanne", "suzanne.glb", ToSceneId(SceneName::SceneGame));
+
+    model_ = AssetsManager::GetModel("suzanne");
     camera_.position = { -3.0f, 0.4f, -1.0f };
     camera_.target = { 0.0f, 0.0f, 0.0f };
     camera_.up = { 0.0f, 1.0f, 0.0f };
@@ -34,20 +36,15 @@ void SceneGame::Load() {
     camera_.projection = CAMERA_PERSPECTIVE;
 
 
-    Mesh cube = GenMeshCube(1.0f, 1.0f, 1.0f);
-    skyboxCube_ = LoadModelFromMesh(cube);
+    skyboxCube_ = AssetsManager::GenerateCube(1.0f, 1.0f, 1.0f);
     skyboxCube_.materials[0].shader = AssetsManager::GetShader("shader-skybox");
-    int v[1] { MATERIAL_MAP_CUBEMAP };
-    SetShaderValue(skyboxCube_.materials[0].shader, GetShaderLocation(skyboxCube_.materials[0].shader, "environmentMap"), v, SHADER_UNIFORM_INT);
-
     model_.materials[0].shader = AssetsManager::GetShader("shader-lighting");
-    SetShaderValue(model_.materials[0].shader, GetShaderLocation(model_.materials[0].shader, "environmentMap"), v, SHADER_UNIFORM_INT);
 
-    Image cubemapImage = LoadImage("assets/shader07-cubemap-reflection/textures/cubemap_sky.png");
-    skyboxTexture_ = LoadTextureCubemap(cubemapImage, CUBEMAP_LAYOUT_LINE_VERTICAL);
-    skyboxCube_.materials[0].maps[MATERIAL_MAP_CUBEMAP].texture = skyboxTexture_;
-    model_.materials[0].maps[MATERIAL_MAP_CUBEMAP].texture = skyboxTexture_;
-    UnloadImage(cubemapImage);
+    AssetsManager::LoadTextureCubemap("cubemap_sky", "cubemap_sky.png", CubemapTextureLayout::Vertical, ToSceneId(SceneName::SceneGame));
+    skyboxTexture_ = AssetsManager::GetTexture("cubemap_sky");
+
+    render::SetShaderCubemapOnModel(skyboxCube_, "shader-skybox", "environmentMap", skyboxTexture_);
+    render::SetShaderCubemapOnModel(model_, "shader-lighting", "environmentMap", skyboxTexture_);
 }
 
 void SceneGame::Update(f32 dt) {
@@ -77,4 +74,5 @@ void SceneGame::Draw() {
 
 void SceneGame::Unload() {
     //AssetsManager::UnloadSceneTextures(ToSceneId(SceneName::SceneGame));
+    AssetsManager::UnloadSceneModels(ToSceneId(SceneName::SceneGame));
 }
