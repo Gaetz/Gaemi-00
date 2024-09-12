@@ -46,10 +46,10 @@ void main()
     // Calculate fragment position based on model transformations
     fragPosition = localPosition;
 
-    // 1. Rotation + translation
-    localPosition.xy *= remap(sin(time), -1.0, 1.0, 0.8, 1.2);
+    // 1. Scale + Rotation + Translation
+    localPosition.xy *= remap(sin(time * 2.0), -1.0, 1.0, 0.6, 1.4);
     localPosition = rotateY(time) * localPosition;
-    //localPosition.x = sin(time);
+    localPosition.x += sin(time);
 
     // Send vertex attributes to fragment shader
     fragPosition = (matModel*vec4(localPosition, 1.0)).xyz;
