@@ -28,15 +28,13 @@ void SceneGame::Load() {
     AssetsManager::LoadModel("suzanne", "suzanne.glb", ToSceneId(SceneName::SceneGame));
 
     model = AssetsManager::GetModel("suzanne");
-
+    model.SetMaterialShader(0, AssetsManager::GetShader("shader-lighting"));
 
     skyboxCube = AssetsManager::GenerateCube(1.0f, 1.0f, 1.0f);
-    skyboxCube.materials[0].shader = AssetsManager::GetShader("shader-skybox");
-    model.materials[0].shader = AssetsManager::GetShader("shader-lighting");
+    skyboxCube.SetMaterialShader(0, AssetsManager::GetShader("shader-skybox"));
 
     AssetsManager::LoadTextureCubemap("cubemap_sky", "cubemap_sky.png", CubemapTextureLayout::Vertical, ToSceneId(SceneName::SceneGame));
     skyboxTexture = AssetsManager::GetTexture("cubemap_sky");
-
     render::SetShaderCubemapOnModel(skyboxCube, "shader-skybox", "environmentMap", skyboxTexture);
     render::SetShaderCubemapOnModel(model, "shader-lighting", "environmentMap", skyboxTexture);
 }
@@ -52,19 +50,18 @@ void SceneGame::Update(f32 dt) {
 
 void SceneGame::Draw() {
     render::BeginMode3D(camera);
-    Vec3 camPosition { camera.GetPosition() };
+    const Vec3 camPosition { camera.GetPosition() };
     render::SetShaderVec3("shader-lighting", "camPosition", camPosition);
-    //render::SetShaderSamplerCube("shader-lighting", "skybox", skyboxTexture_);
 
     // We are inside the cube, we need to disable backface culling!
     render::DisableBackfaceCulling();
     render::DisableDepthMask();
-    DrawModel(skyboxCube, { 0, 0, 0}, 1.0f, WHITE);
+    render::DrawModel(skyboxCube, Vec3 { 0, 0, 0}, 1.0f, WHITE);
     render::EnableBackfaceCulling();
     render::EnableDepthMask();
 
-    DrawModel(model, { 0.0f, 0.0f, 0.0f }, 0.5f, WHITE);
-    DrawGrid(10, 1.0f);
+    render::DrawModel(model, Vec3{ 0.0f, 0.0f, 0.0f }, 0.5f, WHITE);
+    render::DrawGrid(10, 1.0f);
     render::EndMode3D();
 }
 

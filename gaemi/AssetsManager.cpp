@@ -15,7 +15,7 @@ unordered_map<str, Texture> AssetsManager::textures {};
 unordered_map<i32, str> AssetsManager::sceneLoadedTextures {};
 unordered_map<str, f32> AssetsManager::data {};
 unordered_map<str, Shader> AssetsManager::shaders {};
-unordered_map<str, Model> AssetsManager::models {};
+unordered_map<str, Model3D> AssetsManager::models {};
 unordered_map<i32, str> AssetsManager::sceneLoadedModels {};
 
 void AssetsManager::Initialize(const str& gameAssetsPath) {
@@ -131,21 +131,21 @@ Shader AssetsManager::GetShader(const str& name) {
 }
 
 void AssetsManager::LoadModel(const str& name, const str& filename, i32 sceneId) {
-    str path = gfile::FileTypePath(gfile::FileType::Model)+filename;
-    Model model = ::LoadModel(path.c_str());
+    const str path = gfile::FileTypePath(gfile::FileType::Model)+filename;
+    Model3D model { ::LoadModel(path.c_str()) };
     models.emplace(name, model);
-    sceneLoadedTextures.emplace(sceneId, name);
+    sceneLoadedModels.emplace(sceneId, name);
 }
 
 void AssetsManager::LoadSystemModel(const str &name) {
-    Mesh cube = GenMeshCube(1.0f, 1.0f, 1.0f);
-    Model defaultCube = ::LoadModelFromMesh(cube);
+    const Mesh cube = GenMeshCube(1.0f, 1.0f, 1.0f);
+    Model3D defaultCube { ::LoadModelFromMesh(cube) };
     models.emplace(name, defaultCube);
     sceneLoadedModels.emplace(-1, name);
 }
 
 
-Model& AssetsManager::GetModel(const str& name) {
+Model3D& AssetsManager::GetModel(const str& name) {
     if (!models.contains(name)) {
         LOG(LogLevel::Error) << "Model [" << name << "] does not exist in AssetsManager. Returning default model.";
         return models.at(defaultModelId);
@@ -156,15 +156,15 @@ Model& AssetsManager::GetModel(const str& name) {
 void AssetsManager::UnloadSceneModels(i32 sceneId) {
     for (auto& modelId : sceneLoadedModels) {
         if (modelId.first == sceneId) {
-            ::UnloadModel(GetModel(modelId.second));
+            GetModel(modelId.second).Unload();
             models.erase(modelId.second);
         }
     }
 }
 
-Model AssetsManager::GenerateCube(f32 sizeX, f32 sizeY, f32 sizeZ) {
+Model3D AssetsManager::GenerateCube(f32 sizeX, f32 sizeY, f32 sizeZ) {
     Mesh cube = ::GenMeshCube(sizeX, sizeY, sizeZ);
-    Model model = ::LoadModelFromMesh(cube);
+    Model3D model { ::LoadModelFromMesh(cube) };
     return model;
 }
 

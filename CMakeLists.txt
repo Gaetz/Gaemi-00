@@ -84,7 +84,7 @@ endif()
 
 
 # Add code.
-set(GAME_DIR examples/shader07-cubemap-reflection)
+set(GAME_DIR examples/shader05-trigo)
 
 add_subdirectory( gplatform )
 add_subdirectory( glog )

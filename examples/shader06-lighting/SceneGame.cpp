@@ -16,40 +16,32 @@ using gecs::Velocity;
 using gecs::Sprite;
 using gecs::Query;
 
-SceneGame::SceneGame(Game &game) : game{game}
-{
-
-
-}
+SceneGame::SceneGame(Game& game) : game { game } {}
 
 void SceneGame::Load() {
     AssetsManager::LoadShader("shader-lighting", "shader-lighting.vert", "shader-lighting.frag");
     AssetsManager::LoadModel("suzanne", "suzanne.glb", ToSceneId(SceneName::SceneGame));
-    model_ = AssetsManager::GetModel("suzanne");
-    camera_.position = { -3.0f, 0.4f, -1.0f };
-    camera_.target = { 0.0f, 0.0f, 0.0f };
-    camera_.up = { 0.0f, 1.0f, 0.0f };
-    camera_.fovy = 45.0f;
-    camera_.projection = CAMERA_PERSPECTIVE;
-
-    model_.materials[0].shader = AssetsManager::GetShader("shader-lighting");
+    model = AssetsManager::GetModel("suzanne");
+    model.SetMaterialShader(0, AssetsManager::GetShader("shader-lighting"));
 }
 
 void SceneGame::Update(f32 dt) {
-    totalTime_ += dt;
+    totalTime += dt;
 
-    camera_.position.x += sinf(totalTime_) * 3.0f * dt;
-    camera_.position.z += cos(totalTime_) * 3.0f * dt;
+    Vec3 cameraNewPos { camera.GetPosition() };
+    cameraNewPos.x += sinf(totalTime) * 3.0f * dt;
+    cameraNewPos.z += cos(totalTime) * 3.0f * dt;
+    camera.SetPosition(cameraNewPos);
 }
 
 void SceneGame::Draw() {
-    BeginMode3D(camera_);
-    Vec3 camPosition { camera_.position.x, camera_.position.y, camera_.position.z };
+    render::BeginMode3D(camera);
+    const Vec3 camPosition { camera.GetPosition() };
     render::SetShaderVec3("shader-lighting", "camPosition", camPosition);
 
-    DrawModel(model_, { 0.0f, 0.0f, 0.0f }, 0.5f, WHITE);
-    DrawGrid(10, 1.0f);
-    EndMode3D();
+    render::DrawModel(model, Vec3{ 0.0f, 0.0f, 0.0f }, 0.5f, WHITE);
+    render::DrawGrid(10, 1.0f);
+    render::EndMode3D();
 }
 
 void SceneGame::Unload() {

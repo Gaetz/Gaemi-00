@@ -5,11 +5,13 @@
 #ifndef GAEMI_ASSETS_MANAGER_HPP
 #define GAEMI_ASSETS_MANAGER_HPP
 
+#include <Model3D.hpp>
 #include <unordered_map>
 #include "Defines.hpp"
 #include "raylib.h"
 
 using std::unordered_map;
+using render::Model3D;
 
 constexpr char defaultTextureId[] = "default";
 constexpr char defaultModelId[] = "default";
@@ -42,9 +44,9 @@ public:
     static GAPI Shader GetShader(const str& name);
 
     static GAPI void LoadModel(const str& name, const str& filename, i32 sceneId);
-    static GAPI Model& GetModel(const str& name);
+    static GAPI Model3D& GetModel(const str& name);
     static GAPI void UnloadSceneModels(i32 sceneId);
-    static GAPI Model GenerateCube(f32 sizeX, f32 sizeY, f32 sizeZ);
+    static GAPI Model3D GenerateCube(f32 sizeX, f32 sizeY, f32 sizeZ);
 
 private:
     static void LoadSystemTexture(const str& name, const str& filename);
@@ -53,7 +55,7 @@ private:
     static unordered_map<str, Texture> textures;
     static unordered_map<i32, str> sceneLoadedTextures;
     static unordered_map<str, Shader> shaders;
-    static unordered_map<str, Model> models;
+    static unordered_map<str, Model3D> models;
     static unordered_map<i32, str> sceneLoadedModels;
 
     static unordered_map<str, f32> data;

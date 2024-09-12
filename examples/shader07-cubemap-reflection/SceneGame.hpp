@@ -12,13 +12,16 @@
 #include "Vec2.hpp"
 #include "World.hpp"
 #include "Cam3D.hpp"
+#include "Model3D.hpp"
 
 using gmath::Vec2;
 using gmath::Vec3;
 using gecs::World;
 using render::Cam3D;
+using render::Model3D;
 
-class SceneGame : public IScene {
+class SceneGame : public IScene
+{
 public:
     explicit SceneGame(Game& game);
     void Load() override;
@@ -30,10 +33,10 @@ private:
     World& world { World::Instance() };
     Game& game;
 
-    Model model {};
+    Model3D model {};
     Cam3D camera { Vec3 { -3.0f, 1.0f, -1.0f }, Vec3 { 0.0f, -0.25f, 0.0f } };
     TextureCubemap skyboxTexture {};
-    Model skyboxCube {};
+    Model3D skyboxCube {};
 
     float totalTime { 0.0f };
 };

@@ -2,7 +2,6 @@
 // Created by gaetz on 05/11/2022.
 //
 
-#include <cmath>
 #include "Renderer.hpp"
 #include "raylib.h"
 #include "AssetsManager.hpp"
@@ -27,6 +26,14 @@ namespace render {
 
     void EndMode3D() {
         ::EndMode3D();
+    }
+
+    void DrawGrid(const i32 slices, const f32 spacing) {
+        ::DrawGrid(slices, spacing);
+    }
+
+    void DrawModel(const Model3D& model, const Vec3& position, const f32 scale, const Color tint) {
+        ::DrawModel(model.ToRaylib(), position.ToRaylib(), scale, tint);
     }
 
     void DrawTexture(const Texture& texture, i32 x, i32 y, Color tint) {
@@ -102,11 +109,11 @@ namespace render {
         ::SetShaderValueTexture(shader, GetShaderLocation(shader, location.c_str()), tex);
     }
 
-    void SetShaderCubemapOnModel(Model& model, const str& shaderName, const str& location, const TextureCubemap& tex) {
+    void SetShaderCubemapOnModel(Model3D& model, const str& shaderName, const str& location, const TextureCubemap& tex) {
         const Shader& shader = AssetsManager::GetShader(shaderName);
         i32 mapId { MATERIAL_MAP_CUBEMAP };
         ::SetShaderValue(shader, GetShaderLocation(shader, location.c_str()), &mapId, SHADER_UNIFORM_INT);
-        model.materials[0].maps[MATERIAL_MAP_CUBEMAP].texture = tex;
+        model.SetMaterialMapTexture(0, MaterialMapType::Cubemap, tex);
     }
 
     void GenerateTextureMipmaps(Texture& tex) {

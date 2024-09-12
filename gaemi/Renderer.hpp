@@ -5,11 +5,13 @@
 #ifndef GAEMI_RENDERER_HPP
 #define GAEMI_RENDERER_HPP
 
+
 #include "Defines.hpp"
 #include "Rect.hpp"
 #include "Vec4.hpp"
 #include "Vec3.hpp"
 #include "Cam3D.hpp"
+#include "Model3D.hpp"
 
 struct Texture;
 struct Color;
@@ -18,6 +20,7 @@ using gmath::Vec2;
 using gmath::Rect;
 using gmath::Vec3;
 using gmath::Vec4;
+using render::Model3D;
 
 namespace render {
 
@@ -38,12 +41,14 @@ namespace render {
     };
 
     void BeginDraw();
+    void EndDraw();
+
     void BeginMode3D(const Cam3D& camera);
+    void EndMode3D();
 
     void ClearScreen();
-
-    void EndDraw();
-    void EndMode3D();
+    void DrawGrid(i32 slices, f32 spacing);
+    void DrawModel(const Model3D& model, const Vec3& position, f32 scale, Color tint);
 
     GAPI void DrawTexture(const Texture& texture2D, i32 x, i32 y, Color tint);
     GAPI void DrawSprite(const Texture& texture2D, Rect srcRect, Rect dstRect, Color tint);
@@ -68,7 +73,7 @@ namespace render {
     GAPI void SetShaderVec3(const str& shaderName, const str& location, Vec3 vec3);
     GAPI void SetShaderVec4(const str& shaderName, const str& location, Vec4 vec4);
     GAPI void SetShaderSampler2D(const str& shaderName, const str& location, const Texture2D& tex);
-    GAPI void SetShaderCubemapOnModel(Model& model, const str& shaderName, const str& location, const TextureCubemap& tex);
+    GAPI void SetShaderCubemapOnModel(Model3D& model, const str& shaderName, const str& location, const TextureCubemap& tex);
 }
 
 #endif //GAEMI_RENDERER_HPP
