@@ -23,7 +23,11 @@ void SceneGame::Load() {
     AssetsManager::LoadShader("shader-skybox", "shader-skybox.vert", "shader-skybox.frag");
     AssetsManager::LoadModel("suzanne", "suzanne.glb", ToSceneId(SceneName::SceneGame));
 
-    model = AssetsManager::GenerateCube(1.0f, 1.0f, 1.0f);
+    // 1.2. Vertex manipulation with a model
+//    model = AssetsManager::GetModel("suzanne");
+    // 3. Ripple effect with a sphere
+    model = AssetsManager::GenerateSphere(1.0f, 64, 64);
+
     model.SetMaterialShader(0, AssetsManager::GetShader("shader-lighting"));
 
     skyboxCube = AssetsManager::GenerateCube(1.0f, 1.0f, 1.0f);

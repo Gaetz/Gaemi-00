@@ -47,6 +47,8 @@ public:
     static GAPI Model3D& GetModel(const str& name);
     static GAPI void UnloadSceneModels(i32 sceneId);
     static GAPI Model3D GenerateCube(f32 sizeX, f32 sizeY, f32 sizeZ);
+    static GAPI Model3D GenerateSphere(f32 radius, i32 rings, i32 slices);
+
 
 private:
     static void LoadSystemTexture(const str& name, const str& filename);

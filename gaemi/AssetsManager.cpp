@@ -168,3 +168,9 @@ Model3D AssetsManager::GenerateCube(f32 sizeX, f32 sizeY, f32 sizeZ) {
     return model;
 }
 
+Model3D AssetsManager::GenerateSphere(f32 radius, i32 rings, i32 slices) {
+    Mesh sphere = ::GenMeshSphere(radius, rings, slices);
+    Model3D model { ::LoadModelFromMesh(sphere) };
+    return model;
+}
+

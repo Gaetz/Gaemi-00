@@ -1,4 +1,4 @@
-#version 330
+#version 410
 
 in vec3 fragPosition;
 in vec2 fragTexCoord;
@@ -37,31 +37,31 @@ void main() {
     vec3 ambient  = vec3(0.5);
     vec3 viewDir = normalize(camPosition - fragPosition);
 
+    vec3 normal = normalize(cross(dFdx(fragPosition), dFdy(fragPosition)));
+
     vec3 skyColour = vec3(0.0, 0.3, 0.6);
     vec3 groundColour = vec3(0.6, 0.3, 0.1);
-    float hemiMix = remap(fragNormal.y, -1.0, 1.0, 0.0, 1.0);
+    float hemiMix = remap(normal.y, -1.0, 1.0, 0.0, 1.0);
     vec3 hemi = mix(groundColour, skyColour, hemiMix);
     vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
     vec3 lightColour = vec3(1.0, 1.0, 0.9);
-    float lambertian = max(0.0, dot(lightDir, fragNormal));
+    float lambertian = max(0.0, dot(lightDir, normal));
     vec3 diffuse = lambertian * lightColour;
     lighting = ambient * 0.1 + hemi * 0.2 + diffuse * 0.7;
 
-    vec3 r = normalize(reflect(-lightDir, fragNormal));
+    vec3 r = normalize(reflect(-lightDir, normal));
     float phongValue = pow(max(0.0, dot(viewDir, r)), 32.0);
     vec3 specular = vec3(phongValue);
 
-    // 1. Image Based Lighting (cubemap)
-    vec3 iblCoord = normalize(reflect(-viewDir, fragNormal));
+    vec3 iblCoord = normalize(reflect(-viewDir, normal));
     vec3 ibl = texture(environmentMap, iblCoord).rgb;
     specular += ibl * 0.5;
 
-    // 2. Fresnel rim lighting
-    float fresnel = 1.0 - max(0.0, dot(viewDir, fragNormal));
+    float fresnel = 1.0 - max(0.0, dot(viewDir, normal));
     fresnel = pow(fresnel, 2.0);
     specular *= fresnel;
 
-    vec3 colour = baseColour * lighting + specular;
+    vec3 colour = baseColour * lighting + specular + fragColor.rgb;
     colour = linearToSRGBApprox(colour); // Improves the lighting
     finalColor = vec4(colour, 1.0);
 }
