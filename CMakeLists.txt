@@ -84,7 +84,7 @@ endif()
 
 
 # Add code.
-set(GAME_DIR examples/shader08-vertex)
+set(GAME_DIR examples/shader09-2d-sdf)
 
 add_subdirectory( gplatform )
 add_subdirectory( glog )
