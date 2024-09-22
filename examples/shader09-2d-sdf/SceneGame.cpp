@@ -29,8 +29,8 @@ void SceneGame::Load() {
 }
 
 void SceneGame::Update(f32 dt) {
-
-
+    totalTime += dt;
+    render::SetShaderFloat("shader", "time", totalTime);
 }
 
 void SceneGame::Draw() {

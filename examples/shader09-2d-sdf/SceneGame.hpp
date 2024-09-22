@@ -27,6 +27,7 @@ private:
     World& world { World::Instance() };
     Game& game;
     Texture2D shaderTexture;
+    float totalTime { 0.0f };
 };
 
 
