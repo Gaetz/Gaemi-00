@@ -63,6 +63,33 @@ mat2 rotate2D(float angle) {
     return mat2(c, -s, s, c);
 }
 
+float opUnion(float d1, float d2) {
+    return min(d1, d2);
+}
+
+float opSubtraction(float d1, float d2) {
+    return max(-d1, d2);
+}
+
+float opIntersection(float d1, float d2) {
+    return max(d1, d2);
+}
+
+float softMax(float a, float b, float k) {
+    return log(exp(k * a) + exp(k * b)) / k;
+}
+
+float softMin(float a, float b, float k) {
+    return -softMax(-a, -b, k);
+}
+
+float softMinValue(float a, float b, float k) {
+    //float h = remap(a - b, -1.0/k, 1.0/k, 0.0, 1.0);
+    // Alternatively
+    float h = exp(-b *k ) / (exp(-a * k) + exp(-b * k));
+    return h;
+}
+
 out vec4 finalColor;
 
 void main() {
@@ -86,16 +113,32 @@ void main() {
     //    colour = mix(yellow, colour, step(0.0, d));
 
     // 3. Same shapes with darker outline and antialiasing
-    float d = sdfCircle(pixelCoord, 100.0);
-    colour = mix(red * 0.5, colour, smoothstep(-1.0, 1.0, d));
-    colour = mix(red, colour, smoothstep(-5.0, 0.0, d));
-    d = sdfLine(pixelCoord, vec2(-100.0, -50.0), vec2(200.0, 75.0));
-    colour = mix(blue * 0.5, colour, smoothstep(4.0, 5.0, d));
-    vec2 pos = pixelCoord - vec2(100.0, 200.0);
-    pos *= rotate2D(time * 0.25);
-    d = sdfRect(pos, vec2(200.0, 25.0));
-    colour = mix(yellow * 0.5, colour, smoothstep(-1.0, 1.0, d));
-    colour = mix(yellow, colour, smoothstep(-5.0, 0.0, d));
+    //    float d = sdfCircle(pixelCoord, 100.0);
+    //    colour = mix(red * 0.5, colour, smoothstep(-1.0, 1.0, d));
+    //    colour = mix(red, colour, smoothstep(-5.0, 0.0, d));
+    //    d = sdfLine(pixelCoord, vec2(-100.0, -50.0), vec2(200.0, 75.0));
+    //    colour = mix(blue * 0.5, colour, smoothstep(4.0, 5.0, d));
+    //    vec2 pos = pixelCoord - vec2(100.0, 200.0);
+    //    pos *= rotate2D(time * 0.25);
+    //    d = sdfRect(pos, vec2(200.0, 25.0));
+    //    colour = mix(yellow * 0.5, colour, smoothstep(-1.0, 1.0, d));
+    //    colour = mix(yellow, colour, smoothstep(-5.0, 0.0, d));
+
+    // 4. Boolean operations
+    float box = sdfRect(rotate2D(time * 0.5) * pixelCoord, vec2(200.0, 100.0));
+    float d1 = sdfCircle(pixelCoord - vec2(-200.0, -150.0), 150.0);
+    float d2 = sdfCircle(pixelCoord - vec2(200.0, -150.0), 150.0);
+    float d3 = sdfCircle(pixelCoord - vec2(0.0, 200.0), 150.0);
+    float d = opUnion(opUnion(d1, d2), d3);
+    // Also try with opUnion, opSubtraction, opIntersection
+    //d = opUnion(box, d);
+
+    // 5. Smooth unions and colors with softMin
+    vec3 sdfColour = mix(red, blue, smoothstep(0.0, 1.0, softMinValue(box, d, 0.01)));
+
+    d = softMin(box, d, 0.06);
+    colour = mix(sdfColour * 0.5, colour, smoothstep(-1.0, 1.0, d));
+    colour = mix(sdfColour, colour, smoothstep(-5.0, 0.0, d));
 
     finalColor = vec4(colour, 1.0);
 }
