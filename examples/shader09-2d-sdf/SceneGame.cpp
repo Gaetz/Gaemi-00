@@ -24,18 +24,19 @@ SceneGame::SceneGame(Game &game) : game{game}
 
 void SceneGame::Load() {
     AssetsManager::LoadFragmentShader("shader", "shader.frag");
+    AssetsManager::LoadFragmentShader("cloudy", "cloudy.frag");
 
     shaderTexture = AssetsManager::GenerateTexture(720, 720, BLANK);
 }
 
 void SceneGame::Update(f32 dt) {
     totalTime += dt;
-    render::SetShaderFloat("shader", "time", totalTime);
+    render::SetShaderFloat("cloudy", "time", totalTime);
 }
 
 void SceneGame::Draw() {
-    render::BeginShaderMode("shader");
-    render::SetShaderVec2("shader", "resolution", Vec2(720, 720));
+    render::BeginShaderMode("cloudy");
+    render::SetShaderVec2("cloudy", "resolution", Vec2(720, 720));
 
     render::DrawTexture(shaderTexture, 256, 0, WHITE);
     render::EndShaderMode();
