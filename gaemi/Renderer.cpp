@@ -135,4 +135,14 @@ namespace render {
     void DisableDepthMask() {
         ::rlDisableDepthMask();
     }
+
+    void DrawPoint3D(const Vec3& position, Color color) {
+        ::DrawPoint3D(position.ToRaylib(), color);
+    }
+
+    void DrawTriangleStrip3D(const vector<Vec3>& points, Color color) {
+        auto* start = (Vector3 *) points.data();
+        ::DrawTriangleStrip3D(start, points.size(), color);
+    }
+
 }
