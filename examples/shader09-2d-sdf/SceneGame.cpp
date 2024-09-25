@@ -11,10 +11,7 @@
 #include "Renderer.hpp"
 #include "Query.hpp"
 
-using gecs::Position;
-using gecs::Velocity;
-using gecs::Sprite;
-using gecs::Query;
+using gassets::AssetsManager;
 
 SceneGame::SceneGame(Game &game) : game{game}
 {
@@ -31,15 +28,15 @@ void SceneGame::Load() {
 
 void SceneGame::Update(f32 dt) {
     totalTime += dt;
-    render::SetShaderFloat("cloudy", "time", totalTime);
+    gdraw::SetShaderFloat("cloudy", "time", totalTime);
 }
 
 void SceneGame::Draw() {
-    render::BeginShaderMode("cloudy");
-    render::SetShaderVec2("cloudy", "resolution", Vec2(720, 720));
+    gdraw::BeginShaderMode("cloudy");
+    gdraw::SetShaderVec2("cloudy", "resolution", Vec2(720, 720));
 
-    render::DrawTexture(shaderTexture, 256, 0, WHITE);
-    render::EndShaderMode();
+    gdraw::DrawTexture(shaderTexture, 256, 0, WHITE);
+    gdraw::EndShaderMode();
 }
 
 void SceneGame::Unload() {

@@ -11,7 +11,7 @@
 
 using gmath::Rect;
 
-namespace render::im {
+namespace gdraw::im {
     i32 GuiSlider(const Rect& rect, const str& textLeft, const str& textRight, f32 value, f32 minValue, f32 maxValue) {
         return ::GuiSlider(rect.ToRaylib(), textLeft.c_str(), textRight.c_str(), &value, minValue, maxValue);
     }

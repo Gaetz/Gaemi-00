@@ -2,15 +2,16 @@
 // Created by gaetz on 24/09/2024.
 //
 
-#ifndef MESH01_GRID3D_HPP
-#define MESH01_GRID3D_HPP
+#ifndef GDRAW_GRID3D_HPP
+#define GDRAW_GRID3D_HPP
 
 #include "Defines.hpp"
 #include "Vec3.hpp"
 
 using gmath::Vec3;
 
-class Grid3D {
+class Grid3D
+{
 public:
     Grid3D(i32 width_, i32 height_, bool isCentered_);
     void Draw();
@@ -25,4 +26,4 @@ private:
     void Generate();
 };
 
-#endif //MESH01_GRID3D_HPP
+#endif //GDRAW_GRID3D_HPP

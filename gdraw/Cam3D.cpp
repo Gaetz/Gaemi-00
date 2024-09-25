@@ -7,7 +7,7 @@
 
 using gmath::Mat4;
 
-namespace render {
+namespace gdraw {
     Cam3D::Cam3D(Vec3 position_, Vec3 target_) : position(position_), target(target_) {}
 
     void Cam3D::Update(f32 dt) {

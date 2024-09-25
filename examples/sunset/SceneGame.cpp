@@ -71,12 +71,12 @@ void SceneGame::Update(f32 dt) {
 }
 
 void SceneGame::Draw() {
-    render::DrawTexture(backgroundTexture, 0, 120, WHITE);
+    gdraw::DrawTexture(backgroundTexture, 0, 120, WHITE);
 
     // Query all entities with a position and a sprite
     auto posSprites = gecs::Query<Position, Sprite>();
     posSprites.Each([](Position& pos, Sprite& spr) {
-        render::DrawTexture(spr.texture, pos.x, pos.y, WHITE);
+        gdraw::DrawTexture(spr.texture, pos.x, pos.y, WHITE);
     });
 }
 

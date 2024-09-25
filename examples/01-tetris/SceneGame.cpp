@@ -15,6 +15,7 @@ using gecs::Position;
 using gecs::Velocity;
 using gecs::Sprite;
 using gecs::Query;
+using gassets::AssetsManager;
 
 i32 figures[7][4]{
         1, 3, 5, 7,
@@ -96,13 +97,13 @@ void SceneGame::Update(f32 dt) {
 }
 
 void SceneGame::Draw() {
-    render::DrawTexture(backgroundTexture, 0, 0, WHITE);
+    gdraw::DrawTexture(backgroundTexture, 0, 0, WHITE);
 
     auto posSprites = world.Find<Position, Sprite>();
     posSprites.Reset();
     posSprites.Read([](const Position &pos, const Sprite &spr) {
         Rect dst{pos.x, pos.y, spr.dstSize.x, spr.dstSize.y};
-        render::DrawSprite(spr.texture, spr.srcRect, dst, WHITE);
+        gdraw::DrawSprite(spr.texture, spr.srcRect, dst, WHITE);
     });
 }
 

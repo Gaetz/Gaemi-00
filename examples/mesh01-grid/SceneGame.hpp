@@ -6,14 +6,13 @@
 #define MESH01_SCENE_GAME_HPP
 
 #include "IScene.hpp"
-#include "raylib.h"
 #include "Game.hpp"
 #include "Vec2.hpp"
 #include "Cam3D.hpp"
 #include "Grid3D.hpp"
 
 using gmath::Vec2;
-using render::Cam3D;
+using gdraw::Cam3D;
 
 class SceneGame : public IScene {
 public:

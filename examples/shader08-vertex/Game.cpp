@@ -3,10 +3,12 @@
 //
 
 #include "Game.hpp"
+
+#include <ranges>
+
 #include "SceneGame.hpp"
 
 void Game::Load() {
-    World::Instance().Init();
     AddScene(std::make_unique<SceneGame>(*this));
 }
 

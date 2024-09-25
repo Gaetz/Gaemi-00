@@ -33,34 +33,34 @@ void SceneGame::Load() {
     skyboxCube = AssetsManager::GenerateCube(1.0f, 1.0f, 1.0f);
     skyboxCube.SetMaterialShader(0, AssetsManager::GetShader("shader-skybox"));
 
-    AssetsManager::LoadTextureCubemap("cubemap_sky", "cubemap_sky.png", CubemapTextureLayout::Vertical,
+    AssetsManager::LoadTextureCubemap("cubemap_sky", "cubemap_sky.png", gassets::CubemapTextureLayout::Vertical,
                                       ToSceneId(SceneName::SceneGame));
     skyboxTexture = AssetsManager::GetTexture("cubemap_sky");
-    render::SetShaderCubemapOnModel(skyboxCube, "shader-skybox", "environmentMap", skyboxTexture);
-    render::SetShaderCubemapOnModel(model, "shader-lighting", "environmentMap", skyboxTexture);
+    gdraw::SetShaderCubemapOnModel(skyboxCube, "shader-skybox", "environmentMap", skyboxTexture);
+    gdraw::SetShaderCubemapOnModel(model, "shader-lighting", "environmentMap", skyboxTexture);
 }
 
 void SceneGame::Update(f32 dt) {
     totalTime += dt;
-    render::SetShaderFloat("shader-lighting", "time", totalTime);
+    gdraw::SetShaderFloat("shader-lighting", "time", totalTime);
 
 }
 
 void SceneGame::Draw() {
-    render::BeginMode3D(camera);
+    gdraw::BeginMode3D(camera);
     const Vec3 camPosition { camera.GetPosition() };
-    render::SetShaderVec3("shader-lighting", "camPosition", camPosition);
+    gdraw::SetShaderVec3("shader-lighting", "camPosition", camPosition);
 
     // We are inside the cube, we need to disable backface culling!
-    render::DisableBackfaceCulling();
-    render::DisableDepthMask();
-    render::DrawModel(skyboxCube, Vec3 { 0, 0, 0 }, 1.0f, WHITE);
-    render::EnableBackfaceCulling();
-    render::EnableDepthMask();
+    gdraw::DisableBackfaceCulling();
+    gdraw::DisableDepthMask();
+    gdraw::DrawModel(skyboxCube, Vec3 { 0, 0, 0 }, 1.0f, WHITE);
+    gdraw::EnableBackfaceCulling();
+    gdraw::EnableDepthMask();
 
-    render::DrawModel(model, Vec3 { 0.0f, 0.0f, 0.0f }, 0.5f, WHITE);
-    render::DrawGrid(10, 1.0f);
-    render::EndMode3D();
+    gdraw::DrawModel(model, Vec3 { 0.0f, 0.0f, 0.0f }, 0.5f, WHITE);
+    gdraw::DrawGrid(10, 1.0f);
+    gdraw::EndMode3D();
 }
 
 void SceneGame::Unload() {

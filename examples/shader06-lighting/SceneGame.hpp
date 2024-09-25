@@ -16,8 +16,8 @@
 
 using gmath::Vec2;
 using gecs::World;
-using render::Cam3D;
-using render::Model3D;
+using gdraw::Cam3D;
+using gassets::Model3D;
 
 class SceneGame : public IScene {
 public:

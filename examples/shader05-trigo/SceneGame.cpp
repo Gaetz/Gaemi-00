@@ -3,18 +3,12 @@
 //
 
 #include "SceneGame.hpp"
-#include <iomanip>
 #include "ImRenderer.h"
-#include "../gecs/World.hpp"
-#include "../gecs/Entity.hpp"
 #include "AssetsManager.hpp"
 #include "Renderer.hpp"
 #include "Query.hpp"
 
-using gecs::Position;
-using gecs::Velocity;
-using gecs::Sprite;
-using gecs::Query;
+using gassets::AssetsManager;
 
 SceneGame::SceneGame(Game &game) : game{game}
 {
@@ -34,11 +28,11 @@ void SceneGame::Update(f32 dt) {
 }
 
 void SceneGame::Draw() {
-    render::BeginShaderMode("shader");
-    render::SetShaderFloat("shader", "time", totalTime);
+    gdraw::BeginShaderMode("shader");
+    gdraw::SetShaderFloat("shader", "time", totalTime);
 
-    render::DrawTexture(shaderTexture, 128, 60, WHITE);
-    render::EndShaderMode();
+    gdraw::DrawTexture(shaderTexture, 128, 60, WHITE);
+    gdraw::EndShaderMode();
 }
 
 void SceneGame::Unload() {

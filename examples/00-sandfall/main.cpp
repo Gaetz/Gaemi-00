@@ -11,7 +11,7 @@ int main()
     Log::Restart();
 
     Engine engine;
-    engine.Start(1280, 720, "Sandfall", "assets/sandfall", std::make_unique<Game>());
+    engine.Start(1280, 720, "Sandfall", "assets/00-sandfall", std::make_unique<Game>());
 
     return 0;
 }

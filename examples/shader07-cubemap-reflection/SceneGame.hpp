@@ -2,23 +2,23 @@
 // Created by gaetz on 07/02/2024.
 //
 
-#ifndef SHADER01_SCENE_GAME_HPP
-#define SHADER01_SCENE_GAME_HPP
+#ifndef SHADER09_SCENE_GAME_HPP
+#define SHADER09_SCENE_GAME_HPP
+
+#include <AssetsManager.hpp>
 
 #include "IScene.hpp"
 #include "raylib.h"
 #include "Game.hpp"
-#include "../gecs/Types.hpp"
 #include "Vec2.hpp"
-#include "World.hpp"
 #include "Cam3D.hpp"
 #include "Model3D.hpp"
 
 using gmath::Vec2;
 using gmath::Vec3;
-using gecs::World;
-using render::Cam3D;
-using render::Model3D;
+using gdraw::Cam3D;
+using gassets::Model3D;
+using gassets::AssetsManager;
 
 class SceneGame : public IScene
 {
@@ -30,7 +30,6 @@ public:
     void Unload() override;
 
 private:
-    World& world { World::Instance() };
     Game& game;
 
     Model3D model {};
@@ -42,4 +41,4 @@ private:
 };
 
 
-#endif //SHADER01_SCENE_GAME_HPP
+#endif //SHADER09_SCENE_GAME_HPP

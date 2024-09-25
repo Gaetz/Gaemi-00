@@ -2,16 +2,15 @@
 // Created by gaetz on 05/11/2022.
 //
 
-#ifndef GAEMI_RENDERER_HPP
-#define GAEMI_RENDERER_HPP
-
+#ifndef GDRAW_RENDERER_HPP
+#define GDRAW_RENDERER_HPP
 
 #include "Defines.hpp"
 #include "Rect.hpp"
 #include "Vec4.hpp"
 #include "Vec3.hpp"
 #include "Cam3D.hpp"
-#include "Model3D.hpp"
+#include <Model3D.hpp>
 
 struct Texture;
 struct Color;
@@ -20,18 +19,18 @@ using gmath::Vec2;
 using gmath::Rect;
 using gmath::Vec3;
 using gmath::Vec4;
-using render::Model3D;
 
-namespace render {
-
-    enum class TextureWrapMode {
+namespace gdraw {
+    enum class TextureWrapMode
+    {
         Repeat = 0,
         Clamp = 1,
         MirrorRepeat = 2,
         MirrorClamp = 3
     };
 
-    enum class TextureFilterMode {
+    enum class TextureFilterMode
+    {
         Point = 0,
         Bilinear = 1,
         Trilinear = 2,
@@ -51,7 +50,7 @@ namespace render {
     void DrawTriangle3D(const Vec3& v1, const Vec3& v2, const Vec3& v3, Color color);
     void DrawTriangleStrip3D(const vector<Vec3>& points, Color color);
     void DrawGrid(i32 slices, f32 spacing);
-    void DrawModel(const Model3D& model, const Vec3& position, f32 scale, Color tint);
+    void DrawModel(const gassets::Model3D& model, const Vec3& position, f32 scale, Color tint);
 
     GAPI void DrawTexture(const Texture& texture2D, i32 x, i32 y, Color tint);
     GAPI void DrawSprite(const Texture& texture2D, Rect srcRect, Rect dstRect, Color tint);
@@ -76,7 +75,8 @@ namespace render {
     GAPI void SetShaderVec3(const str& shaderName, const str& location, Vec3 vec3);
     GAPI void SetShaderVec4(const str& shaderName, const str& location, Vec4 vec4);
     GAPI void SetShaderSampler2D(const str& shaderName, const str& location, const Texture2D& tex);
-    GAPI void SetShaderCubemapOnModel(Model3D& model, const str& shaderName, const str& location, const TextureCubemap& tex);
+    GAPI void SetShaderCubemapOnModel(gassets::Model3D& model, const str& shaderName, const str& location,
+                                      const TextureCubemap& tex);
 }
 
-#endif //GAEMI_RENDERER_HPP
+#endif //GDRAW_RENDERER_HPP

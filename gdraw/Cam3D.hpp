@@ -2,15 +2,15 @@
 // Created by gaetz on 11/09/2024.
 //
 
-#ifndef GAEMI_CAM3D_HPP
-#define GAEMI_CAM3D_HPP
+#ifndef GDRAW_CAM3D_HPP
+#define GDRAW_CAM3D_HPP
 
 #include "Defines.hpp"
 #include "Vec3.hpp"
 
 using gmath::Vec3;
 
-namespace render {
+namespace gdraw {
     enum class CameraProjection
     {
         Perspective = CAMERA_PERSPECTIVE,
@@ -125,4 +125,4 @@ namespace render {
     };
 } // render
 
-#endif //GAEMI_CAM3D_HPP
+#endif //GDRAW_CAM3D_HPP

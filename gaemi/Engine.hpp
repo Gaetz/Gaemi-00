@@ -6,7 +6,6 @@
 #define GAEMI_ENGINE_HPP
 
 #include <string>
-#include "Renderer.hpp"
 #include "Defines.hpp"
 
 class IGame;

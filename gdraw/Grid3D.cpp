@@ -39,9 +39,9 @@ void Grid3D::Generate() {
 
 void Grid3D::Draw() {
     for (const auto& vertex : vertices) {
-        render::DrawPoint3D(vertex + Vec3(0, 0, -0.1), RED);
+        gdraw::DrawPoint3D(vertex + Vec3(0, 0, -0.1), RED);
     }
     for (i32 i = 0; i < indices.size(); i += 3) {
-        render::DrawTriangle3D(vertices[indices[i]], vertices[indices[i + 1]], vertices[indices[i + 2]], WHITE);
+        gdraw::DrawTriangle3D(vertices[indices[i]], vertices[indices[i + 1]], vertices[indices[i + 2]], WHITE);
     }
 }

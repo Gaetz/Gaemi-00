@@ -13,6 +13,8 @@ using gecs::Position;
 using gecs::Velocity;
 using gecs::Sprite;
 using gecs::Query;
+using gassets::AssetsManager;
+
 
 SceneGame::SceneGame(Game& game) : game { game },
                                    ATOM_WIDTH { AssetsManager::GetData("ATOM_WIDTH") },
@@ -137,7 +139,7 @@ void SceneGame::Draw() {
     // Query all entities with a position and a sprite
     auto posSprites = gecs::Query<Position, Sprite>();
     posSprites.Read([](const Position& pos, const Sprite& spr) {
-        render::DrawTexture(spr.texture, pos.x, pos.y, WHITE);
+        gdraw::DrawTexture(spr.texture, pos.x, pos.y, WHITE);
     });
 }
 

@@ -90,6 +90,8 @@ add_subdirectory( gplatform )
 add_subdirectory( glog )
 add_subdirectory( gfile )
 add_subdirectory( gmath )
+add_subdirectory( gdraw )
+add_subdirectory( gassets )
 add_subdirectory( gecs )
 #add_subdirectory( gcausality ) -- Not ready yet
 add_subdirectory( gaemi )

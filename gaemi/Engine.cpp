@@ -11,6 +11,9 @@
 #include "Log.hpp"
 #include "AssetsManager.hpp"
 #include "Jobs.hpp"
+#include "Renderer.hpp"
+
+using gassets::AssetsManager;
 
 void Engine::Start(i32 windowWidth, i32 windowHeight, const str& gameNameP,
                    const str& gameAssetsPathP, uptr<IGame>&& gameP) noexcept
@@ -37,13 +40,11 @@ void Engine::Start(i32 windowWidth, i32 windowHeight, const str& gameNameP,
 #endif
         game->Update(dt);
 
-
-
-        render::BeginDraw();
-        render::ClearScreen();
+        gdraw::BeginDraw();
+        gdraw::ClearScreen();
         game->Draw();
         DrawFPS(50, 20);
-        render::EndDraw();
+        gdraw::EndDraw();
     }
 
     game->Unload();

@@ -6,8 +6,12 @@
 #include "raylib.h"
 #include "AssetsManager.hpp"
 #include "rlgl.h"
+#include "Model3D.hpp"
 
-namespace render {
+using gassets::AssetsManager;
+using gassets::Model3D;
+
+namespace gdraw {
     void BeginDraw() {
         BeginDrawing();
     }
@@ -113,7 +117,7 @@ namespace render {
         const Shader& shader = AssetsManager::GetShader(shaderName);
         i32 mapId { MATERIAL_MAP_CUBEMAP };
         ::SetShaderValue(shader, GetShaderLocation(shader, location.c_str()), &mapId, SHADER_UNIFORM_INT);
-        model.SetMaterialMapTexture(0, MaterialMapType::Cubemap, tex);
+        model.SetMaterialMapTexture(0, gassets::MaterialMapType::Cubemap, tex);
     }
 
     void GenerateTextureMipmaps(Texture& tex) {

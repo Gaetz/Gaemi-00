@@ -3,24 +3,14 @@
 //
 
 #include "SceneGame.hpp"
-#include <iomanip>
 #include "ImRenderer.h"
-#include "../gecs/World.hpp"
-#include "../gecs/Entity.hpp"
 #include "AssetsManager.hpp"
 #include "Renderer.hpp"
 #include "Query.hpp"
 
-using gecs::Position;
-using gecs::Velocity;
-using gecs::Sprite;
-using gecs::Query;
+using gassets::AssetsManager;
 
-SceneGame::SceneGame(Game &game) : game{game}
-{
-
-
-}
+SceneGame::SceneGame(Game& game) : game { game } {}
 
 void SceneGame::Load() {
     AssetsManager::LoadFragmentShader("shader", "shader.frag");
@@ -30,15 +20,15 @@ void SceneGame::Load() {
 
 void SceneGame::Update(f32 dt) {
     totalTime += dt;
-    render::SetShaderFloat("shader", "time", totalTime);
+    gdraw::SetShaderFloat("shader", "time", totalTime);
 }
 
 void SceneGame::Draw() {
-    render::BeginShaderMode("shader");
-    render::SetShaderVec2("shader", "resolution", Vec2(720, 720));
+    gdraw::BeginShaderMode("shader");
+    gdraw::SetShaderVec2("shader", "resolution", Vec2(720, 720));
 
-    render::DrawTexture(shaderTexture, 256, 0, WHITE);
-    render::EndShaderMode();
+    gdraw::DrawTexture(shaderTexture, 256, 0, WHITE);
+    gdraw::EndShaderMode();
 }
 
 void SceneGame::Unload() {
