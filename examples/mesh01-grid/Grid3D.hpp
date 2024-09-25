@@ -20,9 +20,9 @@ private:
     i32 height { 0 };
     bool isCentered { false };
     vector<Vec3> vertices;
+    vector<i32> indices;
 
     void Generate();
 };
-
 
 #endif //MESH01_GRID3D_HPP

@@ -48,6 +48,7 @@ namespace render {
 
     void ClearScreen();
     void DrawPoint3D(const Vec3& position, Color color);
+    void DrawTriangle3D(const Vec3& v1, const Vec3& v2, const Vec3& v3, Color color);
     void DrawTriangleStrip3D(const vector<Vec3>& points, Color color);
     void DrawGrid(i32 slices, f32 spacing);
     void DrawModel(const Model3D& model, const Vec3& position, f32 scale, Color tint);

@@ -24,7 +24,7 @@ SceneGame::SceneGame(Game &game) : game{game}
 
 void SceneGame::Load() {
     AssetsManager::LoadFragmentShader("shader", "shader.frag");
-
+    DisableCursor();
     //shaderTexture = AssetsManager::GenerateTexture(720, 720, BLANK);
 }
 

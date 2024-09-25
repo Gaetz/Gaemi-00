@@ -140,6 +140,10 @@ namespace render {
         ::DrawPoint3D(position.ToRaylib(), color);
     }
 
+    void DrawTriangle3D(const Vec3& v1, const Vec3& v2, const Vec3& v3, Color color) {
+        ::DrawTriangle3D(v1.ToRaylib(), v2.ToRaylib(), v3.ToRaylib(), color);
+    }
+
     void DrawTriangleStrip3D(const vector<Vec3>& points, Color color) {
         auto* start = (Vector3 *) points.data();
         ::DrawTriangleStrip3D(start, points.size(), color);
