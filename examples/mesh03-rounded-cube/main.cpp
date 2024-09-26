@@ -6,12 +6,11 @@
 #include "Game.hpp"
 #include "Log.hpp"
 
-int main()
-{
+int main() {
     Log::Restart();
 
     Engine engine;
-    engine.Start(1280, 720, "Shader 2D Signed Distance Field", "assets/shader09-2d-sdf", std::make_unique<Game>());
+    engine.Start(1280, 720, "Procedural rounded cube", "assets/mesh03-rounded-cube", std::make_unique<Game>());
 
     return 0;
 }

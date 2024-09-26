@@ -11,7 +11,7 @@ int main()
     Log::Restart();
 
     Engine engine;
-    engine.Start(1280, 720, "Shader 2D Signed Distance Field", "assets/shader09-2d-sdf", std::make_unique<Game>());
+    engine.Start(1280, 720, "Procedural grid", "assets/mesh01-grid", std::make_unique<Game>());
 
     return 0;
 }

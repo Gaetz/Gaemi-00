@@ -18,6 +18,8 @@ SceneGame::SceneGame(Game &game) : game{game}
 
 void SceneGame::Load() {
     DisableCursor();
+    AssetsManager::LoadShader("shader", "shader.vert", "shader.frag");
+
 }
 
 void SceneGame::Update(f32 dt) {
@@ -27,7 +29,9 @@ void SceneGame::Update(f32 dt) {
 void SceneGame::Draw() {
     gdraw::BeginMode3D(camera);
 
+    //gdraw::BeginShaderMode("shader");
     cube.Draw();
+    //gdraw::EndShaderMode();
 
     gdraw::EndMode3D();
 }
