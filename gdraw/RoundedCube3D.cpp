@@ -2,7 +2,7 @@
 // Created by gaetz on 26/09/2024.
 //
 
-#include "Cube3D.hpp"
+#include "RoundedCube3D.hpp"
 
 #include <Log.hpp>
 
@@ -10,48 +10,50 @@
 
 namespace gdraw
 {
-    Cube3D::Cube3D(i32 xSize_, i32 ySize_, i32 zSize_, Vec3 position_):
+    RoundedCube3D::RoundedCube3D(i32 xSize_, i32 ySize_, i32 zSize_, f32 roundness_, Vec3 position_):
         xSize { xSize_ }, ySize { ySize_ },
-        zSize { zSize_ }, position { position_ } {
+        zSize { zSize_ }, roundness { roundness_ }, position { position_ } {
         i32 cornerVertices { 8 };
         i32 edgeVertices { (xSize + ySize + zSize - 3) * 4 };
         i32 faceVertices { ((xSize - 1) * (ySize - 1) + (xSize - 1) * (zSize - 1) + (ySize - 1) * (zSize - 1)) * 2 };
         const i32 vertexCount { cornerVertices + edgeVertices + faceVertices };
         vertices.reserve(vertexCount);
         vertices.resize(vertexCount);
+        normals.reserve(vertexCount);
+        normals.resize(vertexCount);
         i32 quadsCount = (xSize * ySize + xSize * zSize + ySize * zSize) * 2;
         indices.reserve(quadsCount * 6);
         indices.resize(quadsCount * 6);
         Generate();
     }
 
-    void Cube3D::Generate() {
+    void RoundedCube3D::Generate() {
         // Generate vertices
         i32 v { 0 };
         // -- Lateral faces
         for (i32 y = 0; y <= ySize; y++) {
             for (i32 x = 0; x <= xSize; x++) {
-                vertices[v++] = Vec3(x, y, 0);
+                SetVertex(v++, x, y, 0);
             }
             for (i32 z = 1; z <= xSize; z++) {
-                vertices[v++] = Vec3(xSize, y, z);
+                SetVertex(v++, xSize, y, z);
             }
             for (i32 x = xSize - 1; x >= 0; x--) {
-                vertices[v++] = Vec3(x, y, zSize);
+                SetVertex(v++, x, y, zSize);
             }
             for (i32 z = zSize - 1; z > 0; z--) {
-                vertices[v++] = Vec3(0, y, z);
+                SetVertex(v++, 0, y, z);
             }
         }
         // -- Top and bottom
         for (i32 z = 1; z < zSize; z++) {
             for (i32 x = 1; x < xSize; x++) {
-                vertices[v++] = Vec3(x, ySize, z);
+                SetVertex(v++, x, ySize, z);
             }
         }
         for (i32 z = 1; z < zSize; z++) {
             for (i32 x = 1; x < xSize; x++) {
-                vertices[v++] = Vec3(x, 0, z);
+                SetVertex(v++, x, 0, z);
             }
         }
         // Generate indices
@@ -70,7 +72,7 @@ namespace gdraw
         t = CreateBottomFace(t, ring);
     }
 
-    i32 Cube3D::SetQuadIndices(i32 i, i32 v00, i32 v10, i32 v01, i32 v11) {
+    i32 RoundedCube3D::SetQuadIndices(i32 i, i32 v00, i32 v10, i32 v01, i32 v11) {
         indices[i] = v00;
         indices[i + 1] = indices[i + 4] = v01;
         indices[i + 2] = indices[i + 3] = v10;
@@ -78,7 +80,7 @@ namespace gdraw
         return i + 6;
     }
 
-    i32 Cube3D::CreateTopFace(i32 t, i32 ring) {
+    i32 RoundedCube3D::CreateTopFace(i32 t, i32 ring) {
         i32 v = ring * ySize;
         for (i32 x = 0; x < xSize - 1; x++, v++) {
             t = SetQuadIndices(t, v, v + 1, v + ring - 1, v + ring);
@@ -107,7 +109,7 @@ namespace gdraw
         return t;
     }
 
-    i32 Cube3D::CreateBottomFace(i32 t, i32 ring) {
+    i32 RoundedCube3D::CreateBottomFace(i32 t, i32 ring) {
         i32 v = 1;
         i32 vMid = vertices.size() - (xSize - 1) * (zSize - 1);
         t = SetQuadIndices(t, ring - 1, vMid, 0, 1);
@@ -138,12 +140,42 @@ namespace gdraw
         return t;
     }
 
-    void Cube3D::Draw() {
-        for (const auto& vertex : vertices) {
-            gdraw::DrawPoint3D(position + vertex + Vec3(0, 0, -0.05), RED);
+    void RoundedCube3D::SetVertex(i32 i, i32 x, i32 y, i32 z) {
+        Vec3 inner = vertices[i] = Vec3(x, y, z);
+
+        if (x < roundness) {
+            inner.x = roundness;
+        }
+        else if (x > xSize - roundness) {
+            inner.x = xSize - roundness;
+        }
+        if (y < roundness) {
+            inner.y = roundness;
+        }
+        else if (y > ySize - roundness) {
+            inner.y = ySize - roundness;
+        }
+        if (z < roundness) {
+            inner.z = roundness;
+        }
+        else if (z > zSize - roundness) {
+            inner.z = zSize - roundness;
+        }
+
+        normals[i] = (vertices[i] - inner).Normalize();
+        vertices[i] = inner + normals[i] * roundness;
+    }
+
+    void RoundedCube3D::Draw() const {
+        for (i32 i = 0; i < vertices.size(); ++i) {
+            Vec3 vertexPos = position + vertices[i];
+            gdraw::DrawPoint3D(vertexPos + Vec3(0, 0, -0.05), RED);
+            gdraw::DrawLine3D(vertexPos, vertexPos + normals[i], YELLOW);
         }
         for (i32 i = 0; i < indices.size(); i += 3) {
-            gdraw::DrawTriangle3D(position + vertices[indices[i]], position + vertices[indices[i + 1]], position + vertices[indices[i + 2]], WHITE);
+            gdraw::DrawTriangle3D(position + vertices[indices[i]],
+                                  position + vertices[indices[i + 1]],
+                                  position + vertices[indices[i + 2]], WHITE);
         }
     }
 }

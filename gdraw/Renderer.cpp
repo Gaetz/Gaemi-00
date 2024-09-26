@@ -144,6 +144,10 @@ namespace gdraw {
         ::DrawPoint3D(position.ToRaylib(), color);
     }
 
+    void DrawLine3D(const Vec3& start, const Vec3& end, Color color) {
+        ::DrawLine3D(start.ToRaylib(), end.ToRaylib(), color);
+    }
+
     void DrawTriangle3D(const Vec3& v1, const Vec3& v2, const Vec3& v3, Color color) {
         ::DrawTriangle3D(v1.ToRaylib(), v2.ToRaylib(), v3.ToRaylib(), color);
     }
