@@ -84,7 +84,7 @@ endif()
 
 
 # Add code.
-set(GAME_DIR examples/shader10-noise)
+set(GAME_DIR examples/shader11-noise-landscape)
 
 add_subdirectory( gplatform )
 add_subdirectory( glog )
