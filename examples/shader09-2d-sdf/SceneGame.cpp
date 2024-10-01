@@ -28,12 +28,15 @@ void SceneGame::Load() {
 
 void SceneGame::Update(f32 dt) {
     totalTime += dt;
+    gdraw::SetShaderFloat("shader", "time", totalTime);
     gdraw::SetShaderFloat("cloudy", "time", totalTime);
 }
 
 void SceneGame::Draw() {
-    gdraw::BeginShaderMode("cloudy");
-    gdraw::SetShaderVec2("cloudy", "resolution", Vec2(720, 720));
+    gdraw::BeginShaderMode("shader");
+    gdraw::SetShaderVec2("shader", "resolution", Vec2(720, 720));
+    //gdraw::BeginShaderMode("cloudy");
+    //gdraw::SetShaderVec2("cloudy", "resolution", Vec2(720, 720));
 
     gdraw::DrawTexture(shaderTexture, 256, 0, WHITE);
     gdraw::EndShaderMode();

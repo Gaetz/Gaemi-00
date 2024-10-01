@@ -84,7 +84,7 @@ endif()
 
 
 # Add code.
-set(GAME_DIR examples/mesh03-rounded-cube)
+set(GAME_DIR examples/shader10-noise)
 
 add_subdirectory( gplatform )
 add_subdirectory( glog )

@@ -170,7 +170,7 @@ namespace gdraw
         for (i32 i = 0; i < vertices.size(); ++i) {
             Vec3 vertexPos = position + vertices[i];
             gdraw::DrawPoint3D(vertexPos + Vec3(0, 0, -0.05), RED);
-            gdraw::DrawLine3D(vertexPos, vertexPos + normals[i], YELLOW);
+            //gdraw::DrawLine3D(vertexPos, vertexPos + normals[i], YELLOW);
         }
         for (i32 i = 0; i < indices.size(); i += 3) {
             gdraw::DrawTriangle3D(position + vertices[indices[i]],
