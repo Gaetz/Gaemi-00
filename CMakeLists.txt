@@ -84,7 +84,7 @@ endif()
 
 
 # Add code.
-set(GAME_DIR examples/shader12-texture-burn)
+set(GAME_DIR examples/shader14-planet)
 
 add_subdirectory( gplatform )
 add_subdirectory( glog )
