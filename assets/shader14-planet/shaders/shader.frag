@@ -57,13 +57,13 @@ float noise3D(vec3 p) {
 
     vec3 u = f * f * (3.0 - 2.0 * f);
     float result = mix(mix(mix(dot(easyRandom3D(i + vec3(0.0, 0.0, 0.0)), f - vec3(0.0, 0.0, 0.0)),
-    dot(easyRandom3D(i + vec3(1.0, 0.0, 0.0)), f - vec3(1.0, 0.0, 0.0)), u.x),
-    mix(dot(easyRandom3D(i + vec3(0.0, 1.0, 0.0)), f - vec3(0.0, 1.0, 0.0)),
-    dot(easyRandom3D(i + vec3(1.0, 1.0, 0.0)), f - vec3(1.0, 1.0, 0.0)), u.x), u.y),
-    mix(mix(dot(easyRandom3D(i + vec3(0.0, 0.0, 1.0)), f - vec3(0.0, 0.0, 1.0)),
-    dot(easyRandom3D(i + vec3(1.0, 0.0, 1.0)), f - vec3(1.0, 0.0, 1.0)), u.x),
-    mix(dot(easyRandom3D(i + vec3(0.0, 1.0, 1.0)), f - vec3(0.0, 1.0, 1.0)),
-    dot(easyRandom3D(i + vec3(1.0, 1.0, 1.0)), f - vec3(1.0, 1.0, 1.0)), u.x), u.y), u.z);
+                               dot(easyRandom3D(i + vec3(1.0, 0.0, 0.0)), f - vec3(1.0, 0.0, 0.0)), u.x),
+                           mix(dot(easyRandom3D(i + vec3(0.0, 1.0, 0.0)), f - vec3(0.0, 1.0, 0.0)),
+                               dot(easyRandom3D(i + vec3(1.0, 1.0, 0.0)), f - vec3(1.0, 1.0, 0.0)), u.x), u.y),
+                       mix(mix(dot(easyRandom3D(i + vec3(0.0, 0.0, 1.0)), f - vec3(0.0, 0.0, 1.0)),
+                               dot(easyRandom3D(i + vec3(1.0, 0.0, 1.0)), f - vec3(1.0, 0.0, 1.0)), u.x),
+                           mix(dot(easyRandom3D(i + vec3(0.0, 1.0, 1.0)), f - vec3(0.0, 1.0, 1.0)),
+                               dot(easyRandom3D(i + vec3(1.0, 1.0, 1.0)), f - vec3(1.0, 1.0, 1.0)), u.x), u.y), u.z);
     return result;
 }
 
@@ -106,8 +106,8 @@ vec4 simplexNoise(vec3 v) {
     i = mod289(i); // Avoid truncation effects in permutation
     vec4 p =
     permute(permute(permute(i.z + vec4(0.0, i1.z, i2.z, 1.0))
-    + i.y + vec4(0.0, i1.y, i2.y, 1.0))
-    + i.x + vec4(0.0, i1.x, i2.x, 1.0));
+                    + i.y + vec4(0.0, i1.y, i2.y, 1.0))
+            + i.x + vec4(0.0, i1.x, i2.x, 1.0));
 
     // Gradients: 7x7 points over a square, mapped onto an octahedron.
     // The ring size 17*17 = 289 is close to a multiple of 49 (49*6 = 294)
@@ -178,6 +178,30 @@ float fbm(vec3 p, int octaves, float persistence, float lacunarity, float expone
     return total;
 }
 
+float map(vec3 pos) {
+    return fbm(pos, 6, 0.5, 2.0, 4.0);
+}
+
+vec3 calcNormal(vec3 pos, vec3 n) {
+    vec2 e = vec2(0.0001, 0.0);
+    return normalize(
+        n + -500.0 * vec3(
+        map(pos + e.xyy) - map(pos - e.xyy),
+        map(pos + e.yxy) - map(pos - e.yxy),
+        map(pos + e.yyx) - map(pos - e.yyx)
+        )
+    );
+}
+
+mat3 rotateY(float radians) {
+    float s = sin(radians);
+    float c = cos(radians);
+    return mat3(
+    c, 0.0, s,
+    0.0, 1.0, 0.0,
+    -s, 0.0, c);
+}
+
 out vec4 finalColor;
 
 vec3 generateGridStars(vec2 pixelCoords, float starRadius, float cellSize, float seed, bool twinkle) {
@@ -234,8 +258,12 @@ vec3 drawPlanet(vec2 pixelCoords, vec3 colour) {
         float x = pixelCoords.x / 300.0;
         float y = pixelCoords.y / 300.0;
         float z = sqrt(1.0 - x * x - y * y);
+        mat3 planetRotation = rotateY(time * 0.1);
         vec3 viewNormal = vec3(x, y, z);
-        vec3 wsPosition = viewNormal;
+        vec3 wsPosition = planetRotation * viewNormal;
+        vec3 wsNormal = planetRotation * normalize(wsPosition);
+        vec3 wsViewDir = vec3(0.0, 0.0, 1.0);
+
 
         vec3 noiseCoord = wsPosition * 2.0;
         float noiseSample = fbm(noiseCoord, 6, 0.5, 2.0, 4.0);
@@ -243,27 +271,80 @@ vec3 drawPlanet(vec2 pixelCoords, vec3 colour) {
 
         // Colour
         vec3 waterColour = mix(
-        vec3(0.01, 0.09, 0.55), // Ocean blue
-        vec3(0.09, 0.26, 0.57), // Shore blue
-        smoothstep(0.02, 0.06, noiseSample)
+            vec3(0.01, 0.09, 0.55), // Ocean blue
+            vec3(0.09, 0.26, 0.57), // Shore blue
+            smoothstep(0.02, 0.06, noiseSample)
         );
         vec3 landColour = mix(
-        vec3(0.5, 1.0, 0.3), // Shore green
-        vec3(0.0, 0.7, 0.1), // Forest green
-        smoothstep(0.05, 0.1, noiseSample)
+            vec3(0.5, 1.0, 0.3), // Shore green
+            vec3(0.0, 0.7, 0.1), // Forest green
+            smoothstep(0.05, 0.1, noiseSample)
         );
         landColour = mix(
-        vec3(1.0, 1.0, 0.5), // Desert color
-        landColour,
-        smoothstep(0.4, 0.5, moistureMap)
+            vec3(1.0, 1.0, 0.5), // Desert color
+            landColour,
+            smoothstep(0.4, 0.5, moistureMap)
         );
+        landColour = mix(landColour, vec3(0.5, 0.6, 0.5), smoothstep(0.1, 0.2, noiseSample)); // Mountains
+        landColour = mix(landColour, vec3(0.9, 0.9, 1.0), smoothstep(0.2, 0.3, noiseSample)); // Ice on tops
+        landColour = mix(landColour, vec3(0.9, 0.9, 1.0), smoothstep(0.6, 0.9, abs(viewNormal.y))); // Poles
 
-
-        vec3(0.5, 1.0, 0.3);
         planetColour = mix(waterColour, landColour, smoothstep(0.05, 0.06, noiseSample));
+
+        // Lighting
+        vec3 wsLightDir = planetRotation * normalize(vec3(0.5, 1.0, 0.5));
+        vec3 wsSurfaceNormal = calcNormal(noiseCoord, wsNormal);
+        // Different specular values for lands and oceans
+        vec2 specParams = mix(
+            vec2(0.5, 32.0),
+            vec2(0.01, 2.0),
+            smoothstep(0.05, 0.06, noiseSample)
+        );
+        // Wrap: light goes a little further, simulate subsurface scattering
+        float wrap = 0.05;
+        float dp = max(0.0, (dot(wsLightDir, wsSurfaceNormal) + wrap) / (1.0 + wrap));
+
+        // Dark orange light on fringes
+        vec3 lightColour = mix(
+            vec3(0.25, 0.05, 0.0),
+            vec3(0.75),
+            smoothstep(0.05, 0.5, dp));
+
+        vec3 ambient = vec3(0.002);
+        vec3 diffuse = lightColour * dp;
+
+        vec3 r = normalize(reflect(-wsLightDir, wsSurfaceNormal));
+        float phongValue = max(0.0, dot(wsViewDir, r));
+        phongValue = pow(phongValue, specParams.y);
+
+        vec3 specular = vec3(phongValue) * specParams.x * diffuse;
+
+        vec3 planetShading = planetColour * (diffuse + ambient) + specular;
+        planetColour = planetShading;
+
+        // Fresnel
+        float fresnel = smoothstep(1.0, 0.1, viewNormal.z);
+        fresnel = pow(fresnel, 8.0) * dp;
+        planetColour = mix(planetColour, vec3(0.0, 0.5, 1.0), fresnel);
     }
 
     colour = mix(colour, planetColour, smoothstep(0.0, -1.0, d));
+
+    // Planet glow
+    if (d < 40.0 && d >= -1.0) {
+        float x = pixelCoords.x / 440.0;
+        float y = pixelCoords.y / 440.0;
+        float z = sqrt(1.0 - x * x - y * y);
+        vec3 normal = vec3(x, y, z);
+
+        float lighting = dot(normal, normalize(vec3(0.5, 1.0, 0.5)));
+        lighting = smoothstep(-0.15, 1.0, lighting);
+
+        vec3 glowColour = vec3(0.05, 0.3, 0.9) *
+        exp(-0.01 * d * d) * lighting * 0.75;
+        colour += glowColour;
+    }
+
     return colour;
 }
 
