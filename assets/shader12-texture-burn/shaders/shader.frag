@@ -102,7 +102,7 @@ void main() {
     // Regular circle
     //float d = sdfCircle(pixelCoords, size);
     // Noisy rimed circle. Try 50.0 then 200.0 as a multiplier.
-    float d = sdfCircle(pixelCoords + 200.0 * noiseSample, size);
+    float d = sdfCircle(pixelCoords + 50.0 * noiseSample, size);
 
     // Image distortion
     vec2 distortion = noiseSample / resolution;

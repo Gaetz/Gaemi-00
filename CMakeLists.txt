@@ -84,7 +84,7 @@ endif()
 
 
 # Add code.
-set(GAME_DIR examples/shader14-planet)
+set(GAME_DIR examples/shader15-raymarching)
 
 add_subdirectory( gplatform )
 add_subdirectory( glog )
