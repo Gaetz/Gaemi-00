@@ -1,9 +1,19 @@
-#version 330
+#version 410
 
 in vec2 fragTexCoord;
 
 uniform vec2 resolution;
 uniform float time;
+
+const int NUM_STEPS = 256;
+const float MAX_DIST = 1000.0;
+
+const vec3 RED = vec3(1.0, 0.0, 0.0);
+const vec3 GREEN = vec3(0.0, 1.0, 0.0);
+const vec3 BLUE = vec3(0.0, 0.0, 1.0);
+const vec3 GREY = vec3(0.5, 0.5, 0.5);
+const vec3 WHITE = vec3(1.0, 1.0, 1.0);
+
 
 float inverseLerp(float current, float min, float max) {
     return (current - min) / (max - min);
@@ -22,39 +32,124 @@ float sdfSphere(vec3 pos, float radius) {
     return length(pos) - radius;
 }
 
-// Computes the overall SDF. Return the distance to the closest point on the surface.
-float map(vec3 pos) {
-    float dist = sdfSphere(pos - vec3(0.0, 0.0, 5.0), 1.0);
-    return dist;
+float sdfBox(vec3 pos, vec3 size) {
+    vec3 d = abs(pos) - size;
+    return length(max(d, 0.0)) + min(max(d.x, max(d.y, d.z)), 0.0);
 }
 
-const int NUM_STEPS = 256;
-const float MAX_DIST = 1000.0;
+float sdfTorus(vec3 pos, vec2 t) {
+    vec2 q = vec2(length(pos.xz) - t.x, pos.y);
+    return length(q) - t.y;
+}
+
+float sdfPlane(vec3 pos) {
+    return pos.y;
+}
+
+
+struct MaterialData {
+    vec3 colour;
+    float dist;
+};
+
+// Computes the overall SDF. Return the distance to the closest point on the surface.
+MaterialData map(vec3 pos) {
+    // 1. Basic scene with no data (use float as a return type)
+    //    float dist = sdfPlane(pos - vec3(0.0, -2.0, 0.0));
+    //    dist = min(dist, sdfBox(pos - vec3(-2.0, -0.85, 5.0), vec3(1.0)));
+    //    dist = min(dist, sdfBox(pos - vec3(2.0, -0.85, 5.0), vec3(1.0)));
+    //    return dist;
+
+    // 2. Scene with material data
+    MaterialData result = MaterialData(GREY, sdfPlane(pos - vec3(0.0, -2.0, 0.0)));
+    float dist;
+
+    // First box
+    dist = sdfBox(pos - vec3(-2.0, -0.85, 5.0), vec3(1.0));
+    result.colour = dist < result.dist ? RED : result.colour;
+    result.dist = min(dist, result.dist);
+
+    // Second box
+    dist = sdfBox(pos - vec3(2.0, -0.85, 5.0), vec3(1.0));
+    result.colour = dist < result.dist ? BLUE : result.colour;
+    result.dist = min(dist, result.dist);
+
+    return result;
+}
+
+
+// Computes the normal of the surface at a given point by approximating the gradient (derivative) of the SDF.
+vec3 computeNormal(vec3 pos) {
+    const float EPSILON = 0.0001;
+    vec3 n = vec3(
+    map(pos + vec3(EPSILON, 0.0, 0.0)).dist - map(pos - vec3(EPSILON, 0.0, 0.0)).dist,
+    map(pos + vec3(0.0, EPSILON, 0.0)).dist - map(pos - vec3(0.0, EPSILON, 0.0)).dist,
+    map(pos + vec3(0.0, 0.0, EPSILON)).dist - map(pos - vec3(0.0, 0.0, EPSILON)).dist
+    );
+    return normalize(n);
+}
+
+vec3 computeLighting(vec3 pos, vec3 normal, vec3 lightColour, vec3 lightDir) {
+    float dp = saturate(dot(normal, lightDir));
+    return lightColour * dp;
+}
 
 // Performs sphere tracing for the scene. Return the colour of the pixel at sphere intersection.
+//vec3 rayMarchSimple(vec3 cameraOrigin, vec3 cameraDir) {
+//    vec3 pos;
+//    float dist = 0.0;
+//
+//    for (int i = 0; i < NUM_STEPS; i++) {
+//        pos = cameraOrigin + cameraDir * dist;
+//        float distToScene = map(pos);
+//
+//        // Case 1: distToScene < 0, intersection with the scene
+//        if (distToScene < 0.001) {
+//            break;
+//        }
+//        dist += distToScene;
+//
+//        // Case 2 : disttoo big, out of the scene entirely
+//        if (dist >= MAX_DIST) {
+//            return vec3(0.0);
+//        }
+//
+//        // Case 3: neither intersecting nor travelling too far, just continue looping
+//    }
+//
+//    return vec3(1.0);
+//}
+
 vec3 rayMarch(vec3 cameraOrigin, vec3 cameraDir) {
     vec3 pos;
-    float dist = 0.0;
+    MaterialData material = MaterialData(vec3(0.0), 0.0);
+
     for (int i = 0; i < NUM_STEPS; i++) {
-        pos = cameraOrigin + cameraDir * dist;
-        float distToScene = map(pos);
+        pos = cameraOrigin + cameraDir * material.dist;
+        MaterialData result = map(pos);
 
         // Case 1: distToScene < 0, intersection with the scene
-        if (distToScene < 0.001) {
+        if (result.dist < 0.001) {
             break;
         }
-        dist += distToScene;
+        material.dist += result.dist;
+        material.colour = result.colour;
 
-        // Case 2 : disttoo big, out of the scene entirely
-        if (dist >= MAX_DIST) {
+        // Case 2 : dist too big, out of the scene entirely
+        if (material.dist >= MAX_DIST) {
             return vec3(0.0);
         }
 
         // Case 3: neither intersecting nor travelling too far, just continue looping
     }
 
-    return vec3(1.0);
+    vec3 lightColour = WHITE;
+    vec3 lightDir = normalize(vec3(1.0, 2.0, -1.0));
+    vec3 normal = computeNormal(pos);
+    vec3 lighting = computeLighting(pos, normal, lightColour, lightDir);
+    return material.colour * lighting;
 }
+
 
 out vec4 finalColor;
 
