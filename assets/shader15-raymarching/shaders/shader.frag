@@ -74,6 +74,11 @@ MaterialData map(vec3 pos) {
     result.colour = dist < result.dist ? BLUE : result.colour;
     result.dist = min(dist, result.dist);
 
+    // Second box
+    dist = sdfBox(pos - vec3(2.0, 1.0, 50.0 + sin(time) * 25.0), vec3(2.0));
+    result.colour = dist < result.dist ? GREEN : result.colour;
+    result.dist = min(dist, result.dist);
+
     return result;
 }
 
@@ -92,6 +97,29 @@ vec3 computeNormal(vec3 pos) {
 vec3 computeLighting(vec3 pos, vec3 normal, vec3 lightColour, vec3 lightDir) {
     float dp = saturate(dot(normal, lightDir));
     return lightColour * dp;
+}
+
+float computeShadow(vec3 pos, vec3 lightDir) {
+    float d = 0.01;
+    for (int i = 0; i < 64; i++) {
+        float distToScene = map(pos + lightDir * d).dist;
+        if (distToScene < 0.001) {
+            return 0.0;
+        }
+        d += distToScene;
+    }
+    return 1.0;
+}
+
+float computeAmbientOcclusion(vec3 pos, vec3 normal) {
+    float ao = 0.0;
+    float stepSize = 0.1;
+
+    for (float i = 0.0; i < 5.0; i++) {
+        float distFactor = 1.0 / pow(2.0, i);
+        ao += distFactor * (i * stepSize - map(pos + normal * i * stepSize).dist);
+    }
+    return 1.0 - ao;
 }
 
 // Performs sphere tracing for the scene. Return the colour of the pixel at sphere intersection.
@@ -124,6 +152,8 @@ vec3 rayMarch(vec3 cameraOrigin, vec3 cameraDir) {
     vec3 pos;
     MaterialData material = MaterialData(vec3(0.0), 0.0);
 
+    vec3 skyColour = vec3(0.55, 0.6, 1.0);
+
     for (int i = 0; i < NUM_STEPS; i++) {
         pos = cameraOrigin + cameraDir * material.dist;
         MaterialData result = map(pos);
@@ -137,7 +167,7 @@ vec3 rayMarch(vec3 cameraOrigin, vec3 cameraDir) {
 
         // Case 2 : dist too big, out of the scene entirely
         if (material.dist >= MAX_DIST) {
-            return vec3(0.0);
+            return skyColour;
         }
 
         // Case 3: neither intersecting nor travelling too far, just continue looping
@@ -146,8 +176,17 @@ vec3 rayMarch(vec3 cameraOrigin, vec3 cameraDir) {
     vec3 lightColour = WHITE;
     vec3 lightDir = normalize(vec3(1.0, 2.0, -1.0));
     vec3 normal = computeNormal(pos);
+    float shadowed = computeShadow(pos, lightDir);
     vec3 lighting = computeLighting(pos, normal, lightColour, lightDir);
-    return material.colour * lighting;
+    lighting *= shadowed;
+
+    float ao = computeAmbientOcclusion(pos, normal);
+    vec3 colour = material.colour * lighting * ao;
+
+    float fogFactor = 1.0 - exp(-pos.z * 0.01);
+    colour = mix(colour, skyColour, fogFactor);
+
+    return colour;
 }
 
 
