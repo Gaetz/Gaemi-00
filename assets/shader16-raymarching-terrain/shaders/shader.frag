@@ -74,7 +74,7 @@ MaterialData map(vec3 pos) {
     result.colour = dist < result.dist ? BLUE : result.colour;
     result.dist = min(dist, result.dist);
 
-    // Moving box
+    // Second box
     dist = sdfBox(pos - vec3(2.0, 1.0, 50.0 + sin(time) * 25.0), vec3(2.0));
     result.colour = dist < result.dist ? GREEN : result.colour;
     result.dist = min(dist, result.dist);
