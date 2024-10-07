@@ -44,7 +44,6 @@ void main() {
         }
     }
 
-    vec4 finalColor;
     finalColor.rgb = colorMultiplier.rgb;
     finalColor.a = 1.0;
 }

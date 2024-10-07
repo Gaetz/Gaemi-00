@@ -29,9 +29,9 @@ void SceneGame::Update(f32 dt) {
 void SceneGame::Draw() {
     gdraw::BeginMode3D(camera);
 
-    //gdraw::BeginShaderMode("shader");
+    gdraw::BeginShaderMode("shader");
     cube.Draw();
-    //gdraw::EndShaderMode();
+    gdraw::EndShaderMode();
 
     gdraw::EndMode3D();
 }
