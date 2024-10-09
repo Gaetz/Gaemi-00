@@ -7,27 +7,27 @@
 #include <Log.hpp>
 
 namespace gassets {
-    Model3D::Model3D(const Model& raylibModel_) :
-        transform { raylibModel_.transform },
-        meshCount { raylibModel_.meshCount },
-        materialCount { raylibModel_.materialCount },
-        meshes { raylibModel_.meshes },
-        materials { raylibModel_.materials },
-        meshMaterial { raylibModel_.meshMaterial },
-        boneCount { raylibModel_.boneCount },
-        bones { raylibModel_.bones },
-        bindPose { raylibModel_.bindPose } {}
+    Model3D::Model3D(const Model &raylibModel_) :
+            transform { raylibModel_.transform },
+            meshCount { raylibModel_.meshCount },
+            materialCount { raylibModel_.materialCount },
+            meshes { raylibModel_.meshes },
+            materials { raylibModel_.materials },
+            meshMaterial { raylibModel_.meshMaterial },
+            boneCount { raylibModel_.boneCount },
+            bones { raylibModel_.bones },
+            bindPose { raylibModel_.bindPose } {}
 
-    Model3D::Model3D(Model&& raylibModel_) :
-        transform { raylibModel_.transform },
-        meshCount { raylibModel_.meshCount },
-        materialCount { raylibModel_.materialCount },
-        meshes { raylibModel_.meshes },
-        materials { raylibModel_.materials },
-        meshMaterial { raylibModel_.meshMaterial },
-        boneCount { raylibModel_.boneCount },
-        bones { raylibModel_.bones },
-        bindPose { raylibModel_.bindPose } {}
+    Model3D::Model3D(Model &&raylibModel_) :
+            transform { raylibModel_.transform },
+            meshCount { raylibModel_.meshCount },
+            materialCount { raylibModel_.materialCount },
+            meshes { raylibModel_.meshes },
+            materials { raylibModel_.materials },
+            meshMaterial { raylibModel_.meshMaterial },
+            boneCount { raylibModel_.boneCount },
+            bones { raylibModel_.bones },
+            bindPose { raylibModel_.bindPose } {}
 
     void Model3D::Unload() const {
         // Unload meshes
@@ -53,11 +53,15 @@ namespace gassets {
         LOG(LogLevel::Info) << "MODEL: Unloaded model (and meshes) from RAM and VRAM";
     }
 
-    void Model3D::SetMaterialShader(i32 material_, const Shader& shader_) {
+    void Model3D::SetMaterialShader(i32 material_, const Shader &shader_) {
         materials[material_].shader = shader_;
     }
 
-    void Model3D::SetMaterialMapTexture(i32 material_, MaterialMapType mapType_, const Texture2D& texture_) {
+    void Model3D::SetMaterialMapTexture(i32 material_, MaterialMapType mapType_, const Texture2D &texture_) {
         materials[material_].maps[static_cast<i32>(mapType_)].texture = texture_;
+    }
+
+    void Model3D::SetTransform(const Matrix &transform_) {
+        transform = transform_;
     }
 }
