@@ -7,6 +7,7 @@ uniform float time;
 
 const int NUM_STEPS = 256;
 const float MAX_DIST = 1000.0;
+const float MIN_DIST = 0.00001;
 
 const vec3 RED = vec3(1.0, 0.0, 0.0);
 const vec3 GREEN = vec3(0.0, 1.0, 0.0);
@@ -46,38 +47,72 @@ float sdfPlane(vec3 pos) {
     return pos.y;
 }
 
-
 struct MaterialData {
     vec3 colour;
     float dist;
 };
 
+float easyRandom(vec2 p) {
+    p = 50.0 * fract(p * 0.3183099 + vec2(0.71, 0.113));
+    return -1.0 + 2.0 * fract(p.x * p.y * (p.x + p.y));
+}
+
+float noise(vec2 coords) {
+    vec2 size = vec2(1.0);
+    vec2 pc = coords * size;
+    vec2 base = floor(pc);
+
+    float s1 = easyRandom((base + vec2(0.0, 0.0)) / size);
+    float s2 = easyRandom((base + vec2(1.0, 0.0)) / size);
+    float s3 = easyRandom((base + vec2(0.0, 1.0)) / size);
+    float s4 = easyRandom((base + vec2(1.0, 1.0)) / size);
+
+    vec2 f = smoothstep(0.0, 1.0, fract(pc));
+
+    float px1 = mix(s1, s2, f.x);
+    float px2 = mix(s3, s4, f.x);
+    float result = mix(px1, px2, f.y);
+    return result;
+}
+
+float fbm(vec2 p, int octaves, float persistence, float lacunarity) {
+    float amplitude = 0.5;
+    float total = 0.0;
+
+    for (int i = 0; i < octaves; i++) {
+        float noiseValue = noise(p);
+        total += amplitude * noiseValue;
+        amplitude *= persistence;
+        p *= lacunarity;
+    }
+
+    return total;
+}
+
+MaterialData opUnion(MaterialData a, MaterialData b) {
+    return a.dist < b.dist ? a : b;
+}
+
 // Computes the overall SDF. Return the distance to the closest point on the surface.
 MaterialData map(vec3 pos) {
-    // 1. Basic scene with no data (use float as a return type)
-    //    float dist = sdfPlane(pos - vec3(0.0, -2.0, 0.0));
-    //    dist = min(dist, sdfBox(pos - vec3(-2.0, -0.85, 5.0), vec3(1.0)));
-    //    dist = min(dist, sdfBox(pos - vec3(2.0, -0.85, 5.0), vec3(1.0)));
-    //    return dist;
+    float curNoiseDample = fbm(pos.xz / 2.0, 1, 0.5, 2.0);
+    curNoiseDample = abs(curNoiseDample);
+    curNoiseDample *= 1.5;
+    curNoiseDample += 0.1 * fbm(pos.xz * 4.0, 6, 0.5, 2.0);
 
-    // 2. Scene with material data
-    MaterialData result = MaterialData(GREY, sdfPlane(pos - vec3(0.0, -2.0, 0.0)));
-    float dist;
+    float WATER_LEVEL = 0.45;
 
-    // First box
-    dist = sdfBox(pos - vec3(-2.0, -0.85, 5.0), vec3(1.0));
-    result.colour = dist < result.dist ? RED : result.colour;
-    result.dist = min(dist, result.dist);
+    vec3 landColour = vec3(0.498, 0.435, 0.396);
+    landColour = mix(landColour, landColour * 0.25, smoothstep(WATER_LEVEL -0.1, WATER_LEVEL, curNoiseDample));
+    MaterialData result = MaterialData(landColour, pos.y + curNoiseDample);
 
-    // Second box
-    dist = sdfBox(pos - vec3(2.0, -0.85, 5.0), vec3(1.0));
-    result.colour = dist < result.dist ? BLUE : result.colour;
-    result.dist = min(dist, result.dist);
+    vec3 shallowColour = vec3(0.25, 0.25, 0.75);
+    vec3 deepColour = vec3(0.025, 0.025, 0.15);
+    vec3 waterColour = mix(shallowColour, deepColour, smoothstep(WATER_LEVEL, WATER_LEVEL + 0.1, curNoiseDample));
+    waterColour = mix(waterColour, WHITE, smoothstep(WATER_LEVEL + 0.0125, WATER_LEVEL, curNoiseDample));
+    MaterialData waterMaterial = MaterialData(waterColour, pos.y + WATER_LEVEL);
 
-    // Second box
-    dist = sdfBox(pos - vec3(2.0, 1.0, 50.0 + sin(time) * 25.0), vec3(2.0));
-    result.colour = dist < result.dist ? GREEN : result.colour;
-    result.dist = min(dist, result.dist);
+    result = opUnion(result, waterMaterial);
 
     return result;
 }
@@ -99,14 +134,36 @@ vec3 computeLighting(vec3 pos, vec3 normal, vec3 lightColour, vec3 lightDir) {
     return lightColour * dp;
 }
 
-float computeShadow(vec3 pos, vec3 lightDir) {
-    float d = 0.01;
-    for (int i = 0; i < 64; i++) {
-        float distToScene = map(pos + lightDir * d).dist;
-        if (distToScene < 0.001) {
-            return 0.0;
+MaterialData rayCast(vec3 cameraOrigin, vec3 cameraDir, int numSteps, float startDist, float maxDist) {
+    MaterialData material = MaterialData(vec3(0.0), startDist);
+    MaterialData defaultMaterial = MaterialData(vec3(0.0), -1.0);
+
+    // Raymarching code
+    for (int i = 0; i < NUM_STEPS; i++) {
+        vec3 pos = cameraOrigin + cameraDir * material.dist;
+        MaterialData result = map(pos);
+
+        // Case 1: Intersection with the scene
+        if (abs(result.dist) < MIN_DIST * material.dist) {
+            break;
         }
-        d += distToScene;
+        material.dist += result.dist;
+        material.colour = result.colour;
+
+        // Case 2 : dist too big, out of the scene entirely
+        if (material.dist >= maxDist) {
+            return defaultMaterial;
+        }
+
+        // Case 3: neither intersecting nor travelling too far, just continue looping
+    }
+    return material;
+}
+
+float computeShadow(vec3 pos, vec3 lightDir) {
+    MaterialData result = rayCast(pos, lightDir, 64, 0.01, 10.0);
+    if (result.dist >= 0) {
+        return 0.0;
     }
     return 1.0;
 }
@@ -149,32 +206,25 @@ float computeAmbientOcclusion(vec3 pos, vec3 normal) {
 //}
 
 vec3 rayMarch(vec3 cameraOrigin, vec3 cameraDir) {
-    vec3 pos;
-    MaterialData material = MaterialData(vec3(0.0), 0.0);
 
+    MaterialData material = rayCast(cameraOrigin, cameraDir, NUM_STEPS, 1.0, MAX_DIST);
+    /* First sky colour
     vec3 skyColour = vec3(0.55, 0.6, 1.0);
-
-    for (int i = 0; i < NUM_STEPS; i++) {
-        pos = cameraOrigin + cameraDir * material.dist;
-        MaterialData result = map(pos);
-
-        // Case 1: distToScene < 0, intersection with the scene
-        if (result.dist < 0.001) {
-            break;
-        }
-        material.dist += result.dist;
-        material.colour = result.colour;
-
-        // Case 2 : dist too big, out of the scene entirely
-        if (material.dist >= MAX_DIST) {
-            return skyColour;
-        }
-
-        // Case 3: neither intersecting nor travelling too far, just continue looping
+    skyColour = mix(skyColour, skyColour * 0.25, smoothstep(0.0, 0.5, cameraDir.y));
+    */
+    /* Second sky colour */
+    vec3 lightDir = normalize(vec3(-0.5, 0.2, -0.6));
+    vec3 lightColour = WHITE;
+    float skyT = exp(saturate(cameraDir.y) * -40.0);
+    float sunFactor = pow(saturate(dot(lightDir, cameraDir)), 8.0);
+    vec3 skyColour = mix(vec3(0.025, 0.065, 0.5), vec3(0.4, 0.5, 1.0), skyT);
+    vec3 fogColour = mix(skyColour, vec3(1.0, 0.9, 0.65), sunFactor);
+    if (material.dist < 0.0) {
+        return fogColour;
     }
 
-    vec3 lightColour = WHITE;
-    vec3 lightDir = normalize(vec3(1.0, 2.0, -1.0));
+    vec3 pos = cameraOrigin + cameraDir * material.dist;
+
     vec3 normal = computeNormal(pos);
     float shadowed = computeShadow(pos, lightDir);
     vec3 lighting = computeLighting(pos, normal, lightColour, lightDir);
@@ -183,24 +233,34 @@ vec3 rayMarch(vec3 cameraOrigin, vec3 cameraDir) {
     float ao = computeAmbientOcclusion(pos, normal);
     vec3 colour = material.colour * lighting * ao;
 
-    float fogFactor = 1.0 - exp(-pos.z * 0.01);
-    colour = mix(colour, skyColour, fogFactor);
+    float fogDist = distance(cameraOrigin, pos);
+    float inscatter = 1.0 - exp(-fogDist * fogDist * mix(0.0005, 0.001, sunFactor));
+    float extinction = exp(-fogDist * fogDist * 0.01);
+    colour = colour * extinction + fogColour * inscatter;
 
     return colour;
 }
 
+mat3 makeCameraMatrix(vec3 cameraOrigin, vec3 cameraLookAt, vec3 cameraUp) {
+    vec3 z = normalize(cameraLookAt - cameraOrigin);
+    vec3 x = normalize(cross(z, cameraUp));
+    vec3 y = cross(x, z);
+    return mat3(x, y, z);
+}
 
 out vec4 finalColor;
-
 
 void main() {
     vec2 pixelCoords = vec2((fragTexCoord.x - 0.5) * resolution.x, -(fragTexCoord.y - 0.5) * resolution.y);
     vec3 colour = vec3(0.0);
 
+    float t = time * 0.2;
     vec3 rayDir = normalize(vec3(pixelCoords * 2.0 / resolution.y, 1.0));
-    vec3 rayOrigin = vec3(0.0, 0.0, 0.0);
+    vec3 rayOrigin = vec3(3.0, 0.75, -3.0) * vec3(cos(t), 1.0, sin(t));
+    vec3 rayLookAt = vec3(0.0, 0.0, 0.0);
+    mat3 camera = makeCameraMatrix(rayOrigin, rayLookAt, vec3(0.0, 1.0, 0.0));
 
-    colour = rayMarch(rayOrigin, rayDir);
+    colour = rayMarch(rayOrigin, camera * rayDir);
 
     finalColor = vec4(colour, 1.0);
 }
