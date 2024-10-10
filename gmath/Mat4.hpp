@@ -16,8 +16,10 @@ namespace gmath {
         float m2, m6, m10, m14; // Matrix third row (4 components)
         float m3, m7, m11, m15; // Matrix fourth row (4 components)
 
-        static Mat4 CreateRotationMatrix(const Vec3 &axis, float angle);
+        Matrix ToRaylib() const;
 
+        static Mat4 CreateRotationMatrix(const Vec3 &axis, float angle);
+        static const Mat4 Identity;
 
     };
 }

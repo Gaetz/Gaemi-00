@@ -6,6 +6,19 @@
 
 namespace gmath {
 
+    const Mat4 Mat4::Identity { 1.0f, 0.0f, 0.0f, 0.0f,
+                          0.0f, 1.0f, 0.0f, 0.0f,
+                          0.0f, 0.0f, 1.0f, 0.0f,
+                          0.0f, 0.0f, 0.0f, 1.0f };
+
+    Matrix Mat4::ToRaylib() const {
+        Matrix result { m0, m1, m2, m3,
+                        m4, m5, m6, m7,
+                        m8, m9, m10, m11,
+                        m12, m13, m14, m15 };
+        return result;
+    }
+
     Mat4 Mat4::CreateRotationMatrix(const Vec3 &axis, float angle) {
         Mat4 result { 0 };
 

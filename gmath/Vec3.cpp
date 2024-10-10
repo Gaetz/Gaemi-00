@@ -14,6 +14,7 @@ namespace gmath {
             x { x_ }, y { y_ }, z { z_ } {}
 
     const Vec3 Vec3::zero { 0.0f, 0.0f, 0.0f };
+    const Vec3 Vec3::one { 1.0f, 1.0f, 1.0f };
     const Vec3 Vec3::up { 0.0f, 1.0f, 0.0f };
     const Vec3 Vec3::right { 1.0f, 0.0f, 0.0f };
     const Vec3 Vec3::forward { 0.0f, 0.0f, -1.0f };

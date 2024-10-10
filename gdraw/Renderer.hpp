@@ -52,6 +52,7 @@ namespace gdraw {
     void DrawTriangleStrip3D(const vector<Vec3>& points, Color color);
     void DrawGrid(i32 slices, f32 spacing);
     void DrawModel(const gassets::Model3D& model, const Vec3& position, f32 scale, Color tint);
+    void DrawModel(const gassets::Model3D* model, const Vec3& position, f32 scale, Color tint);
 
     GAPI void DrawTexture(const Texture& texture2D, i32 x, i32 y, Color tint);
     GAPI void DrawSprite(const Texture& texture2D, Rect srcRect, Rect dstRect, Color tint);

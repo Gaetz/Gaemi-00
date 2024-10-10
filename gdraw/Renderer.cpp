@@ -40,6 +40,10 @@ namespace gdraw {
         ::DrawModel(model.ToRaylib(), position.ToRaylib(), scale, tint);
     }
 
+    void DrawModel(const Model3D* model, const Vec3& position, const f32 scale, const Color tint) {
+        ::DrawModel(model->ToRaylib(), position.ToRaylib(), scale, tint);
+    }
+
     void DrawTexture(const Texture& texture, i32 x, i32 y, Color tint) {
         ::DrawTexture(texture, x, y, tint);
     }

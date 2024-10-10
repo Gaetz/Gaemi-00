@@ -25,6 +25,7 @@ namespace gmath {
         [[nodiscard]] str Log() const;
 
         static const Vec3 zero;
+        static const Vec3 one;
         static const Vec3 up;
         static const Vec3 right;
         static const Vec3 forward;
