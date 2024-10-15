@@ -10,34 +10,37 @@
 
 using gmath::Mat4;
 
-namespace gdraw
-{
-    RoundedCube3D::RoundedCube3D(i32 xSize_, i32 ySize_, i32 zSize_, f32 roundness_, Vec3 position_):
-        xSize { xSize_ },
-        ySize { ySize_ },
-        zSize { zSize_ },
-        roundness { roundness_ } {
+namespace gdraw {
+    RoundedCube3D::RoundedCube3D(i32 xSize_, i32 ySize_, i32 zSize_, f32 roundness_, Vec3 position_) :
+            xSize { xSize_ },
+            ySize { ySize_ },
+            zSize { zSize_ },
+            roundness { roundness_ } {
+
+        // Build graphics data
+        Build();
+
+        transform = Mat4::Identity;
+        transform.m12 = position_.x;
+        transform.m13 = position_.y;
+        transform.m14 = position_.z;
+
+        // Setup materials
+        materialCount = 1;
+        materials = new Material[materialCount];
+        materials[0] = LoadMaterialDefault();
+        meshMaterial = new int[meshCount];
+        meshMaterial[0] = 0; // First material index
+    }
+
+    void RoundedCube3D::Build() {
+        // Setup geometry data
         i32 cornerVertices { 8 };
         i32 edgeVertices { (xSize + ySize + zSize - 3) * 4 };
         i32 faceVertices { ((xSize - 1) * (ySize - 1) + (xSize - 1) * (zSize - 1) + (ySize - 1) * (zSize - 1)) * 2 };
         const i32 vertexCount { cornerVertices + edgeVertices + faceVertices };
         i32 quadsCount = (xSize * ySize + xSize * zSize + ySize * zSize) * 2;
-        Generate(vertexCount, quadsCount);
 
-        transform = Mat4::Identity.ToRaylib();
-        transform.m12 = position_.x;
-        transform.m13 = position_.y;
-        transform.m14 = position_.z;
-
-        materialCount = 1;
-        materials = new Material[materialCount];
-        materials[0] = LoadMaterialDefault();
-
-        meshMaterial = new int[meshCount];
-        meshMaterial[0] = 0; // First material index
-    }
-
-    void RoundedCube3D::Generate(i32 vertexCount, i32 quadsCount) {
         vector<Vec3> vertices;
         vector<Vec3> normals;
         vector<i32> indices;
@@ -134,7 +137,31 @@ namespace gdraw
         UploadMesh(meshes, false);
     }
 
-    i32 RoundedCube3D::SetQuadIndices(vector<i32>& indices, i32 i, i32 v00, i32 v10, i32 v01, i32 v11) {
+    void RoundedCube3D::Rebuild() {
+        // Save Material and Mesh data
+        i32 formerMaterialCount = materialCount;
+        i32 formerMeshCount = meshCount;
+        Material formerMaterials = *materials;
+        i32 formerMeshMaterials = *meshMaterial;
+        Shader formerShader = materials[0].shader;
+
+        // Unload previous mesh data
+        Unload();
+
+        // Setup materials again
+        materialCount = formerMaterialCount;
+        materials = new Material[materialCount];
+        materials[0] = formerMaterials;
+        meshCount = formerMeshCount;
+        meshMaterial = new int[meshCount];
+        meshMaterial[0] = formerMeshMaterials;
+        SetMaterialShader(0, formerShader);
+
+        // Build again
+        Build();
+    }
+
+    i32 RoundedCube3D::SetQuadIndices(vector<i32> &indices, i32 i, i32 v00, i32 v10, i32 v01, i32 v11) {
         indices[i] = v00;
         indices[i + 1] = indices[i + 4] = v01;
         indices[i + 2] = indices[i + 3] = v10;
@@ -142,7 +169,7 @@ namespace gdraw
         return i + 6;
     }
 
-    i32 RoundedCube3D::CreateTopFace(vector<i32>& indices, i32 t, i32 ring) {
+    i32 RoundedCube3D::CreateTopFace(vector<i32> &indices, i32 t, i32 ring) {
         i32 v = ring * ySize;
         for (i32 x = 0; x < xSize - 1; x++, v++) {
             t = SetQuadIndices(indices, t, v, v + 1, v + ring - 1, v + ring);
@@ -171,7 +198,7 @@ namespace gdraw
         return t;
     }
 
-    i32 RoundedCube3D::CreateBottomFace(vector<i32>& indices, i32 vertexCount, i32 t, i32 ring) {
+    i32 RoundedCube3D::CreateBottomFace(vector<i32> &indices, i32 vertexCount, i32 t, i32 ring) {
         i32 v = 1;
         i32 vMid = vertexCount - (xSize - 1) * (zSize - 1);
         t = SetQuadIndices(indices, t, ring - 1, vMid, 0, 1);
@@ -202,25 +229,22 @@ namespace gdraw
         return t;
     }
 
-    void RoundedCube3D::SetVertex(vector<Vec3>& vertices, vector<Vec3>& normals, i32 i, i32 x, i32 y, i32 z) {
+    void RoundedCube3D::SetVertex(vector<Vec3> &vertices, vector<Vec3> &normals, i32 i, i32 x, i32 y, i32 z) {
         Vec3 inner = vertices[i] = Vec3(x, y, z);
 
         if (x < roundness) {
             inner.x = roundness;
-        }
-        else if (x > xSize - roundness) {
+        } else if (x > xSize - roundness) {
             inner.x = xSize - roundness;
         }
         if (y < roundness) {
             inner.y = roundness;
-        }
-        else if (y > ySize - roundness) {
+        } else if (y > ySize - roundness) {
             inner.y = ySize - roundness;
         }
         if (z < roundness) {
             inner.z = roundness;
-        }
-        else if (z > zSize - roundness) {
+        } else if (z > zSize - roundness) {
             inner.z = zSize - roundness;
         }
 
@@ -232,4 +256,27 @@ namespace gdraw
         Vec3 position { transform.m12, transform.m13, transform.m14 };
         DrawModel(this, position, 1.0f, WHITE);
     }
+
+    i32 RoundedCube3D::GetXSize() const {
+        return xSize;
+    }
+
+    i32 RoundedCube3D::GetYSize() const {
+        return ySize;
+    }
+
+    i32 RoundedCube3D::GetZSize() const {
+        return zSize;
+    }
+
+    f32 RoundedCube3D::GetRoundness() const {
+        return roundness;
+    }
+
+    void RoundedCube3D::SetRoundness(f32 roundness_) {
+        RoundedCube3D::roundness = roundness_;
+        Rebuild();
+    }
+
+
 }

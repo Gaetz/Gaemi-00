@@ -12,13 +12,24 @@
 
 using gmath::Vec3;
 
-namespace gdraw
-{
-    class RoundedCube3D : public gassets::Model3D
-    {
+namespace gdraw {
+    class RoundedCube3D : public gassets::Model3D {
     public:
         RoundedCube3D(i32 xSize_, i32 ySize_, i32 zSize_, f32 roundness_, Vec3 position_);
+
         void Draw() const;
+
+    private:
+    public:
+        i32 GetXSize() const;
+
+        i32 GetYSize() const;
+
+        i32 GetZSize() const;
+
+        f32 GetRoundness() const;
+
+        void SetRoundness(f32 roundness);
 
     private:
         i32 xSize { 1 };
@@ -26,11 +37,16 @@ namespace gdraw
         i32 zSize { 1 };
         f32 roundness { 2 };
 
-        void Generate(i32 vertexCount, i32 quadsCount);
-        i32 SetQuadIndices(vector<i32>& indices, i32 i, i32 v00, i32 v10, i32 v01, i32 v11);
-        i32 CreateTopFace(vector<i32>& indices, i32 t, i32 ring);
-        i32 CreateBottomFace(vector<i32>& indices, i32 vertexCount, i32 t, i32 ring);
-        void SetVertex(vector<Vec3>& vertices, vector<Vec3>& normals, i32 i, i32 x, i32 y, i32 z);
+        void Build();
+        void Rebuild();
+
+        i32 SetQuadIndices(vector<i32> &indices, i32 i, i32 v00, i32 v10, i32 v01, i32 v11);
+
+        i32 CreateTopFace(vector<i32> &indices, i32 t, i32 ring);
+
+        i32 CreateBottomFace(vector<i32> &indices, i32 vertexCount, i32 t, i32 ring);
+
+        void SetVertex(vector<Vec3> &vertices, vector<Vec3> &normals, i32 i, i32 x, i32 y, i32 z);
     };
 }
 

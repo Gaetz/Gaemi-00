@@ -61,7 +61,7 @@ namespace gassets {
         materials[material_].maps[static_cast<i32>(mapType_)].texture = texture_;
     }
 
-    void Model3D::SetTransform(const Matrix &transform_) {
+    void Model3D::SetTransform(const Mat4 &transform_) {
         transform = transform_;
     }
 }

@@ -93,9 +93,9 @@ namespace gdraw {
 
             if (mode == CameraMode::Free) {
                 if (IsKeyDown(KEY_Q))
-                    MoveUp(CAMERA_MOVE_SPEED);
-                if (IsKeyDown(KEY_E))
                     MoveUp(-CAMERA_MOVE_SPEED);
+                if (IsKeyDown(KEY_E))
+                    MoveUp(CAMERA_MOVE_SPEED);
             }
         }
 

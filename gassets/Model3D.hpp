@@ -7,7 +7,9 @@
 
 #include "Defines.hpp"
 #include "raylib.h"
+#include "../gmath/Mat4.hpp"
 
+using gmath::Mat4;
 
 namespace gassets {
     enum class MaterialMapType {
@@ -35,10 +37,10 @@ namespace gassets {
         explicit Model3D(Model &&raylibModel_);
 
         ::Model ToRaylib() const {
-            return { transform, meshCount, materialCount, meshes, materials, meshMaterial, boneCount, bones, bindPose };
+            return { transform.ToRaylib(), meshCount, materialCount, meshes, materials, meshMaterial, boneCount, bones, bindPose };
         }
 
-        void SetTransform(const Matrix &transform_);
+        void SetTransform(const Mat4 &transform_);
 
         void SetMaterialShader(i32 material_, const Shader &shader_);
 
@@ -48,27 +50,27 @@ namespace gassets {
 
     protected:
         /** Local transform matrix */
-        Matrix transform;
+        Mat4 transform { Mat4::Identity };
 
         /** Number of meshes */
-        i32 meshCount;
+        i32 meshCount { 0 };
         /** Number of materials */
-        i32 materialCount;
+        i32 materialCount { 0 };
         /** Meshes array */
-        Mesh *meshes;
+        Mesh *meshes { nullptr };
         /** Materials array */
-        Material *materials;
+        Material *materials { nullptr };
         /** Mesh material number */
-        i32 *meshMaterial;
+        i32 *meshMaterial { nullptr };
 
         // Animation data
 
         /** Number of bones */
-        i32 boneCount;
+        i32 boneCount { 0 };
         /** Bones information (skeleton) */
-        BoneInfo *bones;
+        BoneInfo *bones { nullptr };
         /** Bones base transformation (pose) */
-        Transform *bindPose;
+        Transform *bindPose { nullptr };
     };
 }
 #endif //GASSETS_MODEL3D_HPP
