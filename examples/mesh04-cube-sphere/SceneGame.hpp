@@ -2,10 +2,10 @@
 // Created by gaetz on 07/02/2024.
 //
 
-#ifndef MESH03_SCENE_GAME_HPP
-#define MESH03_SCENE_GAME_HPP
+#ifndef MESH04_SCENE_GAME_HPP
+#define MESH04_SCENE_GAME_HPP
 
-#include <RoundedCube3D.hpp>
+#include <SphereCube3D.hpp>
 
 #include "IScene.hpp"
 #include "Game.hpp"
@@ -26,7 +26,7 @@ public:
 private:
     Game& game;
     Cam3D camera {};
-    gdraw::RoundedCube3D cube { 10, 10, 10, 2.0, Vec3::zero };
+    gdraw::SphereCube3D sphere { 10, 10.0f, Vec3 { 0.0f, 0.0f, 10.0f } };
 };
 
 

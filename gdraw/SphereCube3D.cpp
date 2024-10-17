@@ -2,7 +2,7 @@
 // Created by gaetz on 26/09/2024.
 //
 
-#include "RoundedCube3D.hpp"
+#include "SphereCube3D.hpp"
 
 #include <Log.hpp>
 #include <Mat4.hpp>
@@ -11,11 +11,9 @@
 using gmath::Mat4;
 
 namespace gdraw {
-    RoundedCube3D::RoundedCube3D(i32 xSize_, i32 ySize_, i32 zSize_, f32 roundness_, Vec3 position_) :
-            xSize { xSize_ },
-            ySize { ySize_ },
-            zSize { zSize_ },
-            roundness { roundness_ } {
+    SphereCube3D::SphereCube3D(i32 gridSize_, f32 radius_, Vec3 position_) :
+            gridSize { gridSize_ },
+            radius { radius_ } {
 
         // Build graphics data
         Build();
@@ -33,13 +31,13 @@ namespace gdraw {
         meshMaterial[0] = 0; // First material index
     }
 
-    void RoundedCube3D::Build() {
+    void SphereCube3D::Build() {
         // Setup geometry data
         i32 cornerVertices { 8 };
-        i32 edgeVertices { (xSize + ySize + zSize - 3) * 4 };
-        i32 faceVertices { ((xSize - 1) * (ySize - 1) + (xSize - 1) * (zSize - 1) + (ySize - 1) * (zSize - 1)) * 2 };
+        i32 edgeVertices { (gridSize + gridSize + gridSize - 3) * 4 };
+        i32 faceVertices { ((gridSize - 1) * (gridSize - 1) + (gridSize - 1) * (gridSize - 1) + (gridSize - 1) * (gridSize - 1)) * 2 };
         const i32 vertexCount { cornerVertices + edgeVertices + faceVertices };
-        i32 quadsCount = (xSize * ySize + xSize * zSize + ySize * zSize) * 2;
+        i32 quadsCount = (gridSize * gridSize + gridSize * gridSize + gridSize * gridSize) * 2;
 
         vector<Vec3> vertices;
         vector<Vec3> normals;
@@ -54,38 +52,38 @@ namespace gdraw {
         // Generate vertices
         i32 v { 0 };
         // -- Lateral faces
-        for (i32 y = 0; y <= ySize; y++) {
-            for (i32 x = 0; x <= xSize; x++) {
+        for (i32 y = 0; y <= gridSize; y++) {
+            for (i32 x = 0; x <= gridSize; x++) {
                 SetVertex(vertices, normals, v++, x, y, 0);
             }
-            for (i32 z = 1; z <= xSize; z++) {
-                SetVertex(vertices, normals, v++, xSize, y, z);
+            for (i32 z = 1; z <= gridSize; z++) {
+                SetVertex(vertices, normals, v++, gridSize, y, z);
             }
-            for (i32 x = xSize - 1; x >= 0; x--) {
-                SetVertex(vertices, normals, v++, x, y, zSize);
+            for (i32 x = gridSize - 1; x >= 0; x--) {
+                SetVertex(vertices, normals, v++, x, y, gridSize);
             }
-            for (i32 z = zSize - 1; z > 0; z--) {
+            for (i32 z = gridSize - 1; z > 0; z--) {
                 SetVertex(vertices, normals, v++, 0, y, z);
             }
         }
         // -- Top and bottom
-        for (i32 z = 1; z < zSize; z++) {
-            for (i32 x = 1; x < xSize; x++) {
-                SetVertex(vertices, normals, v++, x, ySize, z);
+        for (i32 z = 1; z < gridSize; z++) {
+            for (i32 x = 1; x < gridSize; x++) {
+                SetVertex(vertices, normals, v++, x, gridSize, z);
             }
         }
-        for (i32 z = 1; z < zSize; z++) {
-            for (i32 x = 1; x < xSize; x++) {
+        for (i32 z = 1; z < gridSize; z++) {
+            for (i32 x = 1; x < gridSize; x++) {
                 SetVertex(vertices, normals, v++, x, 0, z);
             }
         }
 
         // Generate indices
-        i32 ring { (xSize + zSize) * 2 };
+        i32 ring { (gridSize + gridSize) * 2 };
         i32 t { 0 };
         v = 0;
         // -- Lateral faces
-        for (i32 y = 0; y < ySize; y++, v++) {
+        for (i32 y = 0; y < gridSize; y++, v++) {
             for (i32 q = 0; q < ring - 1; q++, v++) {
                 t = SetQuadIndices(indices, t, v, v + 1, v + ring, v + ring + 1);
             }
@@ -137,7 +135,7 @@ namespace gdraw {
         UploadMesh(meshes, false);
     }
 
-    void RoundedCube3D::Rebuild() {
+    void SphereCube3D::Rebuild() {
         // Save Material and Mesh data
         i32 formerMaterialCount = materialCount;
         i32 formerMeshCount = meshCount;
@@ -161,7 +159,7 @@ namespace gdraw {
         Build();
     }
 
-    i32 RoundedCube3D::SetQuadIndices(vector<i32> &indices, i32 i, i32 v00, i32 v10, i32 v01, i32 v11) {
+    i32 SphereCube3D::SetQuadIndices(vector<i32> &indices, i32 i, i32 v00, i32 v10, i32 v01, i32 v11) {
         indices[i] = v00;
         indices[i + 1] = indices[i + 4] = v01;
         indices[i + 2] = indices[i + 3] = v10;
@@ -169,28 +167,28 @@ namespace gdraw {
         return i + 6;
     }
 
-    i32 RoundedCube3D::CreateTopFace(vector<i32> &indices, i32 t, i32 ring) {
-        i32 v = ring * ySize;
-        for (i32 x = 0; x < xSize - 1; x++, v++) {
+    i32 SphereCube3D::CreateTopFace(vector<i32> &indices, i32 t, i32 ring) {
+        i32 v = ring * gridSize;
+        for (i32 x = 0; x < gridSize - 1; x++, v++) {
             t = SetQuadIndices(indices, t, v, v + 1, v + ring - 1, v + ring);
         }
         t = SetQuadIndices(indices, t, v, v + 1, v + ring - 1, v + 2);
 
-        i32 vMin = ring * (ySize + 1) - 1;
+        i32 vMin = ring * (gridSize + 1) - 1;
         i32 vMid = vMin + 1;
         i32 vMax = v + 2;
 
-        for (i32 z = 1; z < zSize - 1; z++, vMin--, vMid++, vMax++) {
-            t = SetQuadIndices(indices, t, vMin, vMid, vMin - 1, vMid + xSize - 1);
-            for (i32 x = 1; x < xSize - 1; x++, vMid++) {
-                t = SetQuadIndices(indices, t, vMid, vMid + 1, vMid + xSize - 1, vMid + xSize);
+        for (i32 z = 1; z < gridSize - 1; z++, vMin--, vMid++, vMax++) {
+            t = SetQuadIndices(indices, t, vMin, vMid, vMin - 1, vMid + gridSize - 1);
+            for (i32 x = 1; x < gridSize - 1; x++, vMid++) {
+                t = SetQuadIndices(indices, t, vMid, vMid + 1, vMid + gridSize - 1, vMid + gridSize);
             }
-            t = SetQuadIndices(indices, t, vMid, vMax, vMid + xSize - 1, vMax + 1);
+            t = SetQuadIndices(indices, t, vMid, vMax, vMid + gridSize - 1, vMax + 1);
         }
 
         i32 vTop = vMin - 2;
         t = SetQuadIndices(indices, t, vMin, vMid, vTop + 1, vTop);
-        for (i32 x = 1; x < xSize - 1; x++, vTop--, vMid++) {
+        for (i32 x = 1; x < gridSize - 1; x++, vTop--, vMid++) {
             t = SetQuadIndices(indices, t, vMid, vMid + 1, vTop, vTop - 1);
         }
         t = SetQuadIndices(indices, t, vMid, vTop - 2, vTop, vTop - 1);
@@ -198,30 +196,30 @@ namespace gdraw {
         return t;
     }
 
-    i32 RoundedCube3D::CreateBottomFace(vector<i32> &indices, i32 vertexCount, i32 t, i32 ring) {
+    i32 SphereCube3D::CreateBottomFace(vector<i32> &indices, i32 vertexCount, i32 t, i32 ring) {
         i32 v = 1;
-        i32 vMid = vertexCount - (xSize - 1) * (zSize - 1);
+        i32 vMid = vertexCount - (gridSize - 1) * (gridSize - 1);
         t = SetQuadIndices(indices, t, ring - 1, vMid, 0, 1);
-        for (i32 x = 1; x < xSize - 1; x++, v++, vMid++) {
+        for (i32 x = 1; x < gridSize - 1; x++, v++, vMid++) {
             t = SetQuadIndices(indices, t, vMid, vMid + 1, v, v + 1);
         }
         t = SetQuadIndices(indices, t, vMid, v + 2, v, v + 1);
 
         i32 vMin = ring - 2;
-        vMid -= xSize - 2;
+        vMid -= gridSize - 2;
         i32 vMax = v + 2;
 
-        for (i32 z = 1; z < zSize - 1; z++, vMin--, vMid++, vMax++) {
-            t = SetQuadIndices(indices, t, vMin, vMid + xSize - 1, vMin + 1, vMid);
-            for (i32 x = 1; x < xSize - 1; x++, vMid++) {
-                t = SetQuadIndices(indices, t, vMid + xSize - 1, vMid + xSize, vMid, vMid + 1);
+        for (i32 z = 1; z < gridSize - 1; z++, vMin--, vMid++, vMax++) {
+            t = SetQuadIndices(indices, t, vMin, vMid + gridSize - 1, vMin + 1, vMid);
+            for (i32 x = 1; x < gridSize - 1; x++, vMid++) {
+                t = SetQuadIndices(indices, t, vMid + gridSize - 1, vMid + gridSize, vMid, vMid + 1);
             }
-            t = SetQuadIndices(indices, t, vMid + xSize - 1, vMax + 1, vMid, vMax);
+            t = SetQuadIndices(indices, t, vMid + gridSize - 1, vMax + 1, vMid, vMax);
         }
 
         i32 vTop = vMin - 1;
         t = SetQuadIndices(indices, t, vTop + 1, vTop, vTop + 2, vMid);
-        for (i32 x = 1; x < xSize - 1; x++, vTop--, vMid++) {
+        for (i32 x = 1; x < gridSize - 1; x++, vTop--, vMid++) {
             t = SetQuadIndices(indices, t, vTop, vTop - 1, vMid, vMid + 1);
         }
         t = SetQuadIndices(indices, t, vTop, vTop - 1, vMid, vTop - 2);
@@ -229,54 +227,14 @@ namespace gdraw {
         return t;
     }
 
-    void RoundedCube3D::SetVertex(vector<Vec3> &vertices, vector<Vec3> &normals, i32 i, i32 x, i32 y, i32 z) {
-        Vec3 inner = vertices[i] = Vec3(x, y, z);
-
-        if (x < roundness) {
-            inner.x = roundness;
-        } else if (x > xSize - roundness) {
-            inner.x = xSize - roundness;
-        }
-        if (y < roundness) {
-            inner.y = roundness;
-        } else if (y > ySize - roundness) {
-            inner.y = ySize - roundness;
-        }
-        if (z < roundness) {
-            inner.z = roundness;
-        } else if (z > zSize - roundness) {
-            inner.z = zSize - roundness;
-        }
-
-        normals[i] = (vertices[i] - inner).Normalize();
-        vertices[i] = inner + normals[i] * roundness;
+    void SphereCube3D::SetVertex(vector<Vec3> &vertices, vector<Vec3> &normals, i32 i, i32 x, i32 y, i32 z) {
+        Vec3 v = Vec3 { static_cast<f32>(x), static_cast<f32>(y), static_cast<f32>(z) } * 2.0f / gridSize - Vec3::one;
+        normals[i] = v.Normalize();
+        vertices[i] = normals[i] * radius;
     }
 
-    void RoundedCube3D::Draw() const {
+    void SphereCube3D::Draw() const {
         Vec3 position { transform.m12, transform.m13, transform.m14 };
         DrawModel(this, position, 1.0f, WHITE);
     }
-
-    i32 RoundedCube3D::GetXSize() const {
-        return xSize;
-    }
-
-    i32 RoundedCube3D::GetYSize() const {
-        return ySize;
-    }
-
-    i32 RoundedCube3D::GetZSize() const {
-        return zSize;
-    }
-
-    f32 RoundedCube3D::GetRoundness() const {
-        return roundness;
-    }
-
-    void RoundedCube3D::SetRoundness(f32 roundness_) {
-        RoundedCube3D::roundness = roundness_;
-        Rebuild();
-    }
-
-
 }

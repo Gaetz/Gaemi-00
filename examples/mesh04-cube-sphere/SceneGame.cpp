@@ -18,9 +18,7 @@ SceneGame::SceneGame(Game &game) : game{game}
 void SceneGame::Load() {
     DisableCursor();
     AssetsManager::LoadShader("standardMeshShader", "standardMeshShader.vert", "standardMeshShader.frag");
-    cube.SetMaterialShader(0, AssetsManager::GetShader("standardMeshShader"));
-    // Setting the roundness of the cube to half its size makes it a sphere
-    cube.SetRoundness(5.0);
+    sphere.SetMaterialShader(0, AssetsManager::GetShader("standardMeshShader"));
 }
 
 void SceneGame::Update(f32 dt) {
@@ -31,7 +29,7 @@ void SceneGame::Draw() {
     gdraw::BeginMode3D(camera);
 
     gdraw::BeginShaderMode("standardMeshShader");
-    cube.Draw();
+    sphere.Draw();
     gdraw::EndShaderMode();
 
     gdraw::EndMode3D();
