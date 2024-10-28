@@ -20,6 +20,7 @@ namespace gmath {
 
         Vec3();
 
+        explicit Vec3(Vector3 raylibVec3);
         explicit Vec3(f32 x_, f32 y_, f32 z_);
 
         [[nodiscard]] str Log() const;

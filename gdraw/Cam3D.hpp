@@ -54,7 +54,7 @@ namespace gdraw {
 
     private:
         /** Camera position */
-        Vec3 position { 0.0f, 1.0f, -10.0f };
+        Vec3 position { 0.0f, 0.0f, -10.0f };
 
         /** Camera target it looks-at */
         Vec3 target { 0.0f, 0.0f, 0.0f };

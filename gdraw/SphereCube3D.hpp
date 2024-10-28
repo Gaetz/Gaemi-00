@@ -12,12 +12,22 @@
 
 using gmath::Vec3;
 
-namespace gdraw {
-    class SphereCube3D : public gassets::Model3D {
+namespace gdraw
+{
+    class SphereCube3D : public gassets::Model3D
+    {
     public:
         SphereCube3D(i32 gridSize_, f32 radius_, Vec3 position_);
 
         void Draw() const;
+
+        f32 GetRadius() const {
+            return radius;
+        }
+
+        Vec3 GetPosition() const {
+            return Vec3 { transform.m3, transform.m7, transform.m11 };
+        };
 
     private:
         i32 gridSize { 1 };
@@ -26,13 +36,13 @@ namespace gdraw {
         void Build();
         void Rebuild();
 
-        i32 SetQuadIndices(vector<i32> &indices, i32 i, i32 v00, i32 v10, i32 v01, i32 v11);
+        i32 SetQuadIndices(vector<i32>& indices, i32 i, i32 v00, i32 v10, i32 v01, i32 v11);
 
-        i32 CreateTopFace(vector<i32> &indices, i32 t, i32 ring);
+        i32 CreateTopFace(vector<i32>& indices, i32 t, i32 ring);
 
-        i32 CreateBottomFace(vector<i32> &indices, i32 vertexCount, i32 t, i32 ring);
+        i32 CreateBottomFace(vector<i32>& indices, i32 vertexCount, i32 t, i32 ring);
 
-        void SetVertex(vector<Vec3> &vertices, vector<Vec3> &normals, i32 i, i32 x, i32 y, i32 z);
+        void SetVertex(vector<Vec3>& vertices, vector<Vec3>& normals, i32 i, i32 x, i32 y, i32 z);
     };
 }
 

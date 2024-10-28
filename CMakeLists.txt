@@ -84,7 +84,7 @@ endif()
 
 
 # Add code.
-set(GAME_DIR examples/mesh04-cube-sphere)
+set(GAME_DIR examples/mesh05-mesh-deformation)
 
 add_subdirectory( gplatform )
 add_subdirectory( glog )

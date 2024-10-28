@@ -10,7 +10,7 @@ int main() {
     Log::Restart();
 
     Engine engine;
-    engine.Start(1280, 720, "Procedural sphere", "assets/mesh04-cube-sphere", std::make_unique<Game>());
+    engine.Start(1280, 720, "Mesh deformation", "assets/mesh05-mesh-deformation", std::make_unique<Game>());
 
     return 0;
 }
