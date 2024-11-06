@@ -47,11 +47,9 @@ void SceneGame::Draw() {
 
     gdraw::BeginShaderMode("deformableMeshShader");
     if (collision.hit) {
-        gdraw::SetShaderInt("deformableMeshShader", "hit", 1);
         gdraw::SetShaderVec3("deformableMeshShader", "hitPosition", Vec3 { collision.point });
         gdraw::SetShaderVec3("deformableMeshShader", "hitNormal", Vec3 { collision.normal });
     } else {
-        gdraw::SetShaderInt("deformableMeshShader", "hit", 0);
         gdraw::SetShaderVec3("deformableMeshShader", "hitPosition", Vec3::zero);
         gdraw::SetShaderVec3("deformableMeshShader", "hitNormal", Vec3::zero);
     }

@@ -27,7 +27,7 @@ namespace gdraw {
     };
 
     constexpr f32 CAMERA_ORBITAL_SPEED { 0.5f };
-    constexpr f32 CAMERA_MOVE_SPEED { 0.09f };
+    constexpr f32 CAMERA_MOVE_SPEED { 0.4f };
     constexpr f32 CAMERA_ROTATION_SPEED { 0.03f };
     constexpr f32 CAMERA_PAN_SPEED { 0.2f };
     constexpr f32 CAMERA_MOUSE_MOVE_SENSITIVITY { 0.003f };

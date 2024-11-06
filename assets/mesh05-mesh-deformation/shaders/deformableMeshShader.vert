@@ -10,7 +10,6 @@ in vec4 vertexColor;
 uniform mat4 mvp;
 uniform mat4 matModel;
 uniform mat4 matNormal;
-uniform int hit;
 uniform vec3 hitPosition;
 uniform vec3 hitNormal;
 
@@ -35,21 +34,15 @@ void main()
 
 
     // Compute deformation
-    vec3 trueHitPosition = vec3(hitPosition.x, hitPosition.y, -hitPosition.z);
-    vec3 trueHitNormal = vec3(hitNormal.x, hitNormal.y, -hitNormal.z);
-
+    vec3 trueHitPosition = (matModel * vec4(hitPosition.x, hitPosition.y, -hitPosition.z, 1.0)).xyz;
     vec3 vertexDeformation = vec3(0.0);
-    if (hit == 1)
+    float distance = length(trueHitPosition - vec3(vertexPosition.xy, -vertexPosition.z));
+    if (distance < effectRadius)
     {
-        float distance = length(trueHitPosition - vertexPosition);
-        if (distance < effectRadius)
-        {
-            float strength = 1.0 - distance/effectRadius;
-            vertexDeformation = trueHitNormal * strength * 5.0;
-        }
+        float strength = 1.0 - distance/effectRadius;
+        vertexDeformation = hitNormal * strength * -3.0;
     }
 
     // Calculate final vertex position
-
     gl_Position = mvp*vec4(vertexPosition + vertexDeformation, 1.0);
 }
