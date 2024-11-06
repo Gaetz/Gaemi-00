@@ -26,7 +26,7 @@ public:
 private:
     Game& game;
     Cam3D camera {};
-    gdraw::SphereCube3D sphere { 10, 10.0f, Vec3 { 0.0f, 0.0f, 20.0f } };
+    gdraw::SphereCube3D sphere { 20, 10.0f, Vec3 { 0.0f, 0.0f, 20.0f } };
     RayCollision collision { false, 0.0f, Vec3::zero.ToRaylib(), Vec3::zero.ToRaylib() };
 };
 
