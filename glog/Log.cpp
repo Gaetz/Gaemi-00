@@ -8,7 +8,7 @@
 #include "Calendar.hpp"
 #include "Asserts.hpp"
 
-const str Log::GAME_LOG_FILE = "Reveries.log";
+const str Log::GAME_LOG_FILE = "Gaemi.log";
 std::ofstream Log::file;
 
 Log::Log() {

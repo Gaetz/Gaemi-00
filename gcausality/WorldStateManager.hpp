@@ -13,7 +13,7 @@ namespace gcausality {
 class WorldStateManager {
 public:
     void Store(WorldState worldStateCopy);
-    u64 GetCurrentFrame() const  { return currentFrame; }
+    [[nodiscard]] u64 GetCurrentFrame() const  { return currentFrame; }
 private:
     u64 currentTimeMs { 0 };
     u64 currentFrame { 0 };

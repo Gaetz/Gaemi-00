@@ -11,9 +11,12 @@
 #include "Log.hpp"
 #include "AssetsManager.hpp"
 #include "Jobs.hpp"
+#include "Renderer.hpp"
+
+using gassets::AssetsManager;
 
 void Engine::Start(i32 windowWidth, i32 windowHeight, const str& gameNameP,
-                   uptr<IGame>&& gameP) noexcept
+                   const str& gameAssetsPathP, uptr<IGame>&& gameP) noexcept
 {
     gameName = gameNameP;
     game = std::move(gameP);
@@ -23,6 +26,7 @@ void Engine::Start(i32 windowWidth, i32 windowHeight, const str& gameNameP,
     SetTargetFPS(60);
     LOG(LogLevel::Info) << "Window initialized";
 
+    AssetsManager::Initialize(gameAssetsPathP);
     AssetsManager::LoadData();
     game->Load();
     LOG(LogLevel::Info) << "Game loaded";
@@ -36,13 +40,11 @@ void Engine::Start(i32 windowWidth, i32 windowHeight, const str& gameNameP,
 #endif
         game->Update(dt);
 
-
-
-        render::BeginDraw();
-        render::ClearScreen();
+        gdraw::BeginDraw();
+        gdraw::ClearScreen();
         game->Draw();
-        DrawFPS(50, 50);
-        render::EndDraw();
+        DrawFPS(50, 20);
+        gdraw::EndDraw();
     }
 
     game->Unload();

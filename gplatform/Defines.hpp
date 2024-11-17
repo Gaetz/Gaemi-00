@@ -3,6 +3,7 @@
 //
 #ifndef GPLATFORM_DEFINES_HPP
 #define GPLATFORM_DEFINES_HPP
+#pragma warning(disable: 4514) // Not interesting: unreferenced inline function has been removed
 
 #include <string>
 #include <vector>
@@ -35,13 +36,6 @@ using uptr = std::unique_ptr<T>;
 
 template<class T>
 using sptr = std::shared_ptr<T>;
-
-template <class T, class... Ts>
-constexpr std::tuple<Ts...> tuple_tail(const std::tuple<T, Ts...>& t) {
-    return std::apply([](auto, auto&&... tail) {
-        return std::make_tuple(std::forward<decltype(tail)>(tail)...);
-    }, t);
-}
 
 /**
  * Debug

@@ -8,9 +8,15 @@
 #include <fstream>
 namespace gfile {
 
+    str File::gameAssetsPath;
+
     unordered_map<str, f32> File::ReadFile(FileType fileType, const str &filename) {
-        unordered_map<str, f32> fileData;
         str path = FileTypePath(fileType) + filename;
+        return ReadFile(path);
+    }
+
+    unordered_map<str, f32> File::ReadFile(const str &path) {
+        unordered_map<str, f32> fileData;
         std::ifstream file { path };
         vector<str> lines {};
         str fileLine;
@@ -29,6 +35,14 @@ namespace gfile {
             fileData.emplace(words[0], std::stof(words[1]));
         }
         return fileData;
+    }
+
+    void File::SetGameAssetsPath(const str &path) {
+        gameAssetsPath = path;
+    }
+
+    str File::GetGameAssetsPath() {
+        return gameAssetsPath;
     }
 
 }
