@@ -6,7 +6,7 @@
 #define TETRIS_BOARD_HPP
 
 #include "Defines.hpp"
-#include "../../gecs/Types.hpp"
+#include "../../ghecs/Types.hpp"
 
 
 class Board {

@@ -2,8 +2,8 @@
 // Created by Gaëtan Blaise-Cazalet on 26/12/2023.
 //
 
-#ifndef GECS_QUERY_HPP
-#define GECS_QUERY_HPP
+#ifndef GHECS_QUERY_HPP
+#define GHECS_QUERY_HPP
 
 #include <tuple>
 #include <unordered_map>
@@ -14,7 +14,7 @@
 #include "QueryCache.hpp"
 #include "QueryManager.hpp"
 
-namespace gecs {
+namespace ghecs {
 
     /**
      * Queries are a way to gather and cache data from world,
@@ -132,4 +132,4 @@ namespace gecs {
         }
     };
 }
-#endif //GECS_QUERY_HPP
+#endif //GHECS_QUERY_HPP

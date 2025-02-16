@@ -5,16 +5,16 @@
 #include "SceneGame.hpp"
 #include <iomanip>
 #include "ImRenderer.h"
-#include "../gecs/World.hpp"
-#include "../gecs/Entity.hpp"
+#include "../ghecs/World.hpp"
+#include "../ghecs/Entity.hpp"
 #include "AssetsManager.hpp"
 #include "Renderer.hpp"
 #include "Query.hpp"
 
-using gecs::Position;
-using gecs::Velocity;
-using gecs::Sprite;
-using gecs::Query;
+using ghecs::Position;
+using ghecs::Velocity;
+using ghecs::Sprite;
+using ghecs::Query;
 using gassets::AssetsManager;
 
 i32 figures[7][4]{
@@ -48,11 +48,11 @@ void SceneGame::Load() {
     auto tileId = world.CreateEntity();
     Position pos{static_cast<f32>(BOARD_X), static_cast<f32>(BOARD_Y)};
     world.AddComponent<Position>(tileId, pos);
-    gecs::Sprite sprite{AssetsManager::GetTexture("tiles")};
+    ghecs::Sprite sprite{AssetsManager::GetTexture("tiles")};
     sprite.srcRect = Rect{0, 0, BOARD_TILE_SIZE, BOARD_TILE_SIZE};
     sprite.dstSize = Vec2{BOARD_TILE_SIZE, BOARD_TILE_SIZE};
     world.AddComponent<Sprite>(tileId, sprite);
-    gecs::Velocity vel{0, BOARD_TILE_SIZE};
+    ghecs::Velocity vel{0, BOARD_TILE_SIZE};
     world.AddComponent<Velocity>(tileId, vel);
 }
 
@@ -66,11 +66,11 @@ void SceneGame::Update(f32 dt) {
             auto tileId = world.CreateEntity();
             Position pos{static_cast<f32>(BOARD_X), static_cast<f32>(BOARD_Y)};
             world.AddComponent<Position>(tileId, pos);
-            gecs::Sprite sprite{AssetsManager::GetTexture("tiles")};
+            ghecs::Sprite sprite{AssetsManager::GetTexture("tiles")};
             sprite.srcRect = Rect{0, 0, BOARD_TILE_SIZE, BOARD_TILE_SIZE};
             sprite.dstSize = Vec2{BOARD_TILE_SIZE, BOARD_TILE_SIZE};
             world.AddComponent<Sprite>(tileId, sprite);
-            gecs::Velocity vel{0, BOARD_TILE_SIZE};
+            ghecs::Velocity vel{0, BOARD_TILE_SIZE};
             world.AddComponent<Velocity>(tileId, vel);
             falling.Reset();
         }

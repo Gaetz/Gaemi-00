@@ -2,15 +2,15 @@
 // Created by gaetz on 07/01/24.
 //
 
-#ifndef GECS_QUERYMANAGER_HPP
-#define GECS_QUERYMANAGER_HPP
+#ifndef GHECS_QUERYMANAGER_HPP
+#define GHECS_QUERYMANAGER_HPP
 
 #include <ranges>
 #include "Types.hpp"
 #include "Components.hpp"
 #include "Archetype.hpp"
 
-namespace gecs {
+namespace ghecs {
 
     /**
      * The QueryManager is in charge of providing utilities for
@@ -259,4 +259,4 @@ namespace gecs {
         void operator=(QueryManager const&) = delete;
     };
 }
-#endif //GECS_QUERYMANAGER_HPP
+#endif //GHECS_QUERYMANAGER_HPP

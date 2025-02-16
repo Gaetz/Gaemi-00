@@ -15,7 +15,7 @@
 #include "World.hpp"
 
 using gmath::Vec2;
-using gecs::World;
+using ghecs::World;
 using gdraw::Cam3D;
 using gassets::Model3D;
 

@@ -2,12 +2,12 @@
 // Created by Gaëtan Blaise-Cazalet on 22/01/2024.
 //
 
-#ifndef GECS_COLUMN_HPP
-#define GECS_COLUMN_HPP
+#ifndef GHECS_COLUMN_HPP
+#define GHECS_COLUMN_HPP
 
 #include "Types.hpp"
 #include "Components.hpp"
-namespace gecs {
+namespace ghecs {
 
     struct Position;
     struct Velocity;
@@ -123,6 +123,6 @@ namespace gecs {
         [[nodiscard]] const Sprite& GetSprite(size_t row) const;
     };
 
-} // gecs
+} // ghecs
 
 #endif //GAEMI_00_COLUMN_HPP

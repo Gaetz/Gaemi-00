@@ -8,7 +8,7 @@
 #include "IScene.hpp"
 #include "raylib.h"
 #include "Game.hpp"
-#include "../gecs/Types.hpp"
+#include "../ghecs/Types.hpp"
 #include "Vec2.hpp"
 
 using gmath::Vec2;
@@ -29,7 +29,7 @@ public:
     void Unload() override;
 
 private:
-    gecs::Id testEntityId;
+    ghecs::Id testEntityId;
 
     Game& game;
     Texture2D backgroundTexture {};

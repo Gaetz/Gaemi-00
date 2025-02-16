@@ -2,8 +2,8 @@
 // Created by gaetz on 03/07/2023.
 //
 
-#ifndef GECS_WORLD_HPP
-#define GECS_WORLD_HPP
+#ifndef GHECS_WORLD_HPP
+#define GHECS_WORLD_HPP
 
 #include "Types.hpp"
 #include "Archetype.hpp"
@@ -11,7 +11,7 @@
 #include <ranges>
 #include "Query.hpp"
 
-namespace gecs {
+namespace ghecs {
 
     /**
      * World is an archetypal ECS pattern.
@@ -206,4 +206,4 @@ namespace gecs {
 }
 
 
-#endif //GECS_WORLD_HPP
+#endif //GHECS_WORLD_HPP

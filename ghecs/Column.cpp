@@ -5,7 +5,7 @@
 #include "Column.hpp"
 #include "Components.hpp"
 
-namespace gecs {
+namespace ghecs {
     const Position& Column::GetPos(size_t row) const {
         return GetRowConst<Position>(row);
     }
@@ -17,4 +17,4 @@ namespace gecs {
     const Sprite &Column::GetSprite(size_t row) const {
         return GetRowConst<Sprite>(row);
     }
-} // gecs
+} // ghecs

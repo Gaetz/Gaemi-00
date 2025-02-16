@@ -2,13 +2,13 @@
 // Created by gaetz on 02/07/2023.
 //
 
-#ifndef GECS_ARCHETYPE_HPP
-#define GECS_ARCHETYPE_HPP
+#ifndef GHECS_ARCHETYPE_HPP
+#define GHECS_ARCHETYPE_HPP
 
 #include "Types.hpp"
 #include "Column.hpp"
 
-namespace gecs {
+namespace ghecs {
 
     class Archetype;
 
@@ -57,4 +57,4 @@ namespace gecs {
 }
 
 
-#endif //GECS_ARCHETYPE_HPP
+#endif //GHECS_ARCHETYPE_HPP

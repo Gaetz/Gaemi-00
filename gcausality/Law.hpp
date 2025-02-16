@@ -7,7 +7,7 @@
 #include "Archetype.hpp"
 #include "WorldState.hpp"
 
-using gecs::Archetype;
+using ghecs::Archetype;
 
 #ifndef GCAUSALITY_LAW_HPP
 #define GCAUSALITY_LAW_HPP

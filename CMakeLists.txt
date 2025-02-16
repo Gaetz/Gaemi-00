@@ -26,7 +26,7 @@ if (UNIX)
 endif(UNIX)
 cmake_policy(SET CMP0135 NEW)
 ## -- Raylib
-set(RAYLIB_VERSION 5.0)
+set(RAYLIB_VERSION 5.5)
 find_package(raylib ${RAYLIB_VERSION} QUIET) # QUIET or REQUIRED
 if (NOT raylib_FOUND) # If there's none, fetch and build raylib
     include(FetchContent)
@@ -84,7 +84,7 @@ endif()
 
 
 # Add code.
-set(GAME_DIR examples/mesh05-mesh-deformation)
+set(GAME_DIR examples/00-sandfall)
 
 add_subdirectory( gplatform )
 add_subdirectory( glog )
@@ -92,7 +92,7 @@ add_subdirectory( gfile )
 add_subdirectory( gmath )
 add_subdirectory( gdraw )
 add_subdirectory( gassets )
-add_subdirectory( gecs )
+add_subdirectory( ghecs )
 #add_subdirectory( gcausality ) -- Not ready yet
 add_subdirectory( gaemi )
 add_subdirectory( ${GAME_DIR} )

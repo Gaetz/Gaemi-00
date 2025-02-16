@@ -2,7 +2,7 @@
 // Created by gaetz on 05/11/2022.
 //
 
-#include "../gaemi/Engine.hpp"
+#include "Engine.hpp"
 #include "Game.hpp"
 #include "Log.hpp"
 

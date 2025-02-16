@@ -5,16 +5,16 @@
 #include "SceneGame.hpp"
 #include <iomanip>
 #include "ImRenderer.h"
-#include "../gecs/World.hpp"
-#include "../gecs/Entity.hpp"
+#include "../ghecs/World.hpp"
+#include "../ghecs/Entity.hpp"
 #include "AssetsManager.hpp"
 #include "Renderer.hpp"
 #include "Query.hpp"
 
-using gecs::Position;
-using gecs::Velocity;
-using gecs::Sprite;
-using gecs::Query;
+using ghecs::Position;
+using ghecs::Velocity;
+using ghecs::Sprite;
+using ghecs::Query;
 
 SceneGame::SceneGame(Game& game) : game { game } {}
 

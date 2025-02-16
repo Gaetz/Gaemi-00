@@ -5,8 +5,8 @@
 #include "SceneGame.hpp"
 #include <iomanip>
 #include "ImRenderer.h"
-#include "../gecs/World.hpp"
-#include "../gecs/Entity.hpp"
+#include "../ghecs/World.hpp"
+#include "../ghecs/Entity.hpp"
 #include "AssetsManager.hpp"
 #include "Renderer.hpp"
 #include "Query.hpp"

@@ -2,8 +2,8 @@
 // Created by gaetz on 02/07/2023.
 //
 
-#ifndef GECS_COMPONENTS_HPP
-#define GECS_COMPONENTS_HPP
+#ifndef GHECS_COMPONENTS_HPP
+#define GHECS_COMPONENTS_HPP
 
 #include <variant>
 #include "Types.hpp"
@@ -20,7 +20,7 @@ using gmath::Vec2;
 
 using std::unordered_map;
 
-namespace gecs {
+namespace ghecs {
 
     struct Column;
 
@@ -97,4 +97,4 @@ namespace gecs {
 }
 
 
-#endif //GECS_COMPONENTS_HPP
+#endif //GHECS_COMPONENTS_HPP

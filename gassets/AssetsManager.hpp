@@ -23,7 +23,7 @@ namespace gassets {
         Horizontal = CUBEMAP_LAYOUT_LINE_HORIZONTAL,
         ThreeByFour = CUBEMAP_LAYOUT_CROSS_THREE_BY_FOUR,
         FourByThree = CUBEMAP_LAYOUT_CROSS_FOUR_BY_THREE,
-        Equirectangular = CUBEMAP_LAYOUT_PANORAMA
+        Equirectangular = CUBEMAP_LAYOUT_AUTO_DETECT
     };
 
     class AssetsManager

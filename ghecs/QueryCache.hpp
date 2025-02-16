@@ -2,13 +2,13 @@
 // Created by gaetz on 17/01/24.
 //
 
-#ifndef GECS_QUERYCACHE_HPP
-#define GECS_QUERYCACHE_HPP
+#ifndef GHECS_QUERYCACHE_HPP
+#define GHECS_QUERYCACHE_HPP
 
 #include "Defines.hpp"
 #include "Types.hpp"
 
-namespace gecs {
+namespace ghecs {
 
     /**
      * Query cache actually stores two caches: one in Array of Structs (AoS) and one in Struct of Arrays (SoA).
@@ -131,4 +131,4 @@ namespace gecs {
 
 }
 
-#endif //GECS_QUERYCACHE_HPP
+#endif //GHECS_QUERYCACHE_HPP

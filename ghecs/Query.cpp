@@ -4,6 +4,6 @@
 
 #include "Query.hpp"
 
-namespace gecs {
+namespace ghecs {
 
 }

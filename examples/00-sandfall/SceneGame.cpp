@@ -3,16 +3,16 @@
 //
 
 #include "SceneGame.hpp"
-#include "../gecs/Entity.hpp"
+#include "../ghecs/Entity.hpp"
 #include "AssetsManager.hpp"
 #include "Renderer.hpp"
 #include "Query.hpp"
 #include "GMath.hpp"
 
-using gecs::Position;
-using gecs::Velocity;
-using gecs::Sprite;
-using gecs::Query;
+using ghecs::Position;
+using ghecs::Velocity;
+using ghecs::Sprite;
+using ghecs::Query;
 using gassets::AssetsManager;
 
 
@@ -50,7 +50,7 @@ void SceneGame::CreateSandAtom(i32 mousePixelX, i32 mousePixelY) {
     world.AddComponent<Position>(atomId, pos);
     Velocity vel {0, static_cast<f32>(ATOM_WIDTH)};
     world.AddComponent<Velocity>(atomId, vel);
-    gecs::Sprite sprite { sandTexture };
+    ghecs::Sprite sprite { sandTexture };
     world.AddComponent<Sprite>(atomId, sprite);
 }
 
@@ -137,7 +137,7 @@ void SceneGame::ComputeGrid() {
 
 void SceneGame::Draw() {
     // Query all entities with a position and a sprite
-    auto posSprites = gecs::Query<Position, Sprite>();
+    auto posSprites = ghecs::Query<Position, Sprite>();
     posSprites.Read([](const Position& pos, const Sprite& spr) {
         gdraw::DrawTexture(spr.texture, pos.x, pos.y, WHITE);
     });

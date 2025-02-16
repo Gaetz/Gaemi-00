@@ -7,7 +7,7 @@
 
 #include <algorithm>
 
-using gecs::World;
+using ghecs::World;
 
 namespace gcausality {
 

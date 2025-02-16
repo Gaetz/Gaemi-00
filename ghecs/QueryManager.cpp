@@ -5,9 +5,9 @@
 #include "QueryManager.hpp"
 #include "World.hpp"
 
-namespace gecs {
+namespace ghecs {
 
-    void QueryManager::Store(gecs::ArchetypeId key, void* q) {
+    void QueryManager::Store(ghecs::ArchetypeId key, void* q) {
         /// TODO: what about deleting this pointer?
         queries.emplace(key, q);
     }

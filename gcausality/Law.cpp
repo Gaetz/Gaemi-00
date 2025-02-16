@@ -6,7 +6,7 @@
 #include "Asserts.hpp"
 #include "World.hpp"
 
-using gecs::World;
+using ghecs::World;
 
 namespace gcausality {
 

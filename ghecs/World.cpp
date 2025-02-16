@@ -9,7 +9,7 @@
 #include <sstream>
 #include <limits>
 
-namespace gecs {
+namespace ghecs {
 
     void World::Init() {
         // Init archetype ids with bits
@@ -300,8 +300,8 @@ namespace gecs {
     void World::LogWorld() {
         std::stringstream stream;
         stream << std::endl;
-        stream << Log::LogMap<gecs::Id, gecs::ArchetypeRecord>("Entities", entityRegistry,
-                                                   [&](gecs::Id id, const gecs::ArchetypeRecord& record) {
+        stream << Log::LogMap<ghecs::Id, ghecs::ArchetypeRecord>("Entities", entityRegistry,
+                                                   [&](ghecs::Id id, const ghecs::ArchetypeRecord& record) {
                                                        str strId = "Entity: "+ std::to_string(id);
                                                        str archetypeId = "Archetype: " + ArchetypeIdToString(record.archetype->archetypeId);
                                                        str strRow = "Row: " + std::to_string(record.row);
@@ -317,8 +317,8 @@ namespace gecs {
                                                    });
 
         stream << std::endl;
-        stream << Log::LogMap<gecs::ArchetypeId, gecs::Archetype>("Archetypes", archetypeRegistry,
-                                                   [](gecs::ArchetypeId id, const gecs::Archetype& archetype) {
+        stream << Log::LogMap<ghecs::ArchetypeId, ghecs::Archetype>("Archetypes", archetypeRegistry,
+                                                   [](ghecs::ArchetypeId id, const ghecs::Archetype& archetype) {
                                                        str archetypeId = "Archetype: " + ArchetypeIdToString(id);
                                                        str count = "Number of entities: " + std::to_string(archetype.GetRowCount());
                                                        return archetypeId + " | " + count;

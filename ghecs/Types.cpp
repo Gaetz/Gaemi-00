@@ -7,7 +7,7 @@
 #include <sstream>
 #include "GMath.hpp"
 
-namespace gecs {
+namespace ghecs {
     str ComponentIdToString(ComponentId componentId) {
         switch (componentId) {
             case ComponentId::Position: {

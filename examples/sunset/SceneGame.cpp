@@ -5,16 +5,16 @@
 #include "SceneGame.hpp"
 #include <iomanip>
 #include "ImRenderer.h"
-#include "../gecs/World.hpp"
-#include "../gecs/Entity.hpp"
+#include "../ghecs/World.hpp"
+#include "../ghecs/Entity.hpp"
 #include "AssetsManager.hpp"
 #include "Renderer.hpp"
 #include "Query.hpp"
 
-using gecs::Position;
-using gecs::Velocity;
-using gecs::Sprite;
-using gecs::Query;
+using ghecs::Position;
+using ghecs::Velocity;
+using ghecs::Sprite;
+using ghecs::Query;
 
 SceneGame::SceneGame(Game& game) : game { game },
   PLAYER_JUMP_MAX_PRESS_TIME { AssetsManager::GetData("PLAYER_JUMP_MAX_PRESS_TIME") },
@@ -34,19 +34,19 @@ void SceneGame::Load() {
 
     backgroundTexture = AssetsManager::GetTexture("bg_sunset");
 
-    gecs::World& world = gecs::World::Instance();
+    ghecs::World& world = ghecs::World::Instance();
     world.Init();
 
-    vector<gecs::Id> entities;
+    vector<ghecs::Id> entities;
     for (u32 i = 0; i < 50; ++i) {
         auto testEntityId = world.CreateEntity();
-        gecs::Entity entity = world.GetEntity(testEntityId);
+        ghecs::Entity entity = world.GetEntity(testEntityId);
         Position pos {static_cast<f32>(GetRandomValue(0, 500)), static_cast<f32>(0 + i * 10)};
-        entity.AddComponent<gecs::Position>(pos);
+        entity.AddComponent<ghecs::Position>(pos);
         Velocity vel {static_cast<f32>(100), 0};
-        entity.AddComponent<gecs::Velocity>(vel);
-        gecs::Sprite sprite { AssetsManager::GetTexture("ghost") };
-        entity.AddComponent<gecs::Sprite>(sprite);
+        entity.AddComponent<ghecs::Velocity>(vel);
+        ghecs::Sprite sprite { AssetsManager::GetTexture("ghost") };
+        entity.AddComponent<ghecs::Sprite>(sprite);
         entities.push_back(testEntityId);
     }
 
@@ -74,7 +74,7 @@ void SceneGame::Draw() {
     gdraw::DrawTexture(backgroundTexture, 0, 120, WHITE);
 
     // Query all entities with a position and a sprite
-    auto posSprites = gecs::Query<Position, Sprite>();
+    auto posSprites = ghecs::Query<Position, Sprite>();
     posSprites.Each([](Position& pos, Sprite& spr) {
         gdraw::DrawTexture(spr.texture, pos.x, pos.y, WHITE);
     });

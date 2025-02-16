@@ -4,7 +4,7 @@
 
 #include "Entity.hpp"
 
-namespace gecs {
+namespace ghecs {
 
     Entity::Entity(u64 idP) {
         id = idP;

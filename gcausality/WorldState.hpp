@@ -9,9 +9,9 @@
 #include "Components.hpp"
 #include "StringUtils.hpp"
 
-using gecs::Id;
-using gecs::ArchetypeId;
-using gecs::Column;
+using ghecs::Id;
+using ghecs::ArchetypeId;
+using ghecs::Column;
 
 namespace gcausality {
 

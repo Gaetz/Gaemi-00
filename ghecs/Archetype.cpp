@@ -4,7 +4,7 @@
 
 #include "Archetype.hpp"
 #include "Components.hpp"
-namespace gecs {
+namespace ghecs {
 
     size_t Archetype::GetRowCount() const {
         if (components.empty()) return 0;

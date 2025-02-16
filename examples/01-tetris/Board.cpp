@@ -6,9 +6,9 @@
 #include "Entity.hpp"
 #include "AssetsManager.hpp"
 
-using gecs::World;
-using gecs::Position;
-using gecs::Sprite;
+using ghecs::World;
+using ghecs::Position;
+using ghecs::Sprite;
 
 Board::Board(i32 x, i32 y, i32 cols, i32 rows, f32 tileSize) :
         x{x}, y{y}, tileSize{tileSize} {

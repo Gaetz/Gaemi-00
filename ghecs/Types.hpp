@@ -2,8 +2,8 @@
 // Created by gaetz on 02/07/2023.
 //
 
-#ifndef GECSS_TYPES_HPP
-#define GECSS_TYPES_HPP
+#ifndef GHECS_TYPES_HPP
+#define GHECS_TYPES_HPP
 
 #include <bitset>
 using std::bitset;
@@ -14,7 +14,7 @@ using std::unordered_map;
 #include "Defines.hpp"
 #include "Defines.hpp"
 
-namespace gecs {
+namespace ghecs {
 
     /**
      * Max number of components
@@ -170,4 +170,4 @@ namespace gecs {
     ArchetypeId ToArchetypeId(const std::vector<ComponentId>& comps);
 }
 
-#endif //GECSS_TYPES_HPP
+#endif //GHECS_TYPES_HPP

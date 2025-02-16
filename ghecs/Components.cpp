@@ -5,7 +5,7 @@
 #include "Components.hpp"
 #include "Column.hpp"
 
-namespace gecs {
+namespace ghecs {
 
     str LogComponent(ComponentId componentId, const Column& column, size_t row) {
         switch (componentId) {

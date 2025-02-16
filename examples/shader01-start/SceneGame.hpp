@@ -8,12 +8,12 @@
 #include "IScene.hpp"
 #include "raylib.h"
 #include "Game.hpp"
-#include "../gecs/Types.hpp"
+#include "../ghecs/Types.hpp"
 #include "Vec2.hpp"
 #include "World.hpp"
 
 using gmath::Vec2;
-using gecs::World;
+using ghecs::World;
 
 class SceneGame : public IScene {
 public:

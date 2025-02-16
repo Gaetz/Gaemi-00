@@ -5,7 +5,7 @@
 #ifndef SUNSET_REVERIES_GAME_HPP
 #define SUNSET_REVERIES_GAME_HPP
 
-#include "../gaemi/IGame.hpp"
+#include "IGame.hpp"
 #include "IScene.hpp"
 
 class Game : public IGame {

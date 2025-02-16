@@ -2,14 +2,14 @@
 // Created by gaetz on 02/07/2023.
 //
 
-#ifndef GECS_ENTITY_HPP
-#define GECS_ENTITY_HPP
+#ifndef GHECS_ENTITY_HPP
+#define GHECS_ENTITY_HPP
 
 #include "Defines.hpp"
 #include "Types.hpp"
 #include "World.hpp"
 
-namespace gecs {
+namespace ghecs {
 
     /**
      * Represents a game entity.
@@ -45,4 +45,4 @@ namespace gecs {
 }
 
 
-#endif //GECS_ENTITY_HPP
+#endif //GHECS_ENTITY_HPP
