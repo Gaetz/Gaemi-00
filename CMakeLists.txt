@@ -84,7 +84,7 @@ endif()
 
 
 # Add code.
-set(GAME_DIR examples/00-sandfall)
+set(GAME_DIR examples/mesh05-mesh-deformation)
 
 add_subdirectory( gplatform )
 add_subdirectory( glog )
@@ -92,6 +92,7 @@ add_subdirectory( gfile )
 add_subdirectory( gmath )
 add_subdirectory( gdraw )
 add_subdirectory( gassets )
+add_subdirectory( gecs )
 add_subdirectory( ghecs )
 #add_subdirectory( gcausality ) -- Not ready yet
 add_subdirectory( gaemi )
